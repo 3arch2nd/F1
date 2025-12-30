@@ -49,28 +49,14 @@
         .loading-text { color: #fff; font-family: var(--font-display); font-size: 14px; letter-spacing: 2px; animation: blink 1s infinite; margin-bottom: 20px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* 엔진 스타트 버튼 (오디오 정책 우회용) */
         #start-engine-btn {
-            background: transparent;
-            color: #fff;
-            border: 2px solid #fff;
-            padding: 15px 40px;
-            font-family: var(--font-display);
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
+            background: transparent; color: #fff; border: 2px solid #fff; padding: 15px 40px;
+            font-family: var(--font-display); font-size: 16px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease;
             box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
-        #start-engine-btn:hover {
-            background: #fff;
-            color: #000;
-            box-shadow: 0 0 30px rgba(255,255,255,0.6);
-        }
+        #start-engine-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255,255,255,0.6); }
 
-        /* 유튜브 플레이어 숨김 (오디오만 사용) */
         #bgm-player { position: absolute; top: -9999px; left: -9999px; visibility: hidden; pointer-events: none; }
 
 
@@ -81,25 +67,36 @@
         .session-step { font-size: 10px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
         .session-name { font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 
-        .radio-box { flex: 1; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-width: 0; max-width: 380px; margin-left: auto; }
-        .radio-top-section { padding: 12px 15px 0px 15px; text-align: right; }
-        .driver-name { font-size: 16px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -1px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
+        /* 📻 라디오 박스 슬림화 수정 */
+        .radio-box { 
+            flex: 0 0 auto; /* 크기 고정 */
+            width: 220px;   /* 💡 너비를 확 줄임 (기존 380px -> 220px) */
+            background: var(--team-radio-bg); 
+            border: 4px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 4px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            margin-left: auto; 
+        }
+        .radio-top-section { padding: 10px 10px 0px 10px; text-align: right; overflow: hidden; }
+        .driver-name { font-size: 14px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -0.5px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
         .driver-name span { color: var(--team-accent); }
-        .radio-label { display: block; margin-top: 2px; font-size: 9px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
+        .radio-label { display: block; margin-top: 2px; font-size: 8px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
         
         .audio-wave-divider { width: 100%; height: 20px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; margin: 5px 0; }
         .bar { flex: 1; margin: 0 1px; background-color: var(--team-primary); transform-origin: bottom; }
         @keyframes equalizer { 0%, 100% { height: 4px; } 50% { height: 14px; } }
         
-        .radio-content-section { padding: 8px 15px 15px 15px; display: flex; flex-direction: column; gap: 5px; }
-        .quote-box { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 12px; letter-spacing: -0.5px; line-height: 1.3; }
+        .radio-content-section { padding: 8px 10px 15px 10px; display: flex; flex-direction: column; gap: 5px; }
+        .quote-box { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 11px; letter-spacing: -0.5px; line-height: 1.3; }
         .quote-box::before { content: "“"; color: #fff; margin-right: 4px; }
         .quote-box::after { content: "”"; color: #fff; margin-left: 4px; }
         .top-msg { text-align: left; color: #fff; }
         .bottom-data { text-align: right; color: var(--team-accent); }
         .amount-container { display: inline-block; text-align: right; }
-        .amount-row { display: block; line-height: 1.2; }
-        .amount-goal { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; font-family: var(--font-display); }
+        .amount-row { display: block; line-height: 1.2; font-size: 11px; font-weight: bold; }
+        .amount-goal { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; font-family: var(--font-display); font-weight: normal; }
 
         /* 서킷 */
         .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 140px 20px 20px 20px; overflow: hidden; min-height: 0; }
@@ -107,27 +104,27 @@
         .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
         .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); transition: stroke-dasharray 0.5s ease; }
         
-        /* 🏁 체커기 패턴 스타일 */
         .checker-box { stroke: none; }
         .checker-white { fill: #fff; }
         .checker-black { fill: #000; }
 
         /* 차량 디자인 */
-        .ai-marker { cursor: default; }
+        .ai-marker { cursor: default; pointer-events: none; }
         .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
-        .ai-marker rect { fill: #222; rx: 2; opacity: 0.8; transition: fill 0.3s, stroke 0.3s; }
-        .ai-marker text { fill: #aaa; font-size: 14px; font-weight: bold; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; }
+        .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: #fff; stroke-width: 1px; }
+        /* 🏷️ 이름표 폰트 수정: 초대형 크기 적용 */
+        .ai-marker text { fill: #fff; font-weight: 900; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         /* 주인공 하이라이트 */
-        .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 1px; opacity: 1; }
+        .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 3px; opacity: 1; }
         .ai-marker.hero-redbull text { fill: #000 !important; font-weight: 900; }
         .ai-marker.hero-redbull circle { fill: #FF1E00 !important; r: 5; }
-        .ai-marker.hero-redbull { filter: drop-shadow(0 0 5px #FFEC00); }
+        .ai-marker.hero-redbull { filter: drop-shadow(0 0 10px #FFEC00); z-index: 999; }
 
-        .ai-marker.hero-mercedes rect { fill: #00D2BE !important; stroke: #fff !important; stroke-width: 1px; opacity: 1; }
+        .ai-marker.hero-mercedes rect { fill: #00D2BE !important; stroke: #fff !important; stroke-width: 3px; opacity: 1; }
         .ai-marker.hero-mercedes text { fill: #000 !important; font-weight: 900; }
         .ai-marker.hero-mercedes circle { fill: #fff !important; r: 5; }
-        .ai-marker.hero-mercedes { filter: drop-shadow(0 0 5px #00D2BE); }
+        .ai-marker.hero-mercedes { filter: drop-shadow(0 0 10px #00D2BE); z-index: 999; }
 
         /* 하단 컨트롤 */
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
@@ -283,50 +280,29 @@
         let trackSpeedProfile = [];
         let raceStarted = false; 
 
-        // 🎵 유튜브 플레이어 변수
         let bgmPlayer;
         function onYouTubeIframeAPIReady() {
             bgmPlayer = new YT.Player('bgm-player', {
                 height: '0',
                 width: '0',
-                videoId: 'YhX_Woa3kVA', // 🏎️ Brian Tyler - F1 Theme
-                playerVars: {
-                    'autoplay': 0, 
-                    'controls': 0,
-                    'loop': 1,
-                    'playlist': 'YhX_Woa3kVA' // 루프를 위해 필요
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
+                videoId: 'YhX_Woa3kVA', 
+                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' },
+                events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
             });
         }
-        function onPlayerReady(event) {
-            // 준비되면 할 일 (여기서는 버튼 클릭 대기)
-        }
+        function onPlayerReady(event) {}
+        function onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) bgmPlayer.playVideo(); }
 
         const driverList = [
-            { id: 'VER', speed: 1.25 }, // Top Tier
-            { id: 'HAM', speed: 1.18 },
-            { id: 'LEC', speed: 1.15 },
-            { id: 'ANT', speed: 1.12 },
-            { id: 'RUS', speed: 1.12 },
-            { id: 'SAI', speed: 1.10 },
-            { id: 'ALO', speed: 1.08 }, // --- Cutoff
-            { id: 'PER', speed: 1.05 },
-            { id: 'GAS', speed: 1.02 },
-            { id: 'OCO', speed: 1.00 },
-            { id: 'ALB', speed: 0.98 },
-            { id: 'BEA', speed: 0.97 },
-            { id: 'TSU', speed: 0.96 },
-            { id: 'STR', speed: 0.95 }
+            { id: 'VER', speed: 1.25 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
+            { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, { id: 'PER', speed: 1.05 },
+            { id: 'GAS', speed: 1.02 }, { id: 'OCO', speed: 1.00 }, { id: 'ALB', speed: 0.98 }, { id: 'BEA', speed: 0.97 },
+            { id: 'TSU', speed: 0.96 }, { id: 'STR', speed: 0.95 }
         ];
 
         let aiDrivers = [];
 
         function init() {
-            // startRaceSequence()는 이제 버튼을 누르면 호출됩니다.
-
             document.getElementById('bg-track').setAttribute('d', singaporeCircuitPath);
             document.getElementById('active-track').setAttribute('d', singaporeCircuitPath);
             const container = document.getElementById('wave-container');
@@ -349,20 +325,15 @@
             updateTeamBtn();
         }
 
-        // 🚦 버튼 클릭 시 실행: 음악 재생 + 시퀀스 시작
         function activateEngine() {
-            document.getElementById('start-engine-btn').style.display = 'none'; // 버튼 숨김
-            if (bgmPlayer && bgmPlayer.playVideo) {
-                bgmPlayer.setVolume(70);
-                bgmPlayer.playVideo(); // 🎵 음악 큐!
-            }
+            document.getElementById('start-engine-btn').style.display = 'none'; 
+            if (bgmPlayer && bgmPlayer.playVideo) { bgmPlayer.setVolume(70); bgmPlayer.playVideo(); }
             startRaceSequence();
         }
 
         function startRaceSequence() {
             let lightCount = 1;
             const loadingText = document.querySelector('.loading-text');
-
             function turnOnNextLight() {
                 if (lightCount <= 5) {
                     document.getElementById(`light-${lightCount}`).classList.add('on');
@@ -375,7 +346,6 @@
                     setTimeout(() => {
                         document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
                         raceStarted = true; 
-                        
                         setTimeout(() => {
                             const overlay = document.getElementById('loading-overlay');
                             overlay.style.opacity = '0';
@@ -392,30 +362,21 @@
             const len = track.getTotalLength();
             const samples = 1000;
             trackSpeedProfile = []; 
-
             for(let i=0; i<samples; i++) {
                 const p = i / samples;
                 const pNext = (i + 1) % samples / samples;
                 const pPrev = (i - 1 + samples) % samples / samples;
-
                 const pt1 = track.getPointAtLength(pPrev * len);
                 const pt2 = track.getPointAtLength(p * len);
                 const pt3 = track.getPointAtLength(pNext * len);
-
                 const angle1 = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
                 const angle2 = Math.atan2(pt3.y - pt2.y, pt3.x - pt2.x);
-                
                 let diff = Math.abs(angle1 - angle2);
                 if (diff > Math.PI) diff = 2 * Math.PI - diff; 
-
                 let targetSpeedFactor = 1.0;
-                if (diff < 0.05) {
-                    targetSpeedFactor = 2.2; 
-                } else if (diff < 0.2) {
-                    targetSpeedFactor = 1.0; 
-                } else {
-                    targetSpeedFactor = 0.3; 
-                }
+                if (diff < 0.05) targetSpeedFactor = 2.2; 
+                else if (diff < 0.2) targetSpeedFactor = 1.0; 
+                else targetSpeedFactor = 0.3; 
                 trackSpeedProfile.push(targetSpeedFactor);
             }
         }
@@ -423,7 +384,6 @@
         function animateAIDrivers() {
             const track = document.getElementById('bg-track');
             const len = track.getTotalLength();
-
             aiDrivers.forEach(ai => {
                 if (!raceStarted) {
                     const point = track.getPointAtLength(len * ai.progress);
@@ -432,25 +392,16 @@
                     ai.element.setAttribute('transform', `translate(${point.x + jitterX}, ${point.y + jitterY})`);
                     return; 
                 }
-
                 const mapIndex = Math.floor(ai.progress * 1000) % 1000;
                 const targetFactor = trackSpeedProfile[mapIndex];
-                
-                if (ai.actualSpeed > targetFactor) {
-                    ai.actualSpeed -= (ai.actualSpeed - targetFactor) * 0.15;
-                } else {
-                    ai.actualSpeed += (targetFactor - ai.actualSpeed) * 0.01;
-                }
-
+                if (ai.actualSpeed > targetFactor) ai.actualSpeed -= (ai.actualSpeed - targetFactor) * 0.15;
+                else ai.actualSpeed += (targetFactor - ai.actualSpeed) * 0.01;
                 const moveStep = ai.baseSpeed * ai.actualSpeed * 0.00025;
-
                 ai.progress += moveStep;
                 if (ai.progress >= 1) ai.progress -= 1;
-
                 const point = track.getPointAtLength(len * ai.progress);
                 ai.element.setAttribute('transform', `translate(${point.x}, ${point.y})`);
             });
-
             requestAnimationFrame(animateAIDrivers);
         }
 
@@ -472,30 +423,28 @@
             const midPoint = Math.ceil(driverList.length / 2);
             const topTier = driverList.slice(0, midPoint); 
             const bottomTier = driverList.slice(midPoint); 
-
             const shuffledTop = shuffleArray([...topTier]);
             const shuffledBottom = shuffleArray([...bottomTier]);
-
             const finalGrid = [...shuffledTop, ...shuffledBottom];
 
             finalGrid.forEach((d, index) => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
                 g.setAttribute("data-id", d.id); 
-
                 if (d.id === heroId) g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
                 
                 const isHero = (d.id === heroId);
-                const rectW = isHero ? 50 : 40;
-                const rectH = isHero ? 24 : 20;
-                const fontSize = isHero ? 16 : 14;
+                // 💡 이름표 크기 대폭 상향
+                const rectW = isHero ? 120 : 100; // 넓이 증가
+                const rectH = isHero ? 50 : 40;   // 높이 증가
+                const fontSize = isHero ? 32 : 28;// 폰트 크기 대폭 증가
 
                 const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
                 rect.setAttribute("x", -rectW/2); rect.setAttribute("y", -rectH - 10);
                 rect.setAttribute("width", rectW); rect.setAttribute("height", rectH);
                 
                 const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute("x", 0); text.setAttribute("y", -rectH/2 - 9);
+                text.setAttribute("x", 0); text.setAttribute("y", -rectH/2 - 5);
                 text.textContent = d.id;
                 text.style.fontSize = `${fontSize}px`;
 
@@ -520,20 +469,16 @@
                 });
             });
 
-            if (heroElement) {
-                layer.appendChild(heroElement);
-            }
+            if (heroElement) layer.appendChild(heroElement);
         }
         
         function updateDriverStyles() {
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             const layer = document.getElementById('ai-cars-layer');
             const allCars = layer.querySelectorAll('.ai-marker');
-
             allCars.forEach(g => {
                 const id = g.getAttribute('data-id');
                 g.classList.remove('hero-redbull', 'hero-mercedes');
-                
                 if (id === heroId) {
                     g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
                     layer.appendChild(g); 
@@ -547,57 +492,33 @@
             const date = new Date(targetYear, 8, 30);
             const day = date.getDay();
             date.setDate(date.getDate() - day);
-            
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
             const d = String(date.getDate()).padStart(2, '0');
             return `${y}-${m}-${d}`;
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_18_bgm', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_18_bgm'); if (stored) state = JSON.parse(stored); }
-
-        function showTooltip(msg) {
-            const tip = document.getElementById('msg-tooltip');
-            tip.innerText = msg; tip.classList.add('show');
-            setTimeout(() => tip.classList.remove('show'), 2500);
-        }
-
-        function getOrdinal(n) {
-            const s = ["th", "st", "nd", "rd"];
-            const v = n % 100;
-            return n + (s[(v - 20) % 10] || s[v] || s[0]);
-        }
+        function saveData() { localStorage.setItem('f1_tracker_v11_20_final_tweak', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_20_final_tweak'); if (stored) state = JSON.parse(stored); }
+        function showTooltip(msg) { const tip = document.getElementById('msg-tooltip'); tip.innerText = msg; tip.classList.add('show'); setTimeout(() => tip.classList.remove('show'), 2500); }
+        function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
         function addMoney() {
             const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
+            const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, '0'); const d = String(now.getDate()).padStart(2, '0');
             const todayStr = `${y}-${m}-${d}`;
             const currentDay = now.getDate();
-
-            if (currentDay !== state.savingsDay) {
-                const dayStr = getOrdinal(state.savingsDay);
-                showTooltip(`NOT YET, BOX ON THE ${dayStr}`); 
-                return;
-            }
-            if (state.lastDepositDate === todayStr) { 
-                showTooltip("ENOUGH NOW"); 
-                return; 
-            }
-            
+            if (currentDay !== state.savingsDay) { const dayStr = getOrdinal(state.savingsDay); showTooltip(`NOT YET, BOX ON THE ${dayStr}`); return; }
+            if (state.lastDepositDate === todayStr) { showTooltip("ENOUGH NOW"); return; }
             const totalGoal = state.q1 + state.q2 + state.q3;
             state.currentAmount += state.depositUnit;
             if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
             state.lastDepositDate = todayStr;
             showTooltip("COPY THAT, BOXING NOW!"); 
-
             let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
             if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
-            saveData(); 
-            updateDashboard(); 
+            saveData(); updateDashboard(); 
         }
 
         function triggerCelebration(sessionName) {
@@ -611,17 +532,14 @@
         }
 
         function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
-
         function syncTrackFill(target) {
             if (animId) cancelAnimationFrame(animId);
             const activeTrack = document.getElementById('active-track');
             const totalLength = activeTrack.getTotalLength();
-            
             function frame() {
                 let diff = target - visualProgress; 
                 visualProgress += diff * 0.08;
                 activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
-                
                 if (Math.abs(diff) > 0.0001) animId = requestAnimationFrame(frame);
             }
             frame();
@@ -631,11 +549,9 @@
             document.body.className = state.team;
             state.driver = (state.team === 'mercedes') ? 'ANTONELLI' : 'VERSTAPPEN';
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
-
             const totalGoal = state.q1 + state.q2 + state.q3;
             let targetP = 0;
             let stepText = "[Q1]"; let nameText = "HOTEL";
-
             if (state.currentAmount < state.q1) { targetP = state.currentAmount / state.q1; stepText = "[Q1]"; nameText = "HOTEL"; }
             else if (state.currentAmount < (state.q1 + state.q2)) { targetP = (state.currentAmount - state.q1) / state.q2; stepText = "[Q2]"; nameText = "FLIGHT"; }
             else { targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; stepText = "[Q3]"; nameText = "GRANDSTAND"; if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } }
@@ -644,9 +560,7 @@
             document.getElementById('session-name').innerText = nameText;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
-            
             syncTrackFill(targetP);
-            
             document.getElementById('savings-day').value = state.savingsDay;
             document.getElementById('deposit-unit').value = state.depositUnit;
             document.getElementById('manual-amount').value = state.currentAmount;
@@ -663,34 +577,26 @@
             const q1 = parseInt(document.getElementById('q1-goal').value) || 0;
             const q2 = parseInt(document.getElementById('q2-goal').value) || 0;
             const q3 = parseInt(document.getElementById('q3-goal').value) || 0;
-            
             const recBox = document.getElementById('rec-box');
             const recMsg = document.getElementById('rec-msg');
-            
             if (!targetDateStr) { recBox.style.display = 'none'; return; }
             recBox.style.display = 'block';
             const totalGoal = q1 + q2 + q3;
             const remaining = totalGoal - curAmt;
-            
             if (remaining <= 0) { recMsg.innerText = "GOAL REACHED! PUSH HARD!"; return; }
-
             const today = new Date();
             const targetDate = new Date(targetDateStr);
             if (targetDate <= today) { recMsg.innerText = "RACE DAY PASSED / INVALID DATE"; return; }
-
             let depositCount = 0;
             let tempDate = new Date(today);
             if (tempDate.getDate() > savingsDay) tempDate.setMonth(tempDate.getMonth() + 1);
             tempDate.setDate(savingsDay);
-
             while (tempDate <= targetDate) { depositCount++; tempDate.setMonth(tempDate.getMonth() + 1); }
-
             if (depositCount === 0) { recMsg.innerText = "IMMEDIATE FULL DEPOSIT REQUIRED"; } 
             else { const monthlyRec = Math.ceil(remaining / depositCount); recMsg.innerText = `REC: ₩${monthlyRec.toLocaleString()} / month (${depositCount} stops)`; }
         }
 
         function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateDashboard(); calculateRecommendation(); }
-        
         function saveAndCloseSettings() {
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
@@ -699,20 +605,11 @@
             state.q2 = Number(document.getElementById('q2-goal').value);
             state.q3 = Number(document.getElementById('q3-goal').value);
             state.targetDate = document.getElementById('target-date').value;
-            
-            saveData(); 
-            updateDashboard(); 
-            
+            saveData(); updateDashboard(); 
             document.getElementById('settings-modal').style.display = 'none';
         }
         
-        function setTeam(t) { 
-            state.team = t; 
-            updateTeamBtn(); 
-            updateDashboard();
-            updateDriverStyles(); 
-        }
-
+        function setTeam(t) { state.team = t; updateTeamBtn(); updateDashboard(); updateDriverStyles(); }
         function updateTeamBtn() {
             document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
             document.getElementById(`opt-${state.team}`).classList.add('selected');
