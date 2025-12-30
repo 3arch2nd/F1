@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#121212">
+    <title>Race to Singapore</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --font-display: 'Michroma', sans-serif;
+            --gray-track: rgba(255, 255, 255, 0.25);
+            --f1-purple: #B624FF;
+        }
+
+        body.mercedes { --team-bg: #121212; --team-radio-bg: rgba(20, 20, 20, 0.9); --team-primary: #00D2BE; --team-accent: #00D2BE; }
+        body.redbull { --team-bg: #0A0045; --team-radio-bg: rgba(10, 0, 69, 0.9); --team-primary: #FF1E00; --team-accent: #FFEC00; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: var(--team-bg); 
+            color: var(--text-color); 
+            font-family: var(--font-display); 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            transition: background 0.5s ease; 
+        }
+
+        /* 헤더 & 라디오 */
+        .header-container { position: absolute; top: 40px; left: 20px; right: 20px; display: flex; gap: 8px; z-index: 100; align-items: stretch; }
+        .logo-box { flex: 1; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; }
+        .f1-logo { width: 100%; max-width: 120px; height: 40px; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 8px; }
+        .session-status { font-size: 10px; font-weight: bold; color: var(--team-accent); text-transform: uppercase; letter-spacing: 1px; text-align: center; background: rgba(255, 255, 255, 0.05); padding: 4px 8px; border-radius: 2px; width: 100%; white-space: nowrap; }
+        .radio-box { flex: 1; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .radio-top-section { padding: 15px 20px 0px 20px; text-align: right; }
+        .driver-name { font-size: 18px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -1px; transform: scaleX(1.1); transform-origin: right; display: inline-block; }
+        .driver-name span { color: var(--team-accent); }
+        .radio-label { display: block; margin-top: 5px; font-size: 10px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
+        
+        /* 오디오 웨이브 */
+        .audio-wave-divider { width: 100%; height: 25px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; margin: 5px 0; }
+        .bar { flex: 1; margin: 0 1px; background-color: var(--team-primary); transform-origin: bottom; }
+        @keyframes equalizer { 0%, 100% { height: 4px; } 50% { height: 18px; } }
+        
+        /* 💬 라디오 대화 박스 수정 */
+        .radio-content-section { padding: 10px 20px 20px 20px; display: flex; flex-direction: column; gap: 8px; }
+        .quote-box { 
+            font-family: var(--font-display); /* Michroma로 변경 */
+            font-style: italic; 
+            font-weight: 400; /* Michroma는 900이 너무 두꺼울 수 있어 조절 */
+            font-size: 13px; /* 폰트 너비를 고려해 크기 살짝 조정 */
+            letter-spacing: -0.5px; 
+        }
+        .quote-box::before { content: "“"; color: #fff; margin-right: 4px; }
+        .quote-box::after { content: "”"; color: #fff; margin-left: 4px; }
+        
+        .top-msg { text-align: left; color: #fff; }
+        .bottom-data { text-align: right; color: var(--team-accent); }
+        .amount-container { display: inline-block; text-align: right; }
+        .amount-row { display: block; line-height: 1.1; }
+        .amount-goal { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 3px; font-family: var(--font-display); }
+
+        /* 서킷 */
+        .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 180px 20px 60px 20px; overflow: hidden; }
+        svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
+        .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+        .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); }
+        .finish-line { stroke: #fff; stroke-width: 20; stroke-dasharray: 4; filter: drop-shadow(0 0 5px #fff); }
+        .car-dot { fill: var(--team-primary); stroke: #fff; stroke-width: 3; filter: drop-shadow(0 0 10px #fff); }
+        .driver-tag-bg { fill: #000; stroke: #fff; stroke-width: 1.5; }
+        .driver-tag-text { fill: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; }
+
+        /* 하단 컨트롤 */
+        .controls { padding: 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; }
+        .box-btn { 
+            background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; 
+            box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; 
+        }
+        .box-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px var(--team-primary); }
+
+        /* 말풍선 */
+        .tooltip {
+            position: absolute; bottom: calc(100% + 20px); left: 50%; transform: translateX(-50%) translateY(10px);
+            background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 12px 20px; border-radius: 4px; font-size: 11px; font-family: var(--font-display);
+            white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        }
+        .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 10px solid transparent; border-top-color: var(--team-primary); }
+
+        .settings-btn { background: none; border: 1px solid #444; color: #888; padding: 8px 15px; margin-top: 20px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: var(--font-display); }
+
+        /* 모달 및 축하 화면 */
+        #celebration-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fastest-lap-title { color: var(--f1-purple); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
+        .fastest-lap-driver { color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
+        .next-session-btn { background: var(--f1-purple); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; font-weight: 900; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--team-radio-bg); padding: 25px; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid #333; overflow-y: auto; max-height: 80vh; }
+        .modal h2 { font-family: var(--font-display); font-size: 16px; margin-bottom: 20px; color: var(--team-accent); text-transform: uppercase; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 6px; font-family: var(--font-display); text-transform: uppercase; }
+        .input-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-display); font-size: 12px; }
+        .radio-option { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; font-family: var(--font-display); color: #888; }
+        .radio-option.selected { border-color: var(--team-accent); color: var(--team-accent); background: rgba(255,255,255,0.1); }
+        .close-btn { width: 100%; padding: 15px; background: var(--team-accent); color: #000; border: none; margin-top: 10px; font-weight: bold; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body class="mercedes">
+
+    <div id="celebration-overlay">
+        <div class="celebration-content">
+            <div class="fastest-lap-title" id="lap-session-title">[Q1] FASTEST LAP</div>
+            <div class="fastest-lap-driver" id="lap-driver-name">ANTONELLI</div>
+            <button class="next-session-btn" onclick="closeCelebration()">PUSH FOR NEXT LAP</button>
+        </div>
+    </div>
+
+    <div class="header-container">
+        <div class="logo-box">
+            <img src="https://i.imgur.com/jan8CSk.png" alt="F1 Logo" class="f1-logo">
+            <div id="session-status" class="session-status">[Q1] ACCOMMODATION</div>
+        </div>
+        <div class="radio-box">
+            <div class="radio-top-section">
+                <div class="driver-name" id="display-name"><span>ANTONELLI</span></div>
+                <span class="radio-label">RADIO</span>
+            </div>
+            <div id="wave-container" class="audio-wave-divider"></div>
+            <div class="radio-content-section">
+                <div class="quote-box top-msg">Balance check.</div>
+                <div class="quote-box bottom-data">
+                    <div class="amount-container">
+                        <span class="amount-row" id="txt-current">CUR ₩0</span>
+                        <span class="amount-row amount-goal" id="txt-goal">TAR ₩5,000,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="track-container">
+        <svg class="track-svg" viewBox="0 0 1200 700">
+            <path id="bg-track" class="track-path-bg" />
+            <path id="active-track" class="track-path-active" />
+            <line id="start-line" class="finish-line" x1="1050" y1="440" x2="1050" y2="460" />
+            <g id="driver-marker">
+                <rect class="driver-tag-bg" x="-55" y="-85" width="110" height="45" rx="4" />
+                <text id="tag-name" class="driver-tag-text" x="0" y="-60">ANT</text>
+                <circle class="car-dot" cx="0" cy="0" r="8" />
+            </g>
+        </svg>
+    </div>
+
+    <div class="controls">
+        <div id="msg-tooltip" class="tooltip">NOT YET, STAY IN GARAGE</div>
+        <button class="box-btn" onclick="addMoney()">BOX BOX</button>
+        <br>
+        <button class="settings-btn" onclick="openSettings()">STRATEGY SETTINGS</button>
+    </div>
+
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <h2>Strategy Settings</h2>
+            <div class="input-group"><label>Constructor</label><div class="radio-group" style="display:flex; gap:10px;"><div class="radio-option" id="opt-mercedes" onclick="setTeam('mercedes')">Mercedes</div><div class="radio-option" id="opt-redbull" onclick="setTeam('redbull')">Red Bull</div></div></div>
+            <div class="input-group"><label>Monthly Savings Day (1-31)</label><input type="number" id="savings-day" min="1" max="31"></div>
+            <div class="input-group"><label>Monthly Amount (₩)</label><input type="number" id="deposit-unit"></div>
+            <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount"></div>
+            <div class="input-group"><label>[Q1] Accommodation (₩)</label><input type="number" id="q1-goal"></div>
+            <div class="input-group"><label>[Q2] Flight (₩)</label><input type="number" id="q2-goal"></div>
+            <div class="input-group"><label>[Q3] Flex (₩)</label><input type="number" id="q3-goal"></div>
+            <button class="close-btn" onclick="saveAndCloseSettings()">Apply Strategy</button>
+        </div>
+    </div>
+
+    <script>
+        const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
+        let state = { currentAmount: 0, team: 'mercedes', driver: 'ANTONELLI', q1: 1600000, q2: 1400000, q3: 2000000, lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, lastDepositDate: '' };
+        let visualProgress = 0, animId = null;
+
+        function init() {
+            document.getElementById('bg-track').setAttribute('d', singaporeCircuitPath);
+            document.getElementById('active-track').setAttribute('d', singaporeCircuitPath);
+            const container = document.getElementById('wave-container');
+            container.innerHTML = '';
+            for(let i=0; i<30; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.animation = `equalizer ${0.4 + Math.random() * 0.4}s infinite ease-in-out`;
+                bar.style.animationDelay = `${Math.random() * 0.5}s`;
+                container.appendChild(bar);
+            }
+            loadData(); updateUI();
+        }
+
+        function saveData() { localStorage.setItem('f1_tracker_v11_2', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_2'); if (stored) state = JSON.parse(stored); }
+
+        function showTooltip(msg) {
+            const tip = document.getElementById('msg-tooltip');
+            tip.innerText = msg; tip.classList.add('show');
+            setTimeout(() => tip.classList.remove('show'), 2500);
+        }
+
+        function addMoney() {
+            const now = new Date(), todayStr = now.toISOString().split('T')[0], currentDay = now.getDate();
+            if (currentDay !== state.savingsDay) {
+                const diff = state.savingsDay - currentDay;
+                const waitDays = diff > 0 ? diff : (new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - currentDay + state.savingsDay);
+                showTooltip(`NOT YET, BOX IN ${waitDays} DAYS`); 
+                return;
+            }
+            if (state.lastDepositDate === todayStr) { 
+                showTooltip("ENOUGH NOW, CHECK TELEMETRY"); 
+                return; 
+            }
+            const totalGoal = state.q1 + state.q2 + state.q3;
+            state.currentAmount += state.depositUnit;
+            if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
+            state.lastDepositDate = todayStr;
+            showTooltip("COPY THAT, BOXING NOW!"); 
+
+            let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
+            if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
+            state.lastSession = checkS;
+            saveData(); updateUI();
+        }
+
+        function triggerCelebration(sessionName) {
+            const overlay = document.getElementById('celebration-overlay');
+            document.getElementById('lap-session-title').innerText = `[${sessionName}] FASTEST LAP`;
+            document.getElementById('lap-driver-name').innerText = state.driver;
+            overlay.style.display = 'flex';
+            const teamPrimary = getComputedStyle(document.body).getPropertyValue('--team-primary').trim();
+            const teamAccent = getComputedStyle(document.body).getPropertyValue('--team-accent').trim();
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, zIndex: 10001, colors: [teamPrimary, teamAccent, '#ffffff'] });
+        }
+
+        function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
+
+        function syncMarker(target) {
+            if (animId) cancelAnimationFrame(animId);
+            const activeTrack = document.getElementById('active-track'), marker = document.getElementById('driver-marker'), totalLength = activeTrack.getTotalLength();
+            function frame() {
+                let diff = target - visualProgress; visualProgress += diff * 0.08;
+                activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
+                const point = activeTrack.getPointAtLength(totalLength * visualProgress);
+                marker.setAttribute('transform', `translate(${point.x}, ${point.y})`);
+                if (Math.abs(diff) > 0.0001) animId = requestAnimationFrame(frame);
+            }
+            frame();
+        }
+
+        function updateUI() {
+            document.body.className = state.team;
+            state.driver = (state.team === 'mercedes') ? 'ANTONELLI' : 'VERSTAPPEN';
+            document.getElementById('tag-name').textContent = (state.team === 'mercedes') ? 'ANT' : 'VER';
+            const totalGoal = state.q1 + state.q2 + state.q3;
+            let targetP = 0, statusText = "";
+            if (state.currentAmount < state.q1) { targetP = state.currentAmount / state.q1; statusText = "[Q1] ACCOMMODATION"; }
+            else if (state.currentAmount < (state.q1 + state.q2)) { targetP = (state.currentAmount - state.q1) / state.q2; statusText = "[Q2] FLIGHT TICKETS"; }
+            else { targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; statusText = "[Q3] GRANDSTAND TICKET"; if (state.currentAmount >= totalGoal) { targetP = 1; statusText = "POLE POSITION REACHED!"; } }
+            document.getElementById('session-status').innerText = statusText;
+            document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
+            document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
+            document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
+            syncMarker(targetP);
+            document.getElementById('savings-day').value = state.savingsDay;
+            document.getElementById('deposit-unit').value = state.depositUnit;
+            document.getElementById('manual-amount').value = state.currentAmount;
+            document.getElementById('q1-goal').value = state.q1;
+            document.getElementById('q2-goal').value = state.q2;
+            document.getElementById('q3-goal').value = state.q3;
+            updateTeamBtn();
+        }
+
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateUI(); }
+        function saveAndCloseSettings() {
+            state.savingsDay = Number(document.getElementById('savings-day').value);
+            state.depositUnit = Number(document.getElementById('deposit-unit').value);
+            state.currentAmount = Number(document.getElementById('manual-amount').value);
+            state.q1 = Number(document.getElementById('q1-goal').value);
+            state.q2 = Number(document.getElementById('q2-goal').value);
+            state.q3 = Number(document.getElementById('q3-goal').value);
+            saveData(); updateUI(); document.getElementById('settings-modal').style.display = 'none';
+        }
+        function setTeam(t) { state.team = t; updateTeamBtn(); updateUI(); }
+        function updateTeamBtn() {
+            document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`opt-${state.team}`).classList.add('selected');
+        }
+        init();
+    </script>
+</body>
+</html>
