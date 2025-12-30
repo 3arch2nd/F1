@@ -39,6 +39,7 @@
             transition: background 0.5s ease; 
         }
 
+        /* 🚦 F1 스타트 로딩 화면 */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; }
         .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; }
         .light-pair { display: flex; flex-direction: column; gap: 5px; }
@@ -81,15 +82,18 @@
         .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
         .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); transition: stroke-dasharray 0.5s ease; }
         
+        /* 🏁 체커기 패턴 스타일 */
         .checker-box { stroke: none; }
         .checker-white { fill: #fff; }
         .checker-black { fill: #000; }
 
+        /* 차량 디자인 */
         .ai-marker { cursor: default; }
         .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
         .ai-marker rect { fill: #222; rx: 2; opacity: 0.8; transition: fill 0.3s, stroke 0.3s; }
         .ai-marker text { fill: #aaa; font-size: 14px; font-weight: bold; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; }
 
+        /* 주인공 하이라이트 */
         .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 1px; opacity: 1; }
         .ai-marker.hero-redbull text { fill: #000 !important; font-weight: 900; }
         .ai-marker.hero-redbull circle { fill: #FF1E00 !important; r: 5; }
@@ -100,6 +104,7 @@
         .ai-marker.hero-mercedes circle { fill: #fff !important; r: 5; }
         .ai-marker.hero-mercedes { filter: drop-shadow(0 0 5px #00D2BE); }
 
+        /* 하단 컨트롤 */
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         .box-btn { background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; width: 100%; max-width: 300px; }
         .box-btn:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--team-primary); }
@@ -109,6 +114,7 @@
         .settings-btn { background: none; border: 1px solid #555; color: #888; padding: 10px 20px; margin-top: 20px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
         .settings-btn:hover { border-color: #fff; color: #fff; }
 
+        /* 모달 */
         #celebration-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .fastest-lap-title { color: var(--f1-purple); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
@@ -285,9 +291,11 @@
             if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
             
             generateTrackSpeedProfile();
-                        requestAnimationFrame(animateAIDrivers);
+            // 💡 최초 로딩 시에만 차량을 생성하고 배치함
+            initAIDrivers();
+            requestAnimationFrame(animateAIDrivers);
             
-            updateDashboard(); 
+            updateDashboard(); // 💡 UI 텍스트만 업데이트
             updateTeamBtn();
         }
 
@@ -386,6 +394,7 @@
             requestAnimationFrame(animateAIDrivers);
         }
 
+        // 🎲 배열 섞기 유틸리티
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -401,18 +410,23 @@
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             let heroElement = null;
 
+            // 💡 [티어별 랜덤 로직] 
+            // 1. 드라이버 리스트를 절반으로 나눔
             const midPoint = Math.ceil(driverList.length / 2);
-            const topTier = driverList.slice(0, midPoint); 
-            const bottomTier = driverList.slice(midPoint); 
+            const topTier = driverList.slice(0, midPoint); // 상위권 (빠른 차)
+            const bottomTier = driverList.slice(midPoint); // 하위권 (느린 차)
 
+            // 2. 각 그룹 내부에서 셔플
             const shuffledTop = shuffleArray([...topTier]);
             const shuffledBottom = shuffleArray([...bottomTier]);
 
+            // 3. 다시 합침 (상위권은 앞쪽, 하위권은 뒤쪽)
             const finalGrid = [...shuffledTop, ...shuffledBottom];
 
             finalGrid.forEach((d, index) => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
+                // data-id 속성 추가 (스타일 업데이트용)
                 g.setAttribute("data-id", d.id); 
 
                 if (d.id === heroId) g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
@@ -439,12 +453,13 @@
 
                 if (isHero) heroElement = g;
 
+                // 🏁 그리드 배치
                 const startPos = 0.999;
                 const gridGap = 0.015;
                 const initialProgress = startPos - (index * gridGap);
 
                 aiDrivers.push({
-                    id: d.id, 
+                    id: d.id, // ID 저장
                     element: g,
                     baseSpeed: d.speed, 
                     progress: initialProgress,
@@ -457,6 +472,7 @@
             }
         }
         
+        // 🛠️ 피트 스탑 후 차량 색상/스타일만 업데이트하는 함수 (위치 리셋 안 함!)
         function updateDriverStyles() {
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             const layer = document.getElementById('ai-cars-layer');
@@ -464,11 +480,17 @@
 
             allCars.forEach(g => {
                 const id = g.getAttribute('data-id');
+                // 기존 클래스 제거
                 g.classList.remove('hero-redbull', 'hero-mercedes');
+                
+                // rect, text, circle은 CSS로 제어되지만, DOM 순서를 바꾸려면 복잡하므로 
+                // 여기서는 색상 클래스만 토글합니다. 
+                // (단, SVG z-index는 순서를 바꿔야 하므로 완벽한 z-index 처리를 위해선 DOM 이동이 필요하지만, 
+                // 피트스탑 중에는 색상만 바뀌어도 충분합니다)
                 
                 if (id === heroId) {
                     g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
-                    
+                    // 주인공을 맨 앞으로 (레이어) 보내기
                     layer.appendChild(g); 
                 }
             });
@@ -530,7 +552,7 @@
             if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
             saveData(); 
-            updateDashboard(); 
+            updateDashboard(); // 돈 냈을 때도 대시보드만 업데이트
         }
 
         function triggerCelebration(sessionName) {
@@ -560,7 +582,8 @@
             frame();
         }
 
-        
+        // 💡 [UI 업데이트 함수 분리]
+        // 이 함수는 텍스트/숫자 정보만 갱신하며, 절대 차량 위치를 리셋하지 않습니다.
         function updateDashboard() {
             document.body.className = state.team;
             state.driver = (state.team === 'mercedes') ? 'ANTONELLI' : 'VERSTAPPEN';
@@ -635,16 +658,17 @@
             state.targetDate = document.getElementById('target-date').value;
             
             saveData(); 
-            updateDashboard();             
+            updateDashboard(); // 💡 정보만 업데이트
+            
             document.getElementById('settings-modal').style.display = 'none';
         }
         
-        
+        // 💡 팀 변경 시: 정보 업데이트 + 차량 스타일 업데이트(위치 유지)
         function setTeam(t) { 
             state.team = t; 
             updateTeamBtn(); 
             updateDashboard();
-            updateDriverStyles(); 
+            updateDriverStyles(); // 💡 차량 색상/스타일만 즉시 반영
         }
 
         function updateTeamBtn() {
