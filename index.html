@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <title>Race to World Tour</title>
+    <title>Race to Singapore 2026</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,20 +32,23 @@
             --marker-text: #ffffff;
         }
 
-        /* 🎨 2026 F1 Team Colors & Smart Contrast System */
+        /* 🎨 2026 F1 Team Colors */
 
-        /* 1. Red Bull (User Specific Request) */
+        /* 1. Red Bull */
         body.redbull { 
-            --team-bg: #0A0045; 
-            --team-radio-bg: rgba(10, 0, 69, 0.95); 
-            --team-primary: #FF1E00; /* Red Buttons */
-            --team-accent: #FFEC00; /* Yellow Text */
-            --track-active-color: #D500F9; /* Purple Track */
-            --marker-bg: #FFEC00; /* Yellow Marker */
-            --marker-text: #000000; /* Black Text */
+            --team-bg: #060025; 
+            --team-radio-bg: rgba(6, 0, 37, 0.95); 
+            --team-primary: #3671C6; 
+            --team-accent: #FCD116; 
+            --track-active-color: #D500F9; 
+            --marker-bg: #FFEC00; 
+            --marker-text: #000000; 
         }
+        body.redbull .bar { background-color: #FF1E00 !important; } 
+        body.redbull .radio-label { color: #FF1E00 !important; } 
+        body.redbull .radio-box { border-color: rgba(255, 30, 0, 0.4); } 
 
-        /* 2. Mercedes (User Specific Request) */
+        /* 2. Mercedes */
         body.mercedes { 
             --team-bg: #121212; 
             --team-radio-bg: rgba(20, 20, 20, 0.95); 
@@ -53,7 +56,7 @@
             --team-accent: #00D2BE; 
             --track-active-color: #00D2BE;
             --marker-bg: #00D2BE;
-            --marker-text: #000000; /* Black Text */
+            --marker-text: #000000; 
         }
         
         /* 3. Ferrari */
@@ -67,29 +70,40 @@
             --marker-text: #ffffff; 
         }
         
-        /* 4. Sauber / Audi (Silver Marker -> Black Text) */
+        /* 4. Sauber / Audi */
         body.sauber { 
             --team-bg: #1C1C1C; 
             --team-radio-bg: rgba(28, 28, 28, 0.95); 
-            --team-primary: #C0C0C0; /* Silver */
-            --team-accent: #FF0000; /* Red */
+            --team-primary: #C0C0C0; 
+            --team-accent: #FF0000; 
             --track-active-color: #C0C0C0; 
             --marker-bg: #C0C0C0;
-            --marker-text: #000000; /* Black Text */
+            --marker-text: #000000; 
         }
         
-        /* 5. Aston Martin (Lime Marker -> Black Text) */
+        /* 5. Haas */
+        body.haas { 
+            --team-bg: #000000; 
+            --team-radio-bg: rgba(10, 10, 10, 0.95); 
+            --team-primary: #E6002B; 
+            --team-accent: #FFFFFF; 
+            --track-active-color: #E6002B;
+            --marker-bg: #E6002B;
+            --marker-text: #ffffff;
+        }
+
+        /* 6. Aston Martin */
         body.astonmartin { 
             --team-bg: #002420; 
             --team-radio-bg: rgba(0, 36, 32, 0.95); 
             --team-primary: #00594F; 
-            --team-accent: #CEDC00; /* Lime */
+            --team-accent: #CEDC00; 
             --track-active-color: #CEDC00; 
             --marker-bg: #CEDC00;
-            --marker-text: #000000; /* Black Text */
+            --marker-text: #000000; 
         }
         
-        /* 6. RB (White/Silver Marker -> Black Text) */
+        /* 7. RB */
         body.rb { 
             --team-bg: #08082A; 
             --team-radio-bg: rgba(8, 8, 42, 0.95); 
@@ -97,10 +111,10 @@
             --team-accent: #FFFFFF; 
             --track-active-color: #1633C8;
             --marker-bg: #FFFFFF;
-            --marker-text: #000000; /* Black Text */
+            --marker-text: #000000; 
         }
 
-        /* 7. Alpine */
+        /* 8. Alpine */
         body.alpine { 
             --team-bg: #00102A; 
             --team-radio-bg: rgba(0, 16, 42, 0.95); 
@@ -111,7 +125,7 @@
             --marker-text: #ffffff;
         }
         
-        /* 8. Williams */
+        /* 9. Williams */
         body.williams { 
             --team-bg: #040015; 
             --team-radio-bg: rgba(4, 0, 21, 0.95); 
@@ -119,17 +133,6 @@
             --team-accent: #FFFFFF; 
             --track-active-color: #00A0DE;
             --marker-bg: #00A0DE;
-            --marker-text: #ffffff;
-        }
-        
-        /* 9. Haas */
-        body.haas { 
-            --team-bg: #000000; 
-            --team-radio-bg: rgba(10, 10, 10, 0.95); 
-            --team-primary: #E6002B; 
-            --team-accent: #FFFFFF; 
-            --track-active-color: #E6002B;
-            --marker-bg: #E6002B;
             --marker-text: #ffffff;
         }
 
@@ -146,7 +149,6 @@
             transition: background 0.5s ease; 
         }
 
-        /* 🚦 F1 스타트 로딩 화면 */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; }
         .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; margin-bottom: 30px; }
         .light-pair { display: flex; flex-direction: column; gap: 5px; }
@@ -161,16 +163,14 @@
         .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 20px; z-index: 100; align-items: flex-start; justify-content: space-between; }
         .logo-box { flex: 0 0 auto; width: 120px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5px; }
         .f1-logo { width: 100%; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
-        
         .circuit-info { text-align: center; margin-top: 5px; width: 100%; }
         .circuit-country { font-size: 10px; color: var(--team-accent); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
         .circuit-name { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: normal; margin-top: 2px; line-height: 1.2; white-space: pre-wrap; word-break: keep-all; }
-
         .status-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 2px; margin-top: 10px; }
         .session-step { font-size: 10px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
         .session-name { font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 
-        .radio-box { flex: 0 0 auto; width: 220px; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-left: auto; }
+        .radio-box { flex: 0 0 auto; width: 220px; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-left: auto; border: 1px solid rgba(255,255,255,0.2); }
         .radio-top-section { padding: 10px 10px 0px 10px; text-align: right; overflow: hidden; }
         .driver-name { font-size: 14px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -0.5px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
         .driver-name span { color: var(--team-accent); }
@@ -201,29 +201,13 @@
         .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: none; }
         .ai-marker text { fill: #fff; font-weight: 900; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        /* 💡 수정됨: Smart Contrast 적용 (변수 기반) */
-        .ai-marker.hero-marker rect { 
-            fill: var(--marker-bg) !important; 
-            stroke: none !important; 
-            opacity: 1; 
-        }
-        .ai-marker.hero-marker text { 
-            fill: var(--marker-text) !important; /* 팀마다 다른 글자색 적용 */
-            font-weight: 900; 
-            text-shadow: none; /* 깔끔하게 그림자 제거 (배경 대비가 명확하므로) */
-        }
-        .ai-marker.hero-marker circle { 
-            fill: var(--team-accent) !important; 
-            r: 5; 
-        }
-        .ai-marker.hero-marker { 
-            z-index: 999; 
-            filter: drop-shadow(0 0 10px var(--marker-bg)); 
-        }
+        .ai-marker.hero-marker rect { fill: var(--marker-bg) !important; stroke: none !important; opacity: 1; }
+        .ai-marker.hero-marker text { fill: var(--marker-text) !important; font-weight: 900; text-shadow: none; }
+        .ai-marker.hero-marker circle { fill: var(--team-accent) !important; r: 5; }
+        .ai-marker.hero-marker { z-index: 999; filter: drop-shadow(0 0 8px var(--marker-bg)); }
 
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         
-        /* Box Btn: Outline Style */
         .box-btn { 
             background-color: transparent; 
             color: var(--team-primary); 
@@ -236,17 +220,17 @@
             text-transform: uppercase; 
             cursor: pointer; 
             box-shadow: none; 
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: all 0.1s ease; 
             position: relative; 
             width: 100%; 
             max-width: 300px; 
+            -webkit-tap-highlight-color: transparent;
         }
-        .box-btn:hover { 
-            background-color: var(--team-primary); 
-            color: #000; 
-            transform: scale(1.02);
-            box-shadow: 0 0 15px var(--team-primary); 
+        @media (hover: hover) {
+            .box-btn:hover { background-color: var(--team-primary); color: #000; transform: scale(1.02); box-shadow: 0 0 15px var(--team-primary); }
         }
+        .box-btn:active { transform: scale(0.98); }
+        .box-btn.flash-active { background-color: var(--team-primary) !important; color: #000 !important; box-shadow: 0 0 20px var(--team-primary) !important; }
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -419,38 +403,10 @@
     </div>
 
     <script>
-        /* 🚨 중요: 동생 데이터 보존을 위한 고정 키 */
         const STORAGE_KEY = 'f1_tracker_v11_23_purple_track';
 
         const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
         
-        const circuitsData = [
-            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 8, h: 2500000, f: 3500000, t: 700000 },
-            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 3, day: 22, h: 3000000, f: 4500000, t: 800000 },
-            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 5, h: 1500000, f: 1000000, t: 600000 },
-            { id: 'bhr', name: 'Bahrain Int. Circuit', country: 'Bahrain', month: 4, day: 19, h: 2500000, f: 4000000, t: 600000 },
-            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 3, h: 5000000, f: 6000000, t: 1500000 },
-            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 17, h: 2000000, f: 3500000, t: 700000 },
-            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 24, h: 6000000, f: 3500000, t: 1200000 },
-            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 7, h: 2500000, f: 4500000, t: 600000 },
-            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 21, h: 2000000, f: 3500000, t: 600000 },
-            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 28, h: 2000000, f: 3500000, t: 700000 },
-            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 5, h: 3000000, f: 3500000, t: 900000 },
-            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 26, h: 2000000, f: 3500000, t: 600000 },
-            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 8, day: 2, h: 1500000, f: 3000000, t: 500000 },
-            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 30, h: 2500000, f: 3500000, t: 800000 },
-            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 6, h: 2200000, f: 3500000, t: 700000 },
-            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 20, h: 2000000, f: 4000000, t: 600000 },
-            { id: 'sin', name: 'Marina Bay Street Circuit', country: 'Singapore', month: 10, day: 4, h: 3500000, f: 1500000, t: 900000 },
-            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 18, h: 3000000, f: 5000000, t: 800000 },
-            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 25, h: 2000000, f: 4500000, t: 600000 },
-            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 8, h: 2000000, f: 5500000, t: 600000 },
-            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 22, h: 5000000, f: 5000000, t: 2000000 },
-            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 11, day: 29, h: 3000000, f: 4000000, t: 700000 },
-            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 6, h: 4000000, f: 4000000, t: 1000000 }
-        ];
-
-        /* 🏎️ 2026 Grid Database */
         const teamsDB = {
             redbull: { name: 'Red Bull Racing', drivers: ['VERSTAPPEN', 'LAWSON'] },
             mercedes: { name: 'Mercedes-AMG', drivers: ['ANTONELLI', 'RUSSELL'] },
@@ -490,7 +446,7 @@
         function onPlayerReady(event) {}
         function onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) bgmPlayer.playVideo(); }
 
-        /* 💡 드라이버 리스트 업데이트 */
+        /* 💡 드라이버 리스트 */
         const driverList = [
             { id: 'VER', speed: 1.25 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
             { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, { id: 'PER', speed: 1.05 },
@@ -514,13 +470,9 @@
                 container.appendChild(bar);
             }
             loadData(); 
-            initCircuitSelect(); 
+            initCircuitSelect();
             if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
             
-            const currentCircuit = circuitsData.find(c => c.id === state.circuitId) || circuitsData[16];
-            document.getElementById('disp-country').innerText = currentCircuit.country;
-            document.getElementById('disp-circuit').innerText = currentCircuit.name;
-
             generateTrackSpeedProfile();
             initAIDrivers();
             requestAnimationFrame(animateAIDrivers);
@@ -528,49 +480,120 @@
             updateTeamSelectUI(); 
         }
 
+        /* 💡 싱가포르 고정 처리 */
         function initCircuitSelect() {
             const select = document.getElementById('circuit-select');
             select.innerHTML = '';
-            circuitsData.forEach(c => {
-                const option = document.createElement('option');
-                option.value = c.id;
-                option.text = `[Rd.${circuitsData.indexOf(c)+1}] ${c.country} - ${c.name}`;
-                if(c.id === state.circuitId) option.selected = true;
-                select.appendChild(option);
+            const option = document.createElement('option');
+            option.value = 'sin';
+            option.text = "SINGAPORE - Marina Bay Street Circuit";
+            option.selected = true;
+            select.appendChild(option);
+            select.disabled = true; // 선택 불가능하게
+        }
+
+        function updateCircuit() { /* 싱가포르 고정이므로 기능 비활성화 */ }
+
+        /* 💡 초기 드라이버 생성 (1회만 실행) + 랜덤 시드 부여 */
+        function initAIDrivers() {
+            const layer = document.getElementById('ai-cars-layer');
+            layer.innerHTML = ''; 
+            aiDrivers = [];
+            
+            const midPoint = Math.ceil(driverList.length / 2);
+            const topTier = driverList.slice(0, midPoint); 
+            const bottomTier = driverList.slice(midPoint); 
+            const shuffledTop = shuffleArray([...topTier]);
+            const shuffledBottom = shuffleArray([...bottomTier]);
+            const finalGrid = [...shuffledTop, ...shuffledBottom];
+
+            finalGrid.forEach((d, index) => {
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "ai-marker");
+                g.setAttribute("data-id", d.id); 
+                
+                const dim = getMarkerDimensions(false);
+                const isMobile = window.innerWidth < 600;
+
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", -dim.rectW/2); rect.setAttribute("y", -dim.rectH - 10);
+                rect.setAttribute("width", dim.rectW); rect.setAttribute("height", dim.rectH);
+                
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", 0); text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
+                text.textContent = d.id;
+                text.style.fontSize = `${dim.fontSize}px`;
+
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("r", dim.circleR);
+
+                g.appendChild(rect); g.appendChild(text); g.appendChild(circle);
+                layer.appendChild(g);
+
+                const startPos = 0.999;
+                const gridGap = 0.015;
+                const initialProgress = startPos - (index * gridGap);
+
+                aiDrivers.push({
+                    id: d.id, 
+                    element: g,
+                    baseSpeed: d.speed, 
+                    progress: initialProgress,
+                    actualSpeed: 0,
+                    // 💡 다이내믹 레이싱을 위한 랜덤 시드 추가
+                    randomOffset: Math.random() * 1000,
+                    fluctuation: 0
+                });
+            });
+            
+            updateRaceScenario();
+        }
+
+        /* 💡 다이내믹 레이싱: 상태 업데이트 & 속도 버프 적용 */
+        function updateRaceScenario() {
+            const heroId = getDriverShortId(state.driver);
+            const layer = document.getElementById('ai-cars-layer');
+            const isMobile = window.innerWidth < 600;
+
+            aiDrivers.forEach(ai => {
+                // 1. 원래 속도 복원
+                const originalData = driverList.find(d => d.id === ai.id);
+                let speed = originalData ? originalData.speed : 1.0;
+
+                const isHero = (ai.id === heroId);
+                const g = ai.element;
+                const rect = g.querySelector('rect');
+                const text = g.querySelector('text');
+                const circle = g.querySelector('circle');
+
+                if (isHero) {
+                    g.classList.add('hero-marker');
+                    layer.appendChild(g);
+
+                    // 💡 히어로 속도 보정 (10% 버프, 최대 1.24, 베르스타펜 제외)
+                    if (ai.id === 'VER') {
+                        speed = 1.25; 
+                    } else {
+                        speed = speed * 1.1; 
+                        if (speed > 1.24) speed = 1.24; 
+                    }
+                } else {
+                    g.classList.remove('hero-marker');
+                }
+
+                ai.baseSpeed = speed;
+
+                const dim = getMarkerDimensions(isHero);
+                rect.setAttribute("x", -dim.rectW/2); rect.setAttribute("y", -dim.rectH - 10);
+                rect.setAttribute("width", dim.rectW); rect.setAttribute("height", dim.rectH);
+                text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
+                text.style.fontSize = `${dim.fontSize}px`;
+                circle.setAttribute("r", dim.circleR);
             });
         }
 
-        function updateCircuit() {
-            const select = document.getElementById('circuit-select');
-            const circuitId = select.value;
-            const data = circuitsData.find(c => c.id === circuitId);
-            
-            if(!data) return;
-
-            state.circuitId = circuitId;
-            state.q1 = data.h; 
-            state.q2 = data.f; 
-            state.q3 = data.t; 
-
-            const currentTarget = new Date(document.getElementById('target-date').value);
-            const targetYear = currentTarget.getFullYear();
-            
-            const raceDate = new Date(targetYear, data.month - 1, data.day);
-            const dayOfWeek = raceDate.getDay();
-            const diff = 0 - dayOfWeek; 
-            raceDate.setDate(raceDate.getDate() + (dayOfWeek === 0 ? 0 : 7 - dayOfWeek)); 
-            
-            const y = raceDate.getFullYear();
-            const m = String(raceDate.getMonth() + 1).padStart(2, '0');
-            const d = String(raceDate.getDate()).padStart(2, '0');
-            state.targetDate = `${y}-${m}-${d}`;
-
-            document.getElementById('q1-goal').value = state.q1;
-            document.getElementById('q2-goal').value = state.q2;
-            document.getElementById('q3-goal').value = state.q3;
-            document.getElementById('target-date').value = state.targetDate;
-            
-            calculateRecommendation();
+        function updateDriverStyles() {
+            updateRaceScenario();
         }
 
         function activateEngine() {
@@ -629,10 +652,13 @@
             }
         }
 
+        /* 💡 다이내믹 레이싱: 컨디션 변화 및 추월 로직 적용 */
         function animateAIDrivers() {
             const track = document.getElementById('bg-track');
             const len = track.getTotalLength();
-            aiDrivers.forEach(ai => {
+            const now = Date.now();
+
+            aiDrivers.forEach((ai, idx) => {
                 if (!raceStarted) {
                     const point = track.getPointAtLength(len * ai.progress);
                     const jitterX = (Math.random() - 0.5) * 1.5;
@@ -640,13 +666,26 @@
                     ai.element.setAttribute('transform', `translate(${point.x + jitterX}, ${point.y + jitterY})`);
                     return; 
                 }
+
+                // 1. 컨디션 파동 (Sine Wave) 적용: +/- 3% 속도 변화
+                const fluctuation = Math.sin(now * 0.001 + ai.randomOffset) * 0.03;
+                let dynamicSpeed = ai.baseSpeed * (1 + fluctuation);
+
+                // 2. 슬립스트림/DRS (앞차와 가까우면 가속)
+                // 간단히: 내 바로 앞 순위의 차량과의 거리 계산 (대략적)
+                // 실제 레이스에선 복잡하지만 여기선 시각적 연출 위주
+                // (생략: 연산 비용 최소화를 위해 Sine Wave만으로도 충분히 역동적임)
+
                 const mapIndex = Math.floor(ai.progress * 1000) % 1000;
-                const targetFactor = trackSpeedProfile[mapIndex];
+                const targetFactor = trackSpeedProfile[mapIndex] * dynamicSpeed; // 다이내믹 스피드 적용
+
                 if (ai.actualSpeed > targetFactor) ai.actualSpeed -= (ai.actualSpeed - targetFactor) * 0.15;
                 else ai.actualSpeed += (targetFactor - ai.actualSpeed) * 0.01;
-                const moveStep = ai.baseSpeed * ai.actualSpeed * 0.00025;
+                
+                const moveStep = ai.actualSpeed * 0.00025;
                 ai.progress += moveStep;
                 if (ai.progress >= 1) ai.progress -= 1;
+                
                 const point = track.getPointAtLength(len * ai.progress);
                 ai.element.setAttribute('transform', `translate(${point.x}, ${point.y})`);
             });
@@ -695,97 +734,6 @@
             return name.substring(0,3).toUpperCase();
         }
 
-        function initAIDrivers() {
-            const layer = document.getElementById('ai-cars-layer');
-            layer.innerHTML = ''; 
-            aiDrivers = [];
-            const heroId = getDriverShortId(state.driver);
-            let heroElement = null;
-
-            const midPoint = Math.ceil(driverList.length / 2);
-            const topTier = driverList.slice(0, midPoint); 
-            const bottomTier = driverList.slice(midPoint); 
-            const shuffledTop = shuffleArray([...topTier]);
-            const shuffledBottom = shuffleArray([...bottomTier]);
-            const finalGrid = [...shuffledTop, ...shuffledBottom];
-
-            finalGrid.forEach((d, index) => {
-                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                g.setAttribute("class", "ai-marker");
-                g.setAttribute("data-id", d.id); 
-                
-                const isHero = (d.id === heroId);
-                if (isHero) g.classList.add('hero-marker');
-                
-                const dim = getMarkerDimensions(isHero);
-                const isMobile = window.innerWidth < 600;
-
-                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                rect.setAttribute("x", -dim.rectW/2); rect.setAttribute("y", -dim.rectH - 10);
-                rect.setAttribute("width", dim.rectW); rect.setAttribute("height", dim.rectH);
-                
-                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute("x", 0); text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
-                text.textContent = d.id;
-                text.style.fontSize = `${dim.fontSize}px`;
-
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("r", dim.circleR);
-
-                g.appendChild(rect); g.appendChild(text); g.appendChild(circle);
-                layer.appendChild(g);
-
-                if (isHero) heroElement = g;
-
-                const startPos = 0.999;
-                const gridGap = 0.015;
-                const initialProgress = startPos - (index * gridGap);
-
-                aiDrivers.push({
-                    id: d.id, 
-                    element: g,
-                    baseSpeed: d.speed, 
-                    progress: initialProgress,
-                    actualSpeed: 0 
-                });
-            });
-
-            if (heroElement) layer.appendChild(heroElement);
-        }
-        
-        function updateDriverStyles() {
-            const heroId = getDriverShortId(state.driver);
-            const layer = document.getElementById('ai-cars-layer');
-            const allCars = layer.querySelectorAll('.ai-marker');
-            const isMobile = window.innerWidth < 600;
-
-            allCars.forEach(g => {
-                const id = g.getAttribute('data-id');
-                const isHero = (id === heroId);
-                const rect = g.querySelector('rect');
-                const text = g.querySelector('text');
-                const circle = g.querySelector('circle');
-
-                g.classList.remove('hero-marker'); 
-                if (isHero) {
-                    g.classList.add('hero-marker'); 
-                    layer.appendChild(g); 
-                }
-
-                const dim = getMarkerDimensions(isHero);
-                
-                rect.setAttribute("x", -dim.rectW/2);
-                rect.setAttribute("y", -dim.rectH - 10);
-                rect.setAttribute("width", dim.rectW);
-                rect.setAttribute("height", dim.rectH);
-
-                text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
-                text.style.fontSize = `${dim.fontSize}px`;
-
-                circle.setAttribute("r", dim.circleR);
-            });
-        }
-
         function getFiveYearsLaterGPDate() {
             const now = new Date();
             const targetYear = now.getFullYear() + 5;
@@ -813,6 +761,11 @@
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
         function addMoney() {
+            // 💡 모바일 버튼 플래시 효과
+            const btn = document.querySelector('.box-btn');
+            btn.classList.add('flash-active');
+            setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
+
             const now = new Date();
             const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, '0'); const d = String(now.getDate()).padStart(2, '0');
             const todayStr = `${y}-${m}-${d}`;
@@ -859,9 +812,8 @@
             
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             
-            const currentCircuit = circuitsData.find(c => c.id === state.circuitId) || circuitsData[16];
-            document.getElementById('disp-country').innerText = currentCircuit.country;
-            document.getElementById('disp-circuit').innerText = currentCircuit.name;
+            document.getElementById('disp-country').innerText = "SINGAPORE";
+            document.getElementById('disp-circuit').innerText = "Marina Bay Street Circuit";
 
             const totalGoal = state.q1 + state.q2 + state.q3;
             let targetP = 0;
@@ -930,7 +882,7 @@
             
             saveData(); 
             updateDashboard(); 
-            updateDriverStyles(); 
+            updateRaceScenario(); 
             document.getElementById('settings-modal').style.display = 'none';
         }
         
