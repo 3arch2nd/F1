@@ -40,86 +40,27 @@
         }
 
         /* 헤더 & 라디오 */
-        .header-container { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%;
-            padding: 40px 20px 0 20px; 
-            display: flex; 
-            gap: 8px; 
-            z-index: 100; 
-            align-items: stretch; 
-        }
-        
-        .logo-box { 
-            flex: 0 0 auto; 
-            width: 120px;
-            background: transparent; 
-            border: none; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 0 10px; 
-        }
-        
+        .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 8px; z-index: 100; align-items: stretch; }
+        .logo-box { flex: 0 0 auto; width: 120px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; }
         .f1-logo { width: 100%; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
-        
-        .status-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            gap: 2px;
-        }
-        .session-step {
-            font-size: 10px; 
-            font-weight: bold; 
-            color: var(--team-accent); 
-            letter-spacing: 1px;
-        }
-        .session-name {
-            font-size: 10px; 
-            font-weight: bold; 
-            color: #fff; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
+        .status-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 2px; }
+        .session-step { font-size: 10px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
+        .session-name { font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 
-        .radio-box { 
-            flex: 1; 
-            background: var(--team-radio-bg); 
-            border: 4px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 4px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            min-width: 0; 
-        }
+        .radio-box { flex: 1; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-width: 0; }
         .radio-top-section { padding: 12px 15px 0px 15px; text-align: right; }
         .driver-name { font-size: 16px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -1px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
         .driver-name span { color: var(--team-accent); }
         .radio-label { display: block; margin-top: 2px; font-size: 9px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
         
-        /* 오디오 웨이브 */
         .audio-wave-divider { width: 100%; height: 20px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; margin: 5px 0; }
         .bar { flex: 1; margin: 0 1px; background-color: var(--team-primary); transform-origin: bottom; }
         @keyframes equalizer { 0%, 100% { height: 4px; } 50% { height: 14px; } }
         
         .radio-content-section { padding: 8px 15px 15px 15px; display: flex; flex-direction: column; gap: 5px; }
-        .quote-box { 
-            font-family: var(--font-display); 
-            font-style: italic; 
-            font-weight: 400; 
-            font-size: 12px; 
-            letter-spacing: -0.5px; 
-            line-height: 1.3;
-        }
+        .quote-box { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 12px; letter-spacing: -0.5px; line-height: 1.3; }
         .quote-box::before { content: "“"; color: #fff; margin-right: 4px; }
         .quote-box::after { content: "”"; color: #fff; margin-left: 4px; }
-        
         .top-msg { text-align: left; color: #fff; }
         .bottom-data { text-align: right; color: var(--team-accent); }
         .amount-container { display: inline-block; text-align: right; }
@@ -127,16 +68,7 @@
         .amount-goal { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; font-family: var(--font-display); }
 
         /* 서킷 */
-        .track-container { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            position: relative; 
-            padding: 140px 20px 20px 20px; 
-            overflow: hidden; 
-            min-height: 0; 
-        }
+        .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 140px 20px 20px 20px; overflow: hidden; min-height: 0; }
         svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
         .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
         .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); }
@@ -146,33 +78,15 @@
         .driver-tag-text { fill: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; }
 
         /* 하단 컨트롤 */
-        .controls { 
-            padding: 20px 30px 40px 30px; 
-            text-align: center; 
-            z-index: 20; 
-            position: relative; 
-            margin-top: auto; 
-            flex-shrink: 0; 
-        }
-        .box-btn { 
-            background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; 
-            box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; 
-            width: 100%; max-width: 300px; 
-        }
+        .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
+        .box-btn { background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; width: 100%; max-width: 300px; }
         .box-btn:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--team-primary); }
-
-        /* 말풍선 */
-        .tooltip {
-            position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px);
-            background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display);
-            white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-        }
+        .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--team-primary); }
-
         .settings-btn { background: none; border: 1px solid #444; color: #888; padding: 8px 15px; margin-top: 15px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: var(--font-display); }
 
-        /* 모달 및 축하 화면 */
+        /* 모달 및 추천 시스템 */
         #celebration-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .fastest-lap-title { color: var(--f1-purple); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
@@ -184,10 +98,34 @@
         .modal h2 { font-family: var(--font-display); font-size: 16px; margin-bottom: 20px; color: var(--team-accent); text-transform: uppercase; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 6px; font-family: var(--font-display); text-transform: uppercase; }
-        .input-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-display); font-size: 12px; }
+        
+        /* 💡 1. 달력 아이콘 및 입력창 가독성 해결 */
+        .input-group input { 
+            width: 100%; 
+            padding: 10px; 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff; 
+            font-family: var(--font-display); 
+            font-size: 12px;
+            color-scheme: dark; /* 브라우저 기본 UI를 다크 모드로 강제 */
+        }
+        
+        /* 🚀 웹킷(크롬, 사파리) 브라우저에서 달력 아이콘 하얗게 만들기 */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
         .radio-option { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; font-family: var(--font-display); color: #888; }
         .radio-option.selected { border-color: var(--team-accent); color: var(--team-accent); background: rgba(255,255,255,0.1); }
         .close-btn { width: 100%; padding: 15px; background: var(--team-accent); color: #000; border: none; margin-top: 10px; font-weight: bold; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; }
+        
+        .recommendation-box { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--team-accent); }
+        .rec-title { font-size: 9px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; font-family: var(--font-display); }
+        .rec-value { font-size: 14px; color: var(--team-accent); font-weight: bold; font-family: var(--font-display); }
+        
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
@@ -251,19 +189,36 @@
         <div class="modal-content">
             <h2>Strategy Settings</h2>
             <div class="input-group"><label>Constructor</label><div class="radio-group" style="display:flex; gap:10px;"><div class="radio-option" id="opt-mercedes" onclick="setTeam('mercedes')">Mercedes</div><div class="radio-option" id="opt-redbull" onclick="setTeam('redbull')">Red Bull</div></div></div>
-            <div class="input-group"><label>Monthly Savings Day (1-31)</label><input type="number" id="savings-day" min="1" max="31"></div>
-            <div class="input-group"><label>Monthly Amount (₩)</label><input type="number" id="deposit-unit"></div>
-            <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount"></div>
-            <div class="input-group"><label>[Q1] Hotel (₩)</label><input type="number" id="q1-goal"></div>
-            <div class="input-group"><label>[Q2] Flight (₩)</label><input type="number" id="q2-goal"></div>
-            <div class="input-group"><label>[Q3] Flex (₩)</label><input type="number" id="q3-goal"></div>
+            
+            <div style="display:flex; gap:10px;">
+                <div class="input-group" style="flex:1;">
+                    <label>Deposit Day (DD)</label>
+                    <input type="number" id="savings-day" min="1" max="31" oninput="calculateRecommendation()">
+                </div>
+                <div class="input-group" style="flex:1;">
+                    <label>Target Date (Race Day)</label>
+                    <input type="date" id="target-date" onchange="calculateRecommendation()">
+                </div>
+            </div>
+
+            <div class="input-group"><label>Monthly Amount (₩)</label><input type="number" id="deposit-unit" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q1] Hotel (₩)</label><input type="number" id="q1-goal" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q2] Flight (₩)</label><input type="number" id="q2-goal" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q3] Flex (₩)</label><input type="number" id="q3-goal" oninput="calculateRecommendation()"></div>
+            
+            <div class="recommendation-box" id="rec-box" style="display:none;">
+                <div class="rec-title">Race Engineer Strategy</div>
+                <div class="rec-value" id="rec-msg">Calculating...</div>
+            </div>
+
             <button class="close-btn" onclick="saveAndCloseSettings()">Apply Strategy</button>
         </div>
     </div>
 
     <script>
         const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
-        let state = { currentAmount: 0, team: 'mercedes', driver: 'ANTONELLI', q1: 1600000, q2: 1400000, q3: 2000000, lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, lastDepositDate: '' };
+        let state = { currentAmount: 0, team: 'mercedes', driver: 'ANTONELLI', q1: 1600000, q2: 1400000, q3: 2000000, lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, lastDepositDate: '', targetDate: '' };
         let visualProgress = 0, animId = null;
 
         function init() {
@@ -278,11 +233,39 @@
                 bar.style.animationDelay = `${Math.random() * 0.5}s`;
                 container.appendChild(bar);
             }
-            loadData(); updateUI();
+            loadData(); 
+            
+            // 💡 2. 데이터 로드 후, 목표 날짜가 없으면 5년 뒤 싱가포르 GP 날짜 자동 설정
+            if (!state.targetDate) {
+                state.targetDate = getFiveYearsLaterGPDate();
+            }
+            
+            updateUI();
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_5', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_5'); if (stored) state = JSON.parse(stored); }
+        // 🚀 5년 뒤 싱가포르 그랑프리 (9월 마지막 일요일) 계산 함수
+        function getFiveYearsLaterGPDate() {
+            const now = new Date();
+            const targetYear = now.getFullYear() + 5;
+            // 9월(Month Index 8)의 마지막 날(30일)로 설정
+            const date = new Date(targetYear, 8, 30);
+            
+            // 요일 확인 (0: 일요일, 1: 월요일...)
+            const day = date.getDay();
+            
+            // 9월 30일에서 day만큼 빼면 가장 가까운 과거(또는 당일) 일요일이 됨
+            // 예: 30일이 수요일(3)이면 30-3=27일(일요일)
+            date.setDate(date.getDate() - day);
+            
+            // YYYY-MM-DD 형식 반환 (Local Time 기준)
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function saveData() { localStorage.setItem('f1_tracker_v11_7', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_7'); if (stored) state = JSON.parse(stored); }
 
         function showTooltip(msg) {
             const tip = document.getElementById('msg-tooltip');
@@ -290,7 +273,6 @@
             setTimeout(() => tip.classList.remove('show'), 2500);
         }
 
-        // 💡 날짜 서수 변환 함수 (예: 1 -> 1st, 2 -> 2nd, 3 -> 3rd, 4 -> 4th)
         function getOrdinal(n) {
             const s = ["th", "st", "nd", "rd"];
             const v = n % 100;
@@ -306,12 +288,10 @@
             const currentDay = now.getDate();
 
             if (currentDay !== state.savingsDay) {
-                // 💡 변경: D-Day 계산을 없애고, 목표 날짜를 직관적으로 영어 서수로 표시
                 const dayStr = getOrdinal(state.savingsDay);
-                showTooltip(`NOT YET, BOX ON THE ${dayStr}`); 
+                showTooltip(`NEGATIVE, BOX ON THE ${dayStr}`); 
                 return;
             }
-            
             if (state.lastDepositDate === todayStr) { 
                 showTooltip("ENOUGH NOW"); 
                 return; 
@@ -361,26 +341,14 @@
             const totalGoal = state.q1 + state.q2 + state.q3;
             
             let targetP = 0;
-            let stepText = "[Q1]";
-            let nameText = "HOTEL";
+            let stepText = "[Q1]"; let nameText = "HOTEL";
 
-            if (state.currentAmount < state.q1) { 
-                targetP = state.currentAmount / state.q1; 
-                stepText = "[Q1]"; nameText = "HOTEL";
-            }
-            else if (state.currentAmount < (state.q1 + state.q2)) { 
-                targetP = (state.currentAmount - state.q1) / state.q2; 
-                stepText = "[Q2]"; nameText = "FLIGHT";
-            }
-            else { 
-                targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; 
-                stepText = "[Q3]"; nameText = "TICKET"; 
-                if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } 
-            }
+            if (state.currentAmount < state.q1) { targetP = state.currentAmount / state.q1; stepText = "[Q1]"; nameText = "HOTEL"; }
+            else if (state.currentAmount < (state.q1 + state.q2)) { targetP = (state.currentAmount - state.q1) / state.q2; stepText = "[Q2]"; nameText = "FLIGHT"; }
+            else { targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; stepText = "[Q3]"; nameText = "GRANDSTAND"; if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } }
             
             document.getElementById('session-step').innerText = stepText;
             document.getElementById('session-name').innerText = nameText;
-
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
@@ -392,10 +360,71 @@
             document.getElementById('q1-goal').value = state.q1;
             document.getElementById('q2-goal').value = state.q2;
             document.getElementById('q3-goal').value = state.q3;
+            document.getElementById('target-date').value = state.targetDate;
+
             updateTeamBtn();
         }
 
-        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateUI(); }
+        function calculateRecommendation() {
+            const savingsDay = parseInt(document.getElementById('savings-day').value) || 1;
+            const targetDateStr = document.getElementById('target-date').value;
+            const curAmt = parseInt(document.getElementById('manual-amount').value) || 0;
+            const q1 = parseInt(document.getElementById('q1-goal').value) || 0;
+            const q2 = parseInt(document.getElementById('q2-goal').value) || 0;
+            const q3 = parseInt(document.getElementById('q3-goal').value) || 0;
+            
+            const recBox = document.getElementById('rec-box');
+            const recMsg = document.getElementById('rec-msg');
+            
+            if (!targetDateStr) {
+                recBox.style.display = 'none';
+                return;
+            }
+
+            recBox.style.display = 'block';
+            const totalGoal = q1 + q2 + q3;
+            const remaining = totalGoal - curAmt;
+            
+            if (remaining <= 0) {
+                recMsg.innerText = "GOAL REACHED! PUSH HARD!";
+                return;
+            }
+
+            const today = new Date();
+            const targetDate = new Date(targetDateStr);
+            
+            if (targetDate <= today) {
+                recMsg.innerText = "RACE DAY PASSED / INVALID DATE";
+                return;
+            }
+
+            let depositCount = 0;
+            let tempDate = new Date(today);
+            
+            if (tempDate.getDate() > savingsDay) {
+                tempDate.setMonth(tempDate.getMonth() + 1);
+            }
+            tempDate.setDate(savingsDay);
+
+            while (tempDate <= targetDate) {
+                depositCount++;
+                tempDate.setMonth(tempDate.getMonth() + 1);
+            }
+
+            if (depositCount === 0) {
+                 recMsg.innerText = "IMMEDIATE FULL DEPOSIT REQUIRED";
+            } else {
+                const monthlyRec = Math.ceil(remaining / depositCount);
+                recMsg.innerText = `REC: ₩${monthlyRec.toLocaleString()} / month (${depositCount} stops)`;
+            }
+        }
+
+        function openSettings() { 
+            document.getElementById('settings-modal').style.display = 'flex'; 
+            updateUI(); 
+            calculateRecommendation();
+        }
+        
         function saveAndCloseSettings() {
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
@@ -403,8 +432,11 @@
             state.q1 = Number(document.getElementById('q1-goal').value);
             state.q2 = Number(document.getElementById('q2-goal').value);
             state.q3 = Number(document.getElementById('q3-goal').value);
+            state.targetDate = document.getElementById('target-date').value;
+            
             saveData(); updateUI(); document.getElementById('settings-modal').style.display = 'none';
         }
+        
         function setTeam(t) { state.team = t; updateTeamBtn(); updateUI(); }
         function updateTeamBtn() {
             document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
