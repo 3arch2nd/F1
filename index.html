@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <title>Race to Singapore</title>
+    <title>Race to World Tour 2026</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,25 +21,116 @@
             --font-display: 'Michroma', sans-serif;
             --gray-track: rgba(255, 255, 255, 0.4); 
             --f1-purple: #B624FF;
+            
+            /* 기본값 */
+            --team-bg: #060025;
+            --team-radio-bg: rgba(6, 0, 37, 0.95);
+            --team-primary: #3671C6;
+            --team-accent: #FF1E00;
+            --track-active-color: #3671C6;
+            --marker-bg: #3671C6;
+            --marker-text: #ffffff;
         }
 
-        /* 💡 수정됨: 트랙 색상(--track-active-color)을 팀 컬러와 분리 
-           Mercedes: 트랙 = 팀 컬러 (Teal)
-           Red Bull: 트랙 = 퍼플 섹터 (#D500F9), 팀 컬러 = 레드 (#FF1E00)
-        */
-        body.mercedes { 
-            --team-bg: #121212; 
-            --team-radio-bg: rgba(20, 20, 20, 0.9); 
-            --team-primary: #00D2BE; 
-            --team-accent: #00D2BE; 
-            --track-active-color: #00D2BE; /* 메르세데스는 그대로 */
-        }
+        /* 🎨 2026 F1 Team Colors & Smart Contrast System */
+
+        /* 1. Red Bull (User Specific Request) */
         body.redbull { 
             --team-bg: #0A0045; 
-            --team-radio-bg: rgba(10, 0, 69, 0.9); 
-            --team-primary: #FF1E00; 
-            --team-accent: #FFEC00; 
-            --track-active-color: #D500F9; /* 💜 레드불 트랙만 퍼플 섹터 색상! */
+            --team-radio-bg: rgba(10, 0, 69, 0.95); 
+            --team-primary: #FF1E00; /* Red Buttons */
+            --team-accent: #FFEC00; /* Yellow Text */
+            --track-active-color: #D500F9; /* Purple Track */
+            --marker-bg: #FFEC00; /* Yellow Marker */
+            --marker-text: #000000; /* Black Text */
+        }
+
+        /* 2. Mercedes (User Specific Request) */
+        body.mercedes { 
+            --team-bg: #121212; 
+            --team-radio-bg: rgba(20, 20, 20, 0.95); 
+            --team-primary: #00D2BE; 
+            --team-accent: #00D2BE; 
+            --track-active-color: #00D2BE;
+            --marker-bg: #00D2BE;
+            --marker-text: #000000; /* Black Text */
+        }
+        
+        /* 3. Ferrari */
+        body.ferrari { 
+            --team-bg: #1A0000; 
+            --team-radio-bg: rgba(40, 0, 0, 0.95); 
+            --team-primary: #FF2800; 
+            --team-accent: #FFF200; 
+            --track-active-color: #FF2800;
+            --marker-bg: #FF2800;
+            --marker-text: #ffffff; 
+        }
+        
+        /* 4. Sauber / Audi (Silver Marker -> Black Text) */
+        body.sauber { 
+            --team-bg: #1C1C1C; 
+            --team-radio-bg: rgba(28, 28, 28, 0.95); 
+            --team-primary: #C0C0C0; /* Silver */
+            --team-accent: #FF0000; /* Red */
+            --track-active-color: #C0C0C0; 
+            --marker-bg: #C0C0C0;
+            --marker-text: #000000; /* Black Text */
+        }
+        
+        /* 5. Aston Martin (Lime Marker -> Black Text) */
+        body.astonmartin { 
+            --team-bg: #002420; 
+            --team-radio-bg: rgba(0, 36, 32, 0.95); 
+            --team-primary: #00594F; 
+            --team-accent: #CEDC00; /* Lime */
+            --track-active-color: #CEDC00; 
+            --marker-bg: #CEDC00;
+            --marker-text: #000000; /* Black Text */
+        }
+        
+        /* 6. RB (White/Silver Marker -> Black Text) */
+        body.rb { 
+            --team-bg: #08082A; 
+            --team-radio-bg: rgba(8, 8, 42, 0.95); 
+            --team-primary: #1633C8; 
+            --team-accent: #FFFFFF; 
+            --track-active-color: #1633C8;
+            --marker-bg: #FFFFFF;
+            --marker-text: #000000; /* Black Text */
+        }
+
+        /* 7. Alpine */
+        body.alpine { 
+            --team-bg: #00102A; 
+            --team-radio-bg: rgba(0, 16, 42, 0.95); 
+            --team-primary: #0090FF; 
+            --team-accent: #FD4BC7; 
+            --track-active-color: #0090FF;
+            --marker-bg: #0090FF;
+            --marker-text: #ffffff;
+        }
+        
+        /* 8. Williams */
+        body.williams { 
+            --team-bg: #040015; 
+            --team-radio-bg: rgba(4, 0, 21, 0.95); 
+            --team-primary: #00A0DE; 
+            --team-accent: #FFFFFF; 
+            --track-active-color: #00A0DE;
+            --marker-bg: #00A0DE;
+            --marker-text: #ffffff;
+        }
+        
+        /* 9. Haas */
+        body.haas { 
+            --team-bg: #000000; 
+            --team-radio-bg: rgba(10, 10, 10, 0.95); 
+            --team-primary: #E6002B; 
+            --team-accent: #FFFFFF; 
+            --track-active-color: #E6002B;
+            --marker-bg: #E6002B;
+            --marker-text: #ffffff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,48 +152,32 @@
         .light-pair { display: flex; flex-direction: column; gap: 5px; }
         .f1-light { width: 40px; height: 40px; background-color: rgba(255, 0, 0, 0.2); border-radius: 50%; border: 3px solid #222; transition: all 0.1s ease; }
         .f1-light.on { background-color: #ff0000; box-shadow: 0 0 30px #ff0000, 0 0 10px #ff0000 inset; border-color: #500; }
-        
         .loading-text { color: #fff; font-family: var(--font-display); font-size: 14px; letter-spacing: 2px; animation: blink 1s infinite; margin-bottom: 20px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        #start-engine-btn {
-            background: transparent; color: #fff; border: 2px solid #fff; padding: 15px 40px;
-            font-family: var(--font-display); font-size: 16px; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
+        #start-engine-btn { background: transparent; color: #fff; border: 2px solid #fff; padding: 15px 40px; font-family: var(--font-display); font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
         #start-engine-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255,255,255,0.6); }
-
         #bgm-player { position: absolute; top: -9999px; left: -9999px; visibility: hidden; pointer-events: none; }
-
 
         .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 20px; z-index: 100; align-items: flex-start; justify-content: space-between; }
         .logo-box { flex: 0 0 auto; width: 120px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5px; }
         .f1-logo { width: 100%; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
-        .status-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 2px; }
+        
+        .circuit-info { text-align: center; margin-top: 5px; width: 100%; }
+        .circuit-country { font-size: 10px; color: var(--team-accent); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        .circuit-name { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: normal; margin-top: 2px; line-height: 1.2; white-space: pre-wrap; word-break: keep-all; }
+
+        .status-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 2px; margin-top: 10px; }
         .session-step { font-size: 10px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
         .session-name { font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 
-        .radio-box { 
-            flex: 0 0 auto; 
-            width: 220px;   
-            background: var(--team-radio-bg); 
-            border: 4px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 4px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            margin-left: auto; 
-        }
+        .radio-box { flex: 0 0 auto; width: 220px; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-left: auto; }
         .radio-top-section { padding: 10px 10px 0px 10px; text-align: right; overflow: hidden; }
         .driver-name { font-size: 14px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -0.5px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
         .driver-name span { color: var(--team-accent); }
         .radio-label { display: block; margin-top: 2px; font-size: 8px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
-        
         .audio-wave-divider { width: 100%; height: 20px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; margin: 5px 0; }
         .bar { flex: 1; margin: 0 1px; background-color: var(--team-primary); transform-origin: bottom; }
         @keyframes equalizer { 0%, 100% { height: 4px; } 50% { height: 14px; } }
-        
         .radio-content-section { padding: 8px 10px 15px 10px; display: flex; flex-direction: column; gap: 5px; }
         .quote-box { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 11px; letter-spacing: -0.5px; line-height: 1.3; }
         .quote-box::before { content: "“"; color: #fff; margin-right: 4px; }
@@ -113,74 +188,93 @@
         .amount-row { display: block; line-height: 1.2; font-size: 11px; font-weight: bold; }
         .amount-goal { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; font-family: var(--font-display); font-weight: normal; }
 
-        /* 서킷 */
         .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 140px 20px 20px 20px; overflow: hidden; min-height: 0; }
         svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
         .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
-        
-        /* 💡 수정됨: 트랙 색상을 --track-active-color로 변경 */
-        .track-path-active { 
-            fill: none; 
-            stroke: var(--track-active-color); 
-            stroke-width: 14; 
-            stroke-linecap: round; 
-            stroke-linejoin: round; 
-            filter: drop-shadow(0 0 10px var(--track-active-color)); /* 광원 효과도 트랙 색상 따라감 */
-            transition: stroke-dasharray 0.5s ease, stroke 0.5s ease; 
-        }
-        
+        .track-path-active { fill: none; stroke: var(--track-active-color); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--track-active-color)); transition: stroke-dasharray 0.5s ease, stroke 0.5s ease; }
         .checker-box { stroke: none; }
         .checker-white { fill: #fff; }
         .checker-black { fill: #000; }
 
-        /* 차량 디자인 */
         .ai-marker { cursor: default; pointer-events: none; }
         .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
         .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: none; }
         .ai-marker text { fill: #fff; font-weight: 900; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        
+        /* 💡 수정됨: Smart Contrast 적용 (변수 기반) */
+        .ai-marker.hero-marker rect { 
+            fill: var(--marker-bg) !important; 
+            stroke: none !important; 
+            opacity: 1; 
+        }
+        .ai-marker.hero-marker text { 
+            fill: var(--marker-text) !important; /* 팀마다 다른 글자색 적용 */
+            font-weight: 900; 
+            text-shadow: none; /* 깔끔하게 그림자 제거 (배경 대비가 명확하므로) */
+        }
+        .ai-marker.hero-marker circle { 
+            fill: var(--team-accent) !important; 
+            r: 5; 
+        }
+        .ai-marker.hero-marker { 
+            z-index: 999; 
+            filter: drop-shadow(0 0 10px var(--marker-bg)); 
+        }
 
-        /* 주인공 하이라이트 */
-        .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 3px; opacity: 1; }
-        .ai-marker.hero-redbull text { fill: #000 !important; font-weight: 900; }
-        .ai-marker.hero-redbull circle { fill: #FF1E00 !important; r: 5; }
-        .ai-marker.hero-redbull { filter: drop-shadow(0 0 10px #FFEC00); z-index: 999; }
-
-        .ai-marker.hero-mercedes rect { fill: #00D2BE !important; stroke: #fff !important; stroke-width: 3px; opacity: 1; }
-        .ai-marker.hero-mercedes text { fill: #000 !important; font-weight: 900; }
-        .ai-marker.hero-mercedes circle { fill: #fff !important; r: 5; }
-        .ai-marker.hero-mercedes { filter: drop-shadow(0 0 10px #00D2BE); z-index: 999; }
-
-        /* 하단 컨트롤 */
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
-        .box-btn { background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; width: 100%; max-width: 300px; }
-        .box-btn:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--team-primary); }
+        
+        /* Box Btn: Outline Style */
+        .box-btn { 
+            background-color: transparent; 
+            color: var(--team-primary); 
+            font-family: var(--font-display); 
+            font-size: 18px; 
+            font-weight: bold; 
+            border: 2px solid var(--team-primary); 
+            padding: 18px 50px; 
+            border-radius: 4px; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            box-shadow: none; 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative; 
+            width: 100%; 
+            max-width: 300px; 
+        }
+        .box-btn:hover { 
+            background-color: var(--team-primary); 
+            color: #000; 
+            transform: scale(1.02);
+            box-shadow: 0 0 15px var(--team-primary); 
+        }
+
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--team-primary); }
+        
         .settings-btn { background: none; border: 1px solid #555; color: #888; padding: 10px 20px; margin-top: 20px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
         .settings-btn:hover { border-color: #fff; color: #fff; }
 
-        /* 모달 */
-        #celebration-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .fastest-lap-title { color: var(--f1-purple); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
-        .fastest-lap-driver { color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
-        .next-session-btn { background: var(--f1-purple); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; font-weight: 900; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
-
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--team-radio-bg); padding: 25px; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid #333; overflow-y: auto; max-height: 80vh; }
+        .modal-content { background: var(--team-radio-bg); padding: 25px; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid #333; overflow-y: auto; max-height: 80vh; border: 1px solid var(--team-accent); }
         .modal h2 { font-family: var(--font-display); font-size: 16px; margin-bottom: 20px; color: var(--team-accent); text-transform: uppercase; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 6px; font-family: var(--font-display); text-transform: uppercase; }
-        .input-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-display); font-size: 12px; color-scheme: dark; }
+        .input-group input, .input-group select { width: 100%; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-display); font-size: 12px; color-scheme: dark; outline: none; }
+        .input-group select option { background: #222; color: #fff; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer; }
-        .radio-option { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; font-family: var(--font-display); color: #888; }
-        .radio-option.selected { border-color: var(--team-accent); color: var(--team-accent); background: rgba(255,255,255,0.1); }
+        
         .close-btn { width: 100%; padding: 16px; background: transparent; color: var(--team-accent); border: 2px solid var(--team-accent); margin-top: 15px; font-weight: 900; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; letter-spacing: 2px; transition: background 0.2s, color 0.2s; }
         .close-btn:hover { background: var(--team-accent); color: #000; }
         .recommendation-box { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--team-accent); }
         .rec-title { font-size: 9px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; font-family: var(--font-display); }
         .rec-value { font-size: 14px; color: var(--team-accent); font-weight: bold; font-family: var(--font-display); }
+        
+        #celebration-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .celebration-content { background: #000; border: 2px solid var(--team-primary); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: none; border: 2px solid var(--team-primary); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fastest-lap-title { color: var(--team-primary); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
+        .fastest-lap-driver { color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
+        .next-session-btn { background: var(--team-primary); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; font-weight: 900; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -201,7 +295,7 @@
 
     <div id="bgm-player"></div>
 
-    <div id="celebration-overlay">
+    <div id="celebration-overlay" style="display: none;">
         <div class="celebration-content">
             <div class="fastest-lap-title" id="lap-session-title">[Q1] FASTEST LAP</div>
             <div class="fastest-lap-driver" id="lap-driver-name">ANTONELLI</div>
@@ -212,6 +306,10 @@
     <div class="header-container">
         <div class="logo-box">
             <img src="https://i.imgur.com/jan8CSk.png" alt="F1 Logo" class="f1-logo">
+            <div class="circuit-info">
+                <div class="circuit-country" id="disp-country">SINGAPORE</div>
+                <div class="circuit-name" id="disp-circuit">Marina Bay Street Circuit</div>
+            </div>
             <div class="status-container">
                 <div id="session-step" class="session-step">[Q1]</div>
                 <div id="session-name" class="session-name">HOTEL</div>
@@ -239,7 +337,6 @@
         <svg class="track-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet">
             <path id="bg-track" class="track-path-bg" />
             <path id="active-track" class="track-path-active" />
-            
             <g id="start-finish-line" transform="translate(1040, 435)">
                  <rect x="0" y="0" width="10" height="5" class="checker-white"/>
                  <rect x="10" y="0" width="10" height="5" class="checker-black"/>
@@ -254,7 +351,6 @@
                  <rect x="0" y="25" width="10" height="5" class="checker-black"/>
                  <rect x="10" y="25" width="10" height="5" class="checker-white"/>
             </g>
-            
             <g id="ai-cars-layer"></g>
         </svg>
     </div>
@@ -269,8 +365,33 @@
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <h2>Strategy Settings</h2>
-            <div class="input-group"><label>Constructor</label><div class="radio-group" style="display:flex; gap:10px;"><div class="radio-option" id="opt-mercedes" onclick="setTeam('mercedes')">Mercedes</div><div class="radio-option" id="opt-redbull" onclick="setTeam('redbull')">Red Bull</div></div></div>
             
+            <div class="input-group">
+                <label>Constructor</label>
+                <select id="team-select" onchange="updateDriverList(this.value)">
+                    <option value="redbull">ORACLE RED BULL RACING</option>
+                    <option value="mercedes">MERCEDES-AMG PETRONAS</option>
+                    <option value="ferrari">SCUDERIA FERRARI HP</option>
+                    <option value="astonmartin">ASTON MARTIN ARAMCO</option>
+                    <option value="alpine">BWT ALPINE F1 TEAM</option>
+                    <option value="williams">WILLIAMS RACING</option>
+                    <option value="rb">VISA CASH APP RB</option>
+                    <option value="sauber">SAUBER / AUDI</option>
+                    <option value="haas">MONEYGRAM HAAS F1</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Driver</label>
+                <select id="driver-select" onchange="setDriver(this.value)">
+                    </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Select Circuit (2026 Calendar)</label>
+                <select id="circuit-select" onchange="updateCircuit()"></select>
+            </div>
+
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1;">
                     <label>Deposit Day (DD)</label>
@@ -298,8 +419,62 @@
     </div>
 
     <script>
+        /* 🚨 중요: 동생 데이터 보존을 위한 고정 키 */
+        const STORAGE_KEY = 'f1_tracker_v11_23_purple_track';
+
         const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
-        let state = { currentAmount: 0, team: 'redbull', driver: 'VERSTAPPEN', q1: 1600000, q2: 1400000, q3: 2000000, lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, lastDepositDate: '', targetDate: '' };
+        
+        const circuitsData = [
+            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 8, h: 2500000, f: 3500000, t: 700000 },
+            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 3, day: 22, h: 3000000, f: 4500000, t: 800000 },
+            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 5, h: 1500000, f: 1000000, t: 600000 },
+            { id: 'bhr', name: 'Bahrain Int. Circuit', country: 'Bahrain', month: 4, day: 19, h: 2500000, f: 4000000, t: 600000 },
+            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 3, h: 5000000, f: 6000000, t: 1500000 },
+            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 17, h: 2000000, f: 3500000, t: 700000 },
+            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 24, h: 6000000, f: 3500000, t: 1200000 },
+            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 7, h: 2500000, f: 4500000, t: 600000 },
+            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 21, h: 2000000, f: 3500000, t: 600000 },
+            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 28, h: 2000000, f: 3500000, t: 700000 },
+            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 5, h: 3000000, f: 3500000, t: 900000 },
+            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 26, h: 2000000, f: 3500000, t: 600000 },
+            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 8, day: 2, h: 1500000, f: 3000000, t: 500000 },
+            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 30, h: 2500000, f: 3500000, t: 800000 },
+            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 6, h: 2200000, f: 3500000, t: 700000 },
+            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 20, h: 2000000, f: 4000000, t: 600000 },
+            { id: 'sin', name: 'Marina Bay Street Circuit', country: 'Singapore', month: 10, day: 4, h: 3500000, f: 1500000, t: 900000 },
+            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 18, h: 3000000, f: 5000000, t: 800000 },
+            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 25, h: 2000000, f: 4500000, t: 600000 },
+            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 8, h: 2000000, f: 5500000, t: 600000 },
+            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 22, h: 5000000, f: 5000000, t: 2000000 },
+            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 11, day: 29, h: 3000000, f: 4000000, t: 700000 },
+            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 6, h: 4000000, f: 4000000, t: 1000000 }
+        ];
+
+        /* 🏎️ 2026 Grid Database */
+        const teamsDB = {
+            redbull: { name: 'Red Bull Racing', drivers: ['VERSTAPPEN', 'LAWSON'] },
+            mercedes: { name: 'Mercedes-AMG', drivers: ['ANTONELLI', 'RUSSELL'] },
+            ferrari: { name: 'Ferrari HP', drivers: ['LECLERC', 'HAMILTON'] },
+            astonmartin: { name: 'Aston Martin', drivers: ['ALONSO', 'STROLL'] },
+            alpine: { name: 'Alpine', drivers: ['GASLY', 'DOOHAN'] },
+            williams: { name: 'Williams', drivers: ['ALBON', 'SAINZ'] },
+            rb: { name: 'Visa Cash App RB', drivers: ['TSUNODA', 'HADJAR'] },
+            sauber: { name: 'Sauber / Audi', drivers: ['HULKENBERG', 'BORTOLETO'] },
+            haas: { name: 'Haas F1', drivers: ['OCON', 'BEARMAN'] }
+        };
+
+        let state = { 
+            currentAmount: 0, 
+            team: 'redbull', 
+            driver: 'VERSTAPPEN', 
+            q1: 3500000, q2: 1500000, q3: 900000, 
+            lastSession: 'Q1', 
+            savingsDay: 25, 
+            depositUnit: 100000, 
+            lastDepositDate: '', 
+            targetDate: '',
+            circuitId: 'sin' 
+        };
         let visualProgress = 0, animId = null;
         let trackSpeedProfile = [];
         let raceStarted = false; 
@@ -307,9 +482,7 @@
         let bgmPlayer;
         function onYouTubeIframeAPIReady() {
             bgmPlayer = new YT.Player('bgm-player', {
-                height: '0',
-                width: '0',
-                videoId: 'YhX_Woa3kVA', 
+                height: '0', width: '0', videoId: 'YhX_Woa3kVA', 
                 playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' },
                 events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
             });
@@ -317,11 +490,13 @@
         function onPlayerReady(event) {}
         function onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) bgmPlayer.playVideo(); }
 
+        /* 💡 드라이버 리스트 업데이트 */
         const driverList = [
             { id: 'VER', speed: 1.25 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
             { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, { id: 'PER', speed: 1.05 },
             { id: 'GAS', speed: 1.02 }, { id: 'OCO', speed: 1.00 }, { id: 'ALB', speed: 0.98 }, { id: 'BEA', speed: 0.97 },
-            { id: 'TSU', speed: 0.96 }, { id: 'STR', speed: 0.95 }
+            { id: 'TSU', speed: 0.96 }, { id: 'STR', speed: 0.95 }, { id: 'HUL', speed: 0.96 }, 
+            { id: 'LAW', speed: 1.05 }, { id: 'DOO', speed: 0.95 }, { id: 'BOR', speed: 0.94 }, { id: 'HAD', speed: 0.93 }
         ];
 
         let aiDrivers = [];
@@ -339,14 +514,63 @@
                 container.appendChild(bar);
             }
             loadData(); 
+            initCircuitSelect(); 
             if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
             
+            const currentCircuit = circuitsData.find(c => c.id === state.circuitId) || circuitsData[16];
+            document.getElementById('disp-country').innerText = currentCircuit.country;
+            document.getElementById('disp-circuit').innerText = currentCircuit.name;
+
             generateTrackSpeedProfile();
             initAIDrivers();
             requestAnimationFrame(animateAIDrivers);
-            
             updateDashboard();
-            updateTeamBtn();
+            updateTeamSelectUI(); 
+        }
+
+        function initCircuitSelect() {
+            const select = document.getElementById('circuit-select');
+            select.innerHTML = '';
+            circuitsData.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.text = `[Rd.${circuitsData.indexOf(c)+1}] ${c.country} - ${c.name}`;
+                if(c.id === state.circuitId) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        function updateCircuit() {
+            const select = document.getElementById('circuit-select');
+            const circuitId = select.value;
+            const data = circuitsData.find(c => c.id === circuitId);
+            
+            if(!data) return;
+
+            state.circuitId = circuitId;
+            state.q1 = data.h; 
+            state.q2 = data.f; 
+            state.q3 = data.t; 
+
+            const currentTarget = new Date(document.getElementById('target-date').value);
+            const targetYear = currentTarget.getFullYear();
+            
+            const raceDate = new Date(targetYear, data.month - 1, data.day);
+            const dayOfWeek = raceDate.getDay();
+            const diff = 0 - dayOfWeek; 
+            raceDate.setDate(raceDate.getDate() + (dayOfWeek === 0 ? 0 : 7 - dayOfWeek)); 
+            
+            const y = raceDate.getFullYear();
+            const m = String(raceDate.getMonth() + 1).padStart(2, '0');
+            const d = String(raceDate.getDate()).padStart(2, '0');
+            state.targetDate = `${y}-${m}-${d}`;
+
+            document.getElementById('q1-goal').value = state.q1;
+            document.getElementById('q2-goal').value = state.q2;
+            document.getElementById('q3-goal').value = state.q3;
+            document.getElementById('target-date').value = state.targetDate;
+            
+            calculateRecommendation();
         }
 
         function activateEngine() {
@@ -448,11 +672,34 @@
             return { rectW, rectH, fontSize, circleR };
         }
 
+        function getDriverShortId(name) {
+            if(!name) return 'UNK';
+            if(name === 'VERSTAPPEN') return 'VER';
+            if(name === 'ANTONELLI') return 'ANT';
+            if(name === 'LECLERC') return 'LEC';
+            if(name === 'HAMILTON') return 'HAM';
+            if(name === 'ALONSO') return 'ALO';
+            if(name === 'STROLL') return 'STR';
+            if(name === 'GASLY') return 'GAS';
+            if(name === 'DOOHAN') return 'DOO';
+            if(name === 'ALBON') return 'ALB';
+            if(name === 'SAINZ') return 'SAI';
+            if(name === 'TSUNODA') return 'TSU';
+            if(name === 'HADJAR') return 'HAD';
+            if(name === 'HULKENBERG') return 'HUL';
+            if(name === 'BORTOLETO') return 'BOR';
+            if(name === 'OCON') return 'OCO';
+            if(name === 'BEARMAN') return 'BEA';
+            if(name === 'RUSSELL') return 'RUS';
+            if(name === 'LAWSON') return 'LAW';
+            return name.substring(0,3).toUpperCase();
+        }
+
         function initAIDrivers() {
             const layer = document.getElementById('ai-cars-layer');
             layer.innerHTML = ''; 
             aiDrivers = [];
-            const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
+            const heroId = getDriverShortId(state.driver);
             let heroElement = null;
 
             const midPoint = Math.ceil(driverList.length / 2);
@@ -466,9 +713,10 @@
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
                 g.setAttribute("data-id", d.id); 
-                if (d.id === heroId) g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
                 
                 const isHero = (d.id === heroId);
+                if (isHero) g.classList.add('hero-marker');
+                
                 const dim = getMarkerDimensions(isHero);
                 const isMobile = window.innerWidth < 600;
 
@@ -506,7 +754,7 @@
         }
         
         function updateDriverStyles() {
-            const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
+            const heroId = getDriverShortId(state.driver);
             const layer = document.getElementById('ai-cars-layer');
             const allCars = layer.querySelectorAll('.ai-marker');
             const isMobile = window.innerWidth < 600;
@@ -518,9 +766,9 @@
                 const text = g.querySelector('text');
                 const circle = g.querySelector('circle');
 
-                g.classList.remove('hero-redbull', 'hero-mercedes');
+                g.classList.remove('hero-marker'); 
                 if (isHero) {
-                    g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
+                    g.classList.add('hero-marker'); 
                     layer.appendChild(g); 
                 }
 
@@ -550,8 +798,17 @@
             return `${y}-${m}-${d}`;
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_23_purple_track', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_23_purple_track'); if (stored) state = JSON.parse(stored); }
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        function loadData() { 
+            const stored = localStorage.getItem(STORAGE_KEY); 
+            if (stored) {
+                state = JSON.parse(stored);
+                if (!state.team || !teamsDB[state.team]) {
+                    state.team = 'redbull';
+                    state.driver = 'VERSTAPPEN';
+                }
+            } 
+        }
         function showTooltip(msg) { const tip = document.getElementById('msg-tooltip'); tip.innerText = msg; tip.classList.add('show'); setTimeout(() => tip.classList.remove('show'), 2500); }
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
@@ -575,9 +832,9 @@
 
         function triggerCelebration(sessionName) {
             const overlay = document.getElementById('celebration-overlay');
+            overlay.style.display = 'flex'; 
             document.getElementById('lap-session-title').innerText = `[${sessionName}] FASTEST LAP`;
             document.getElementById('lap-driver-name').innerText = state.driver;
-            overlay.style.display = 'flex';
             const teamPrimary = getComputedStyle(document.body).getPropertyValue('--team-primary').trim();
             const teamAccent = getComputedStyle(document.body).getPropertyValue('--team-accent').trim();
             confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, zIndex: 10001, colors: [teamPrimary, teamAccent, '#ffffff'] });
@@ -599,8 +856,13 @@
 
         function updateDashboard() {
             document.body.className = state.team;
-            state.driver = (state.team === 'mercedes') ? 'ANTONELLI' : 'VERSTAPPEN';
+            
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
+            
+            const currentCircuit = circuitsData.find(c => c.id === state.circuitId) || circuitsData[16];
+            document.getElementById('disp-country').innerText = currentCircuit.country;
+            document.getElementById('disp-circuit').innerText = currentCircuit.name;
+
             const totalGoal = state.q1 + state.q2 + state.q3;
             let targetP = 0;
             let stepText = "[Q1]"; let nameText = "HOTEL";
@@ -648,8 +910,16 @@
             else { const monthlyRec = Math.ceil(remaining / depositCount); recMsg.innerText = `REC: ₩${monthlyRec.toLocaleString()} / month (${depositCount} stops)`; }
         }
 
-        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateDashboard(); calculateRecommendation(); }
+        function openSettings() { 
+            document.getElementById('settings-modal').style.display = 'flex'; 
+            updateTeamSelectUI(); 
+            calculateRecommendation(); 
+        }
+
         function saveAndCloseSettings() {
+            state.team = document.getElementById('team-select').value;
+            state.driver = document.getElementById('driver-select').value;
+            
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
             state.currentAmount = Number(document.getElementById('manual-amount').value);
@@ -657,15 +927,47 @@
             state.q2 = Number(document.getElementById('q2-goal').value);
             state.q3 = Number(document.getElementById('q3-goal').value);
             state.targetDate = document.getElementById('target-date').value;
-            saveData(); updateDashboard(); 
+            
+            saveData(); 
+            updateDashboard(); 
+            updateDriverStyles(); 
             document.getElementById('settings-modal').style.display = 'none';
         }
         
-        function setTeam(t) { state.team = t; updateTeamBtn(); updateDashboard(); updateDriverStyles(); }
-        function updateTeamBtn() {
-            document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
-            document.getElementById(`opt-${state.team}`).classList.add('selected');
+        function setDriver(d) { /* UI 변경용, 실제 저장은 버튼 클릭 시 */ }
+
+        function updateDriverList(teamKey) {
+            const driverSelect = document.getElementById('driver-select');
+            driverSelect.innerHTML = ''; 
+            
+            const teamInfo = teamsDB[teamKey];
+            if (teamInfo) {
+                teamInfo.drivers.forEach(dName => {
+                    const option = document.createElement('option');
+                    option.value = dName;
+                    option.text = dName;
+                    driverSelect.appendChild(option);
+                });
+                
+                if (teamInfo.drivers.includes(state.driver) && state.team === teamKey) {
+                    driverSelect.value = state.driver;
+                } else {
+                    driverSelect.selectedIndex = 0;
+                }
+            }
+            document.body.className = teamKey; 
         }
+
+        function updateTeamSelectUI() {
+            const selectBox = document.getElementById('team-select');
+            if(selectBox) {
+                selectBox.value = state.team;
+                updateDriverList(state.team); 
+                const driverBox = document.getElementById('driver-select');
+                if(driverBox) driverBox.value = state.driver;
+            }
+        }
+
         init();
     </script>
 </body>
