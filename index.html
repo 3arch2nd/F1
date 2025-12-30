@@ -19,7 +19,7 @@
             --bg-color: #121212;
             --text-color: #ffffff;
             --font-display: 'Michroma', sans-serif;
-            --gray-track: rgba(255, 255, 255, 0.25);
+            --gray-track: rgba(255, 255, 255, 0.4); 
             --f1-purple: #B624FF;
         }
 
@@ -39,15 +39,23 @@
             transition: background 0.5s ease; 
         }
 
-        /* 헤더 & 라디오 */
-        .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 8px; z-index: 100; align-items: stretch; }
-        .logo-box { flex: 0 0 auto; width: 120px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; }
+        .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; }
+        .light-pair { display: flex; flex-direction: column; gap: 5px; }
+        .f1-light { width: 40px; height: 40px; background-color: rgba(255, 0, 0, 0.2); border-radius: 50%; border: 3px solid #222; transition: all 0.1s ease; }
+        .f1-light.on { background-color: #ff0000; box-shadow: 0 0 30px #ff0000, 0 0 10px #ff0000 inset; border-color: #500; }
+        .loading-text { margin-top: 30px; color: #fff; font-family: var(--font-display); font-size: 14px; letter-spacing: 2px; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+
+        .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 20px; z-index: 100; align-items: flex-start; justify-content: space-between; }
+        .logo-box { flex: 0 0 auto; width: 120px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5px; }
         .f1-logo { width: 100%; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
         .status-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 2px; }
         .session-step { font-size: 10px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
         .session-name { font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 
-        .radio-box { flex: 1; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-width: 0; }
+        .radio-box { flex: 1; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-width: 0; max-width: 380px; margin-left: auto; }
         .radio-top-section { padding: 12px 15px 0px 15px; text-align: right; }
         .driver-name { font-size: 16px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -1px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
         .driver-name span { color: var(--team-accent); }
@@ -71,22 +79,36 @@
         .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 140px 20px 20px 20px; overflow: hidden; min-height: 0; }
         svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
         .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
-        .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); }
-        .finish-line { stroke: #fff; stroke-width: 20; stroke-dasharray: 4; filter: drop-shadow(0 0 5px #fff); }
-        .car-dot { fill: var(--team-primary); stroke: #fff; stroke-width: 3; filter: drop-shadow(0 0 10px #fff); }
-        .driver-tag-bg { fill: #000; stroke: #fff; stroke-width: 1.5; }
-        .driver-tag-text { fill: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; }
+        .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); transition: stroke-dasharray 0.5s ease; }
+        
+        .checker-box { stroke: none; }
+        .checker-white { fill: #fff; }
+        .checker-black { fill: #000; }
 
-        /* 하단 컨트롤 */
+        .ai-marker { cursor: default; }
+        .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
+        .ai-marker rect { fill: #222; rx: 2; opacity: 0.8; transition: fill 0.3s, stroke 0.3s; }
+        .ai-marker text { fill: #aaa; font-size: 14px; font-weight: bold; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; }
+
+        .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 1px; opacity: 1; }
+        .ai-marker.hero-redbull text { fill: #000 !important; font-weight: 900; }
+        .ai-marker.hero-redbull circle { fill: #FF1E00 !important; r: 5; }
+        .ai-marker.hero-redbull { filter: drop-shadow(0 0 5px #FFEC00); }
+
+        .ai-marker.hero-mercedes rect { fill: #00D2BE !important; stroke: #fff !important; stroke-width: 1px; opacity: 1; }
+        .ai-marker.hero-mercedes text { fill: #000 !important; font-weight: 900; }
+        .ai-marker.hero-mercedes circle { fill: #fff !important; r: 5; }
+        .ai-marker.hero-mercedes { filter: drop-shadow(0 0 5px #00D2BE); }
+
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         .box-btn { background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; width: 100%; max-width: 300px; }
         .box-btn:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--team-primary); }
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--team-primary); }
-        .settings-btn { background: none; border: 1px solid #444; color: #888; padding: 8px 15px; margin-top: 15px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: var(--font-display); }
+        .settings-btn { background: none; border: 1px solid #555; color: #888; padding: 10px 20px; margin-top: 20px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
+        .settings-btn:hover { border-color: #fff; color: #fff; }
 
-        /* 모달 및 추천 시스템 */
         #celebration-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .fastest-lap-title { color: var(--f1-purple); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
@@ -98,38 +120,30 @@
         .modal h2 { font-family: var(--font-display); font-size: 16px; margin-bottom: 20px; color: var(--team-accent); text-transform: uppercase; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 6px; font-family: var(--font-display); text-transform: uppercase; }
-        
-        /* 💡 1. 달력 아이콘 및 입력창 가독성 해결 */
-        .input-group input { 
-            width: 100%; 
-            padding: 10px; 
-            background: rgba(0,0,0,0.3); 
-            border: 1px solid rgba(255,255,255,0.2); 
-            color: #fff; 
-            font-family: var(--font-display); 
-            font-size: 12px;
-            color-scheme: dark; /* 브라우저 기본 UI를 다크 모드로 강제 */
-        }
-        
-        /* 🚀 웹킷(크롬, 사파리) 브라우저에서 달력 아이콘 하얗게 만들기 */
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            opacity: 0.8;
-            cursor: pointer;
-        }
-
+        .input-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-display); font-size: 12px; color-scheme: dark; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer; }
         .radio-option { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; font-family: var(--font-display); color: #888; }
         .radio-option.selected { border-color: var(--team-accent); color: var(--team-accent); background: rgba(255,255,255,0.1); }
-        .close-btn { width: 100%; padding: 15px; background: var(--team-accent); color: #000; border: none; margin-top: 10px; font-weight: bold; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; }
-        
+        .close-btn { width: 100%; padding: 16px; background: transparent; color: var(--team-accent); border: 2px solid var(--team-accent); margin-top: 15px; font-weight: 900; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; letter-spacing: 2px; transition: background 0.2s, color 0.2s; }
+        .close-btn:hover { background: var(--team-accent); color: #000; }
         .recommendation-box { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--team-accent); }
         .rec-title { font-size: 9px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; font-family: var(--font-display); }
         .rec-value { font-size: 14px; color: var(--team-accent); font-weight: bold; font-family: var(--font-display); }
-        
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
-<body class="mercedes">
+<body class="redbull">
+
+    <div id="loading-overlay">
+        <div class="lights-container">
+            <div class="light-pair"><div class="f1-light" id="light-1"></div><div class="f1-light" id="light-1b"></div></div>
+            <div class="light-pair"><div class="f1-light" id="light-2"></div><div class="f1-light" id="light-2b"></div></div>
+            <div class="light-pair"><div class="f1-light" id="light-3"></div><div class="f1-light" id="light-3b"></div></div>
+            <div class="light-pair"><div class="f1-light" id="light-4"></div><div class="f1-light" id="light-4b"></div></div>
+            <div class="light-pair"><div class="f1-light" id="light-5"></div><div class="f1-light" id="light-5b"></div></div>
+        </div>
+        <div class="loading-text">TIERED GRID FORMATION...</div>
+    </div>
 
     <div id="celebration-overlay">
         <div class="celebration-content">
@@ -149,7 +163,7 @@
         </div>
         <div class="radio-box">
             <div class="radio-top-section">
-                <div class="driver-name" id="display-name"><span>ANTONELLI</span></div>
+                <div class="driver-name" id="display-name"><span>VERSTAPPEN</span></div>
                 <span class="radio-label">RADIO</span>
             </div>
             <div id="wave-container" class="audio-wave-divider"></div>
@@ -169,12 +183,23 @@
         <svg class="track-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet">
             <path id="bg-track" class="track-path-bg" />
             <path id="active-track" class="track-path-active" />
-            <line id="start-line" class="finish-line" x1="1050" y1="440" x2="1050" y2="460" />
-            <g id="driver-marker">
-                <rect class="driver-tag-bg" x="-55" y="-85" width="110" height="45" rx="4" />
-                <text id="tag-name" class="driver-tag-text" x="0" y="-60">ANT</text>
-                <circle class="car-dot" cx="0" cy="0" r="8" />
+            
+            <g id="start-finish-line" transform="translate(1040, 435)">
+                 <rect x="0" y="0" width="10" height="5" class="checker-white"/>
+                 <rect x="10" y="0" width="10" height="5" class="checker-black"/>
+                 <rect x="0" y="5" width="10" height="5" class="checker-black"/>
+                 <rect x="10" y="5" width="10" height="5" class="checker-white"/>
+                 <rect x="0" y="10" width="10" height="5" class="checker-white"/>
+                 <rect x="10" y="10" width="10" height="5" class="checker-black"/>
+                 <rect x="0" y="15" width="10" height="5" class="checker-black"/>
+                 <rect x="10" y="15" width="10" height="5" class="checker-white"/>
+                 <rect x="0" y="20" width="10" height="5" class="checker-white"/>
+                 <rect x="10" y="20" width="10" height="5" class="checker-black"/>
+                 <rect x="0" y="25" width="10" height="5" class="checker-black"/>
+                 <rect x="10" y="25" width="10" height="5" class="checker-white"/>
             </g>
+            
+            <g id="ai-cars-layer"></g>
         </svg>
     </div>
 
@@ -182,7 +207,7 @@
         <div id="msg-tooltip" class="tooltip">NOT YET, STAY IN GARAGE</div>
         <button class="box-btn" onclick="addMoney()">BOX BOX</button>
         <br>
-        <button class="settings-btn" onclick="openSettings()">STRATEGY SETTINGS</button>
+        <button class="settings-btn" onclick="openSettings()">PIT STOP</button>
     </div>
 
     <div class="modal" id="settings-modal">
@@ -205,23 +230,46 @@
             <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>[Q1] Hotel (₩)</label><input type="number" id="q1-goal" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>[Q2] Flight (₩)</label><input type="number" id="q2-goal" oninput="calculateRecommendation()"></div>
-            <div class="input-group"><label>[Q3] Flex (₩)</label><input type="number" id="q3-goal" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q3] TICKET (₩)</label><input type="number" id="q3-goal" oninput="calculateRecommendation()"></div>
             
             <div class="recommendation-box" id="rec-box" style="display:none;">
                 <div class="rec-title">Race Engineer Strategy</div>
                 <div class="rec-value" id="rec-msg">Calculating...</div>
             </div>
 
-            <button class="close-btn" onclick="saveAndCloseSettings()">Apply Strategy</button>
+            <button class="close-btn" onclick="saveAndCloseSettings()">PIT LIMITER OFF</button>
         </div>
     </div>
 
     <script>
         const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
-        let state = { currentAmount: 0, team: 'mercedes', driver: 'ANTONELLI', q1: 1600000, q2: 1400000, q3: 2000000, lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, lastDepositDate: '', targetDate: '' };
+        let state = { currentAmount: 0, team: 'redbull', driver: 'VERSTAPPEN', q1: 1600000, q2: 1400000, q3: 2000000, lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, lastDepositDate: '', targetDate: '' };
         let visualProgress = 0, animId = null;
+        let trackSpeedProfile = [];
+        let raceStarted = false; 
+
+        const driverList = [
+            { id: 'VER', speed: 1.25 }, // Top Tier
+            { id: 'HAM', speed: 1.18 },
+            { id: 'LEC', speed: 1.15 },
+            { id: 'ANT', speed: 1.12 },
+            { id: 'RUS', speed: 1.12 },
+            { id: 'SAI', speed: 1.10 },
+            { id: 'ALO', speed: 1.08 }, // --- Cutoff
+            { id: 'PER', speed: 1.05 },
+            { id: 'GAS', speed: 1.02 },
+            { id: 'OCO', speed: 1.00 },
+            { id: 'ALB', speed: 0.98 },
+            { id: 'BEA', speed: 0.97 },
+            { id: 'TSU', speed: 0.96 },
+            { id: 'STR', speed: 0.95 }
+        ];
+
+        let aiDrivers = [];
 
         function init() {
+            startRaceSequence();
+
             document.getElementById('bg-track').setAttribute('d', singaporeCircuitPath);
             document.getElementById('active-track').setAttribute('d', singaporeCircuitPath);
             const container = document.getElementById('wave-container');
@@ -234,38 +282,213 @@
                 container.appendChild(bar);
             }
             loadData(); 
+            if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
             
-            // 💡 2. 데이터 로드 후, 목표 날짜가 없으면 5년 뒤 싱가포르 GP 날짜 자동 설정
-            if (!state.targetDate) {
-                state.targetDate = getFiveYearsLaterGPDate();
-            }
+            generateTrackSpeedProfile();
+                        requestAnimationFrame(animateAIDrivers);
             
-            updateUI();
+            updateDashboard(); 
+            updateTeamBtn();
         }
 
-        // 🚀 5년 뒤 싱가포르 그랑프리 (9월 마지막 일요일) 계산 함수
+        function startRaceSequence() {
+            let lightCount = 1;
+            const loadingText = document.querySelector('.loading-text');
+
+            function turnOnNextLight() {
+                if (lightCount <= 5) {
+                    document.getElementById(`light-${lightCount}`).classList.add('on');
+                    document.getElementById(`light-${lightCount}b`).classList.add('on');
+                    lightCount++;
+                    setTimeout(turnOnNextLight, 1000); 
+                } else {
+                    loadingText.innerText = "ENGINES READY...";
+                    const randomDelay = Math.random() * 1300 + 200;
+                    setTimeout(() => {
+                        document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
+                        raceStarted = true; 
+                        
+                        setTimeout(() => {
+                            const overlay = document.getElementById('loading-overlay');
+                            overlay.style.opacity = '0';
+                            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                        }, 200);
+                    }, randomDelay);
+                }
+            }
+            setTimeout(turnOnNextLight, 500);
+        }
+
+        function generateTrackSpeedProfile() {
+            const track = document.getElementById('bg-track');
+            const len = track.getTotalLength();
+            const samples = 1000;
+            trackSpeedProfile = []; 
+
+            for(let i=0; i<samples; i++) {
+                const p = i / samples;
+                const pNext = (i + 1) % samples / samples;
+                const pPrev = (i - 1 + samples) % samples / samples;
+
+                const pt1 = track.getPointAtLength(pPrev * len);
+                const pt2 = track.getPointAtLength(p * len);
+                const pt3 = track.getPointAtLength(pNext * len);
+
+                const angle1 = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
+                const angle2 = Math.atan2(pt3.y - pt2.y, pt3.x - pt2.x);
+                
+                let diff = Math.abs(angle1 - angle2);
+                if (diff > Math.PI) diff = 2 * Math.PI - diff; 
+
+                let targetSpeedFactor = 1.0;
+                if (diff < 0.05) {
+                    targetSpeedFactor = 2.2; 
+                } else if (diff < 0.2) {
+                    targetSpeedFactor = 1.0; 
+                } else {
+                    targetSpeedFactor = 0.3; 
+                }
+                trackSpeedProfile.push(targetSpeedFactor);
+            }
+        }
+
+        function animateAIDrivers() {
+            const track = document.getElementById('bg-track');
+            const len = track.getTotalLength();
+
+            aiDrivers.forEach(ai => {
+                if (!raceStarted) {
+                    const point = track.getPointAtLength(len * ai.progress);
+                    const jitterX = (Math.random() - 0.5) * 1.5;
+                    const jitterY = (Math.random() - 0.5) * 1.5;
+                    ai.element.setAttribute('transform', `translate(${point.x + jitterX}, ${point.y + jitterY})`);
+                    return; 
+                }
+
+                const mapIndex = Math.floor(ai.progress * 1000) % 1000;
+                const targetFactor = trackSpeedProfile[mapIndex];
+                
+                if (ai.actualSpeed > targetFactor) {
+                    ai.actualSpeed -= (ai.actualSpeed - targetFactor) * 0.15;
+                } else {
+                    ai.actualSpeed += (targetFactor - ai.actualSpeed) * 0.01;
+                }
+
+                const moveStep = ai.baseSpeed * ai.actualSpeed * 0.00025;
+
+                ai.progress += moveStep;
+                if (ai.progress >= 1) ai.progress -= 1;
+
+                const point = track.getPointAtLength(len * ai.progress);
+                ai.element.setAttribute('transform', `translate(${point.x}, ${point.y})`);
+            });
+
+            requestAnimationFrame(animateAIDrivers);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initAIDrivers() {
+            const layer = document.getElementById('ai-cars-layer');
+            layer.innerHTML = ''; 
+            aiDrivers = [];
+            const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
+            let heroElement = null;
+
+            const midPoint = Math.ceil(driverList.length / 2);
+            const topTier = driverList.slice(0, midPoint); 
+            const bottomTier = driverList.slice(midPoint); 
+
+            const shuffledTop = shuffleArray([...topTier]);
+            const shuffledBottom = shuffleArray([...bottomTier]);
+
+            const finalGrid = [...shuffledTop, ...shuffledBottom];
+
+            finalGrid.forEach((d, index) => {
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "ai-marker");
+                g.setAttribute("data-id", d.id); 
+
+                if (d.id === heroId) g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
+                
+                const isHero = (d.id === heroId);
+                const rectW = isHero ? 50 : 40;
+                const rectH = isHero ? 24 : 20;
+                const fontSize = isHero ? 16 : 14;
+
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", -rectW/2); rect.setAttribute("y", -rectH - 10);
+                rect.setAttribute("width", rectW); rect.setAttribute("height", rectH);
+                
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", 0); text.setAttribute("y", -rectH/2 - 9);
+                text.textContent = d.id;
+                text.style.fontSize = `${fontSize}px`;
+
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("r", 4);
+
+                g.appendChild(rect); g.appendChild(text); g.appendChild(circle);
+                layer.appendChild(g);
+
+                if (isHero) heroElement = g;
+
+                const startPos = 0.999;
+                const gridGap = 0.015;
+                const initialProgress = startPos - (index * gridGap);
+
+                aiDrivers.push({
+                    id: d.id, 
+                    element: g,
+                    baseSpeed: d.speed, 
+                    progress: initialProgress,
+                    actualSpeed: 0 
+                });
+            });
+
+            if (heroElement) {
+                layer.appendChild(heroElement);
+            }
+        }
+        
+        function updateDriverStyles() {
+            const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
+            const layer = document.getElementById('ai-cars-layer');
+            const allCars = layer.querySelectorAll('.ai-marker');
+
+            allCars.forEach(g => {
+                const id = g.getAttribute('data-id');
+                g.classList.remove('hero-redbull', 'hero-mercedes');
+                
+                if (id === heroId) {
+                    g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
+                    
+                    layer.appendChild(g); 
+                }
+            });
+        }
+
         function getFiveYearsLaterGPDate() {
             const now = new Date();
             const targetYear = now.getFullYear() + 5;
-            // 9월(Month Index 8)의 마지막 날(30일)로 설정
             const date = new Date(targetYear, 8, 30);
-            
-            // 요일 확인 (0: 일요일, 1: 월요일...)
             const day = date.getDay();
-            
-            // 9월 30일에서 day만큼 빼면 가장 가까운 과거(또는 당일) 일요일이 됨
-            // 예: 30일이 수요일(3)이면 30-3=27일(일요일)
             date.setDate(date.getDate() - day);
             
-            // YYYY-MM-DD 형식 반환 (Local Time 기준)
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
             const d = String(date.getDate()).padStart(2, '0');
             return `${y}-${m}-${d}`;
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_7', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_7'); if (stored) state = JSON.parse(stored); }
+        function saveData() { localStorage.setItem('f1_tracker_v11_17_tiered', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_17_tiered'); if (stored) state = JSON.parse(stored); }
 
         function showTooltip(msg) {
             const tip = document.getElementById('msg-tooltip');
@@ -289,7 +512,7 @@
 
             if (currentDay !== state.savingsDay) {
                 const dayStr = getOrdinal(state.savingsDay);
-                showTooltip(`NEGATIVE, BOX ON THE ${dayStr}`); 
+                showTooltip(`NOT YET, BOX ON THE ${dayStr}`); 
                 return;
             }
             if (state.lastDepositDate === todayStr) { 
@@ -306,7 +529,8 @@
             let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
             if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
-            saveData(); updateUI();
+            saveData(); 
+            updateDashboard(); 
         }
 
         function triggerCelebration(sessionName) {
@@ -321,25 +545,28 @@
 
         function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
 
-        function syncMarker(target) {
+        function syncTrackFill(target) {
             if (animId) cancelAnimationFrame(animId);
-            const activeTrack = document.getElementById('active-track'), marker = document.getElementById('driver-marker'), totalLength = activeTrack.getTotalLength();
+            const activeTrack = document.getElementById('active-track');
+            const totalLength = activeTrack.getTotalLength();
+            
             function frame() {
-                let diff = target - visualProgress; visualProgress += diff * 0.08;
+                let diff = target - visualProgress; 
+                visualProgress += diff * 0.08;
                 activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
-                const point = activeTrack.getPointAtLength(totalLength * visualProgress);
-                marker.setAttribute('transform', `translate(${point.x}, ${point.y})`);
+                
                 if (Math.abs(diff) > 0.0001) animId = requestAnimationFrame(frame);
             }
             frame();
         }
 
-        function updateUI() {
+        
+        function updateDashboard() {
             document.body.className = state.team;
             state.driver = (state.team === 'mercedes') ? 'ANTONELLI' : 'VERSTAPPEN';
-            document.getElementById('tag-name').textContent = (state.team === 'mercedes') ? 'ANT' : 'VER';
+            document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
+
             const totalGoal = state.q1 + state.q2 + state.q3;
-            
             let targetP = 0;
             let stepText = "[Q1]"; let nameText = "HOTEL";
 
@@ -349,10 +576,10 @@
             
             document.getElementById('session-step').innerText = stepText;
             document.getElementById('session-name').innerText = nameText;
-            document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
-            syncMarker(targetP);
+            
+            syncTrackFill(targetP);
             
             document.getElementById('savings-day').value = state.savingsDay;
             document.getElementById('deposit-unit').value = state.depositUnit;
@@ -361,8 +588,6 @@
             document.getElementById('q2-goal').value = state.q2;
             document.getElementById('q3-goal').value = state.q3;
             document.getElementById('target-date').value = state.targetDate;
-
-            updateTeamBtn();
         }
 
         function calculateRecommendation() {
@@ -376,54 +601,29 @@
             const recBox = document.getElementById('rec-box');
             const recMsg = document.getElementById('rec-msg');
             
-            if (!targetDateStr) {
-                recBox.style.display = 'none';
-                return;
-            }
-
+            if (!targetDateStr) { recBox.style.display = 'none'; return; }
             recBox.style.display = 'block';
             const totalGoal = q1 + q2 + q3;
             const remaining = totalGoal - curAmt;
             
-            if (remaining <= 0) {
-                recMsg.innerText = "GOAL REACHED! PUSH HARD!";
-                return;
-            }
+            if (remaining <= 0) { recMsg.innerText = "GOAL REACHED! PUSH HARD!"; return; }
 
             const today = new Date();
             const targetDate = new Date(targetDateStr);
-            
-            if (targetDate <= today) {
-                recMsg.innerText = "RACE DAY PASSED / INVALID DATE";
-                return;
-            }
+            if (targetDate <= today) { recMsg.innerText = "RACE DAY PASSED / INVALID DATE"; return; }
 
             let depositCount = 0;
             let tempDate = new Date(today);
-            
-            if (tempDate.getDate() > savingsDay) {
-                tempDate.setMonth(tempDate.getMonth() + 1);
-            }
+            if (tempDate.getDate() > savingsDay) tempDate.setMonth(tempDate.getMonth() + 1);
             tempDate.setDate(savingsDay);
 
-            while (tempDate <= targetDate) {
-                depositCount++;
-                tempDate.setMonth(tempDate.getMonth() + 1);
-            }
+            while (tempDate <= targetDate) { depositCount++; tempDate.setMonth(tempDate.getMonth() + 1); }
 
-            if (depositCount === 0) {
-                 recMsg.innerText = "IMMEDIATE FULL DEPOSIT REQUIRED";
-            } else {
-                const monthlyRec = Math.ceil(remaining / depositCount);
-                recMsg.innerText = `REC: ₩${monthlyRec.toLocaleString()} / month (${depositCount} stops)`;
-            }
+            if (depositCount === 0) { recMsg.innerText = "IMMEDIATE FULL DEPOSIT REQUIRED"; } 
+            else { const monthlyRec = Math.ceil(remaining / depositCount); recMsg.innerText = `REC: ₩${monthlyRec.toLocaleString()} / month (${depositCount} stops)`; }
         }
 
-        function openSettings() { 
-            document.getElementById('settings-modal').style.display = 'flex'; 
-            updateUI(); 
-            calculateRecommendation();
-        }
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateDashboard(); calculateRecommendation(); }
         
         function saveAndCloseSettings() {
             state.savingsDay = Number(document.getElementById('savings-day').value);
@@ -434,10 +634,19 @@
             state.q3 = Number(document.getElementById('q3-goal').value);
             state.targetDate = document.getElementById('target-date').value;
             
-            saveData(); updateUI(); document.getElementById('settings-modal').style.display = 'none';
+            saveData(); 
+            updateDashboard();             
+            document.getElementById('settings-modal').style.display = 'none';
         }
         
-        function setTeam(t) { state.team = t; updateTeamBtn(); updateUI(); }
+        
+        function setTeam(t) { 
+            state.team = t; 
+            updateTeamBtn(); 
+            updateDashboard();
+            updateDriverStyles(); 
+        }
+
         function updateTeamBtn() {
             document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
             document.getElementById(`opt-${state.team}`).classList.add('selected');
