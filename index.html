@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <title>Race to Singapore 2030</title>
+    <title>Race to Singapore</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -160,15 +160,90 @@
         #start-engine-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255,255,255,0.6); }
         #bgm-player { position: absolute; top: -9999px; left: -9999px; visibility: hidden; pointer-events: none; }
 
-        .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 20px; z-index: 100; align-items: flex-start; justify-content: space-between; }
-        .logo-box { flex: 0 0 auto; width: 120px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 5px; }
-        .f1-logo { width: 100%; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
-        .circuit-info { text-align: center; margin-top: 5px; width: 100%; }
-        .circuit-country { font-size: 10px; color: var(--team-accent); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
-        .circuit-name { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: normal; margin-top: 2px; line-height: 1.2; white-space: pre-wrap; word-break: keep-all; }
-        .status-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 2px; margin-top: 10px; }
-        .session-step { font-size: 10px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
-        .session-name { font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        /* 💡 [수정] 헤더 레이아웃 개선: 높이 압축 및 왼쪽 정렬 */
+        .header-container { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            padding: 40px 20px 0 20px; 
+            display: flex; 
+            gap: 15px; 
+            z-index: 100; 
+            align-items: flex-start; /* 상단 기준 정렬 */
+            justify-content: space-between; 
+        }
+
+        /* 왼쪽 정보 영역: 정렬을 왼쪽으로, 너비 자동 조정 */
+        .logo-box { 
+            flex: 0 1 auto; /* 필요한 만큼만 공간 차지 */
+            width: auto; 
+            background: transparent; 
+            border: none; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items: flex-start; /* 왼쪽 정렬 핵심 */
+            padding: 0; 
+        }
+
+        /* 로고 크기 축소 */
+        .f1-logo { 
+            width: 60px; /* 120px -> 60px 로 축소 */
+            height: auto; 
+            object-fit: contain; 
+            filter: brightness(0) invert(1); 
+            margin-bottom: 8px; /* 간격 축소 */
+        }
+
+        /* 텍스트 왼쪽 정렬 및 여백 정리 */
+        .circuit-info { 
+            text-align: left; /* 왼쪽 정렬 */
+            margin-top: 0; 
+            width: 100%; 
+        }
+
+        .circuit-country { 
+            font-size: 10px; 
+            color: var(--team-accent); 
+            font-weight: bold; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+        }
+
+        .circuit-name { 
+            font-size: 9px; 
+            color: rgba(255,255,255,0.7); 
+            font-weight: normal; 
+            margin-top: 2px; 
+            line-height: 1.2; 
+            white-space: nowrap; /* 줄바꿈 방지 */
+        }
+
+        /* 상태 표시(Q1, HOTEL) 왼쪽 정렬 및 간격 조정 */
+        .status-container { 
+            display: flex; 
+            flex-direction: row; /* 가로 배열로 변경하여 높이 절약 */
+            align-items: center; 
+            gap: 6px; 
+            margin-top: 8px; 
+        }
+
+        .session-step { 
+            font-size: 11px; /* 가독성 위해 약간 키움 */
+            font-weight: bold; 
+            color: var(--team-accent); 
+            letter-spacing: 1px; 
+        }
+
+        .session-name { 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: #fff; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            white-space: nowrap; 
+        }
 
         .radio-box { flex: 0 0 auto; width: 220px; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-left: auto; border: 1px solid rgba(255,255,255,0.2); }
         .radio-top-section { padding: 10px 10px 0px 10px; text-align: right; overflow: hidden; }
@@ -208,7 +283,7 @@
 
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         
-        /* 💡 수정됨: 모바일 호버 이슈 해결 */
+/* 💡 [수정] 모바일 호버 이슈 해결을 위한 버튼 스타일 재정의 */
         .box-btn { 
             background-color: transparent; 
             color: var(--team-primary); 
@@ -221,15 +296,16 @@
             text-transform: uppercase; 
             cursor: pointer; 
             box-shadow: none; 
-            transition: all 0.1s ease; 
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s; 
             position: relative; 
             width: 100%; 
             max-width: 300px; 
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* 모바일 탭 하이라이트 제거 */
+            outline: none; /* 포커스 아웃라인 제거 */
         }
 
-        /* PC(마우스)에서만 호버 효과 적용 */
-        @media (hover: hover) {
+        /* PC(마우스) 환경에서만 호버 효과 적용 (모바일 제외) */
+        @media (hover: hover) and (pointer: fine) {
             .box-btn:hover { 
                 background-color: var(--team-primary); 
                 color: #000; 
@@ -238,19 +314,41 @@
             }
         }
 
-        /* 터치 및 클릭 시 즉각 반응 (Active) */
-        .box-btn:active { 
-            transform: scale(0.98); 
+        /* 모바일 터치 및 클릭 시 즉각 반응 (Active) */
+        .box-btn:active, .box-btn.flash-active { 
+            transform: scale(0.96); 
             background-color: var(--team-primary) !important; 
             color: #000 !important; 
-            box-shadow: 0 0 10px var(--team-primary) !important; 
+            box-shadow: 0 0 15px var(--team-primary) !important; 
+            transition: none; /* 즉각 반응 */
+        }
+
+        /* 💡 [추가] 오디오 컨트롤 버튼 (좌측 하단 배치) */
+        .audio-container {
+            position: absolute;
+            bottom: 40px; /* controls 패딩과 높이 고려 */
+            left: 30px;
+            z-index: 50;
+        }
+
+        .audio-btn {
+            background: transparent;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        /* JS로 제어할 강제 점등 클래스 (시각적 피드백) */
-        .box-btn.flash-active { 
-            background-color: var(--team-primary) !important; 
-            color: #000 !important; 
-            box-shadow: 0 0 20px var(--team-primary) !important; 
+        .audio-btn:hover { opacity: 1; }
+        
+        .audio-icon {
+            width: 24px;
+            height: 24px;
+            fill: #888; /* 연한 회색 */
         }
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
@@ -362,9 +460,22 @@
 
     <div class="controls">
         <div id="msg-tooltip" class="tooltip">NOT YET, STAY IN GARAGE</div>
+        
         <button class="box-btn" onclick="addMoney()">BOX BOX</button>
         <br>
+        
         <button class="settings-btn" onclick="openSettings()">PIT STOP</button>
+
+        <div class="audio-container">
+            <button class="audio-btn" onclick="toggleAudio()" aria-label="Toggle Audio">
+                <svg id="icon-sound-on" class="audio-icon" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                <svg id="icon-sound-off" class="audio-icon" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <div class="modal" id="settings-modal">
@@ -460,6 +571,55 @@
         let raceStarted = false; 
 
         let bgmPlayer;
+let isMuted = false;
+
+        /* 💡 [추가] 오디오 토글 함수 */
+        function toggleAudio() {
+            isMuted = !isMuted;
+            const onIcon = document.getElementById('icon-sound-on');
+            const offIcon = document.getElementById('icon-sound-off');
+
+            if (isMuted) {
+                if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(0);
+                onIcon.style.display = 'none';
+                offIcon.style.display = 'block';
+            } else {
+                if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(70);
+                onIcon.style.display = 'block';
+                offIcon.style.display = 'none';
+            }
+        }
+
+        /* 💡 [수정] addMoney 함수 내 버튼 효과 강화 */
+        function addMoney() {
+            // 모바일 버튼 시각 효과 (터치 시점과 동기화)
+            const btn = document.querySelector('.box-btn');
+            
+            // 기존 active 클래스 제거 후 다시 추가하여 애니메이션 리셋 효과
+            btn.classList.remove('flash-active');
+            void btn.offsetWidth; // 리플로우 강제 (애니메이션 재시작 트리거)
+            btn.classList.add('flash-active');
+            
+            setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
+
+            // ... 기존 로직 그대로 유지 ...
+            const now = new Date();
+            // (아래 코드는 기존 addMoney 함수 내용과 동일하게 유지하세요)
+            const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, '0'); const d = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${y}-${m}-${d}`;
+            const currentDay = now.getDate();
+            if (currentDay !== state.savingsDay) { const dayStr = getOrdinal(state.savingsDay); showTooltip(`NOT YET, BOX ON THE ${dayStr}`); return; }
+            if (state.lastDepositDate === todayStr) { showTooltip("ENOUGH NOW"); return; }
+            const totalGoal = state.q1 + state.q2 + state.q3;
+            state.currentAmount += state.depositUnit;
+            if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
+            state.lastDepositDate = todayStr;
+            showTooltip("COPY THAT, BOXING NOW!"); 
+            let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
+            if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
+            state.lastSession = checkS;
+            saveData(); updateDashboard(); 
+        }
         function onYouTubeIframeAPIReady() {
             bgmPlayer = new YT.Player('bgm-player', {
                 height: '0', width: '0', videoId: 'YhX_Woa3kVA', 
