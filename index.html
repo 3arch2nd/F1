@@ -110,11 +110,11 @@
         /* 차량 디자인 */
         .ai-marker { cursor: default; pointer-events: none; }
         .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
-        .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: #fff; stroke-width: 1px; }
-        /* 폰트 스타일 */
+        /* 💡 수정 1: 기본 AI 차량 테두리 제거 (stroke: none) */
+        .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: none; }
         .ai-marker text { fill: #fff; font-weight: 900; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* 주인공 하이라이트 */
+        /* 주인공 하이라이트 (여기서만 테두리 적용) */
         .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 3px; opacity: 1; }
         .ai-marker.hero-redbull text { fill: #000 !important; font-weight: 900; }
         .ai-marker.hero-redbull circle { fill: #FF1E00 !important; r: 5; }
@@ -412,15 +412,24 @@
             return array;
         }
 
+        // 💡 헬퍼 함수: 주인공 여부와 모바일 여부에 따라 크기 계산
+        function getMarkerDimensions(isHero) {
+            const isMobile = window.innerWidth < 600;
+            let rectW, rectH, fontSize, circleR;
+            if (isMobile) {
+                 rectW = isHero ? 90 : 70; rectH = isHero ? 40 : 30; fontSize = isHero ? 24 : 20; circleR = 6;
+            } else {
+                 rectW = isHero ? 50 : 40; rectH = isHero ? 24 : 20; fontSize = isHero ? 16 : 14; circleR = 4;
+            }
+            return { rectW, rectH, fontSize, circleR };
+        }
+
         function initAIDrivers() {
             const layer = document.getElementById('ai-cars-layer');
             layer.innerHTML = ''; 
             aiDrivers = [];
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             let heroElement = null;
-
-            // 💡 [화면 크기 감지] 모바일 여부 체크 (너비 600px 미만 기준)
-            const isMobile = window.innerWidth < 600;
 
             const midPoint = Math.ceil(driverList.length / 2);
             const topTier = driverList.slice(0, midPoint); 
@@ -437,34 +446,21 @@
                 
                 const isHero = (d.id === heroId);
                 
-                // 💡 [반응형 크기 로직]
-                // Mobile일 경우 약 1.8배 ~ 2배 크게 설정
-                let rectW, rectH, fontSize;
-
-                if (isMobile) {
-                    // Mobile Size (Big & Readable)
-                    rectW = isHero ? 90 : 70;
-                    rectH = isHero ? 40 : 30;
-                    fontSize = isHero ? 24 : 20;
-                } else {
-                    // PC Size (Sleek & Compact - Original)
-                    rectW = isHero ? 50 : 40;
-                    rectH = isHero ? 24 : 20;
-                    fontSize = isHero ? 16 : 14;
-                }
+                // 💡 헬퍼 함수 사용하여 크기 가져오기
+                const dim = getMarkerDimensions(isHero);
+                const isMobile = window.innerWidth < 600;
 
                 const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                rect.setAttribute("x", -rectW/2); rect.setAttribute("y", -rectH - 10);
-                rect.setAttribute("width", rectW); rect.setAttribute("height", rectH);
+                rect.setAttribute("x", -dim.rectW/2); rect.setAttribute("y", -dim.rectH - 10);
+                rect.setAttribute("width", dim.rectW); rect.setAttribute("height", dim.rectH);
                 
                 const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                // 텍스트 위치 미세 조정 (수직 중앙 정렬)
-                text.setAttribute("x", 0); text.setAttribute("y", -rectH/2 - (isMobile ? 8 : 9));
+                text.setAttribute("x", 0); text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
                 text.textContent = d.id;
-                text.style.fontSize = `${fontSize}px`;
+                text.style.fontSize = `${dim.fontSize}px`;
 
                 const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("r", isMobile ? 6 : 4); // 원 크기도 모바일에서 살짝 키움
+                circle.setAttribute("r", dim.circleR);
 
                 g.appendChild(rect); g.appendChild(text); g.appendChild(circle);
                 layer.appendChild(g);
@@ -487,17 +483,39 @@
             if (heroElement) layer.appendChild(heroElement);
         }
         
+        // 💡 수정된 함수: 팀 변경 시 스타일뿐만 아니라 크기도 재계산하여 적용
         function updateDriverStyles() {
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             const layer = document.getElementById('ai-cars-layer');
             const allCars = layer.querySelectorAll('.ai-marker');
+            const isMobile = window.innerWidth < 600;
+
             allCars.forEach(g => {
                 const id = g.getAttribute('data-id');
+                const isHero = (id === heroId);
+                const rect = g.querySelector('rect');
+                const text = g.querySelector('text');
+                const circle = g.querySelector('circle');
+
+                // 1. 스타일 클래스 업데이트 (색상)
                 g.classList.remove('hero-redbull', 'hero-mercedes');
-                if (id === heroId) {
+                if (isHero) {
                     g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
-                    layer.appendChild(g); 
+                    layer.appendChild(g); // 주인공을 맨 앞으로
                 }
+
+                // 2. 크기 업데이트 (SVG 속성 재계산)
+                const dim = getMarkerDimensions(isHero);
+                
+                rect.setAttribute("x", -dim.rectW/2);
+                rect.setAttribute("y", -dim.rectH - 10);
+                rect.setAttribute("width", dim.rectW);
+                rect.setAttribute("height", dim.rectH);
+
+                text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
+                text.style.fontSize = `${dim.fontSize}px`;
+
+                circle.setAttribute("r", dim.circleR);
             });
         }
 
@@ -513,8 +531,8 @@
             return `${y}-${m}-${d}`;
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_21_responsive_labels', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_21_responsive_labels'); if (stored) state = JSON.parse(stored); }
+        function saveData() { localStorage.setItem('f1_tracker_v11_22_final_fixes', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_22_final_fixes'); if (stored) state = JSON.parse(stored); }
         function showTooltip(msg) { const tip = document.getElementById('msg-tooltip'); tip.innerText = msg; tip.classList.add('show'); setTimeout(() => tip.classList.remove('show'), 2500); }
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
