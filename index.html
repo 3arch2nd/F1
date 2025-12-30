@@ -208,6 +208,7 @@
 
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         
+        /* 💡 수정됨: 모바일 터치 최적화 스타일 */
         .box-btn { 
             background-color: transparent; 
             color: var(--team-primary); 
@@ -224,13 +225,28 @@
             position: relative; 
             width: 100%; 
             max-width: 300px; 
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
         }
+
+        /* PC(마우스)에서만 호버 효과 적용 */
         @media (hover: hover) {
-            .box-btn:hover { background-color: var(--team-primary); color: #000; transform: scale(1.02); box-shadow: 0 0 15px var(--team-primary); }
+            .box-btn:hover { 
+                background-color: var(--team-primary); 
+                color: #000; 
+                transform: scale(1.02); 
+                box-shadow: 0 0 15px var(--team-primary); 
+            }
         }
+
+        /* 터치했을 때 즉각 반응 */
         .box-btn:active { transform: scale(0.98); }
-        .box-btn.flash-active { background-color: var(--team-primary) !important; color: #000 !important; box-shadow: 0 0 20px var(--team-primary) !important; }
+        
+        /* JS로 제어할 강제 점등 클래스 */
+        .box-btn.flash-active { 
+            background-color: var(--team-primary) !important; 
+            color: #000 !important; 
+            box-shadow: 0 0 20px var(--team-primary) !important; 
+        }
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -371,11 +387,6 @@
                     </select>
             </div>
             
-            <div class="input-group">
-                <label>Select Circuit (2026 Calendar)</label>
-                <select id="circuit-select" onchange="updateCircuit()"></select>
-            </div>
-
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1;">
                     <label>Deposit Day (DD)</label>
@@ -446,7 +457,6 @@
         function onPlayerReady(event) {}
         function onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) bgmPlayer.playVideo(); }
 
-        /* 💡 드라이버 리스트 */
         const driverList = [
             { id: 'VER', speed: 1.25 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
             { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, { id: 'PER', speed: 1.05 },
@@ -470,7 +480,6 @@
                 container.appendChild(bar);
             }
             loadData(); 
-            initCircuitSelect();
             if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
             
             generateTrackSpeedProfile();
@@ -480,21 +489,9 @@
             updateTeamSelectUI(); 
         }
 
-        /* 💡 싱가포르 고정 처리 */
-        function initCircuitSelect() {
-            const select = document.getElementById('circuit-select');
-            select.innerHTML = '';
-            const option = document.createElement('option');
-            option.value = 'sin';
-            option.text = "SINGAPORE - Marina Bay Street Circuit";
-            option.selected = true;
-            select.appendChild(option);
-            select.disabled = true; // 선택 불가능하게
-        }
+        /* 💡 드롭박스 관련 코드 제거됨 */
+        function updateCircuit() {}
 
-        function updateCircuit() { /* 싱가포르 고정이므로 기능 비활성화 */ }
-
-        /* 💡 초기 드라이버 생성 (1회만 실행) + 랜덤 시드 부여 */
         function initAIDrivers() {
             const layer = document.getElementById('ai-cars-layer');
             layer.innerHTML = ''; 
@@ -540,7 +537,6 @@
                     baseSpeed: d.speed, 
                     progress: initialProgress,
                     actualSpeed: 0,
-                    // 💡 다이내믹 레이싱을 위한 랜덤 시드 추가
                     randomOffset: Math.random() * 1000,
                     fluctuation: 0
                 });
@@ -549,14 +545,12 @@
             updateRaceScenario();
         }
 
-        /* 💡 다이내믹 레이싱: 상태 업데이트 & 속도 버프 적용 */
         function updateRaceScenario() {
             const heroId = getDriverShortId(state.driver);
             const layer = document.getElementById('ai-cars-layer');
             const isMobile = window.innerWidth < 600;
 
             aiDrivers.forEach(ai => {
-                // 1. 원래 속도 복원
                 const originalData = driverList.find(d => d.id === ai.id);
                 let speed = originalData ? originalData.speed : 1.0;
 
@@ -570,7 +564,6 @@
                     g.classList.add('hero-marker');
                     layer.appendChild(g);
 
-                    // 💡 히어로 속도 보정 (10% 버프, 최대 1.24, 베르스타펜 제외)
                     if (ai.id === 'VER') {
                         speed = 1.25; 
                     } else {
@@ -652,7 +645,6 @@
             }
         }
 
-        /* 💡 다이내믹 레이싱: 컨디션 변화 및 추월 로직 적용 */
         function animateAIDrivers() {
             const track = document.getElementById('bg-track');
             const len = track.getTotalLength();
@@ -667,17 +659,11 @@
                     return; 
                 }
 
-                // 1. 컨디션 파동 (Sine Wave) 적용: +/- 3% 속도 변화
                 const fluctuation = Math.sin(now * 0.001 + ai.randomOffset) * 0.03;
                 let dynamicSpeed = ai.baseSpeed * (1 + fluctuation);
 
-                // 2. 슬립스트림/DRS (앞차와 가까우면 가속)
-                // 간단히: 내 바로 앞 순위의 차량과의 거리 계산 (대략적)
-                // 실제 레이스에선 복잡하지만 여기선 시각적 연출 위주
-                // (생략: 연산 비용 최소화를 위해 Sine Wave만으로도 충분히 역동적임)
-
                 const mapIndex = Math.floor(ai.progress * 1000) % 1000;
-                const targetFactor = trackSpeedProfile[mapIndex] * dynamicSpeed; // 다이내믹 스피드 적용
+                const targetFactor = trackSpeedProfile[mapIndex] * dynamicSpeed;
 
                 if (ai.actualSpeed > targetFactor) ai.actualSpeed -= (ai.actualSpeed - targetFactor) * 0.15;
                 else ai.actualSpeed += (targetFactor - ai.actualSpeed) * 0.01;
@@ -761,7 +747,7 @@
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
         function addMoney() {
-            // 💡 모바일 버튼 플래시 효과
+            // 💡 모바일 버튼 플래시 효과 (JS)
             const btn = document.querySelector('.box-btn');
             btn.classList.add('flash-active');
             setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
@@ -812,6 +798,7 @@
             
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             
+            // 싱가포르 고정 텍스트
             document.getElementById('disp-country').innerText = "SINGAPORE";
             document.getElementById('disp-circuit').innerText = "Marina Bay Street Circuit";
 
