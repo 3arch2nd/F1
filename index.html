@@ -41,12 +41,37 @@
 
         /* 🚦 F1 스타트 로딩 화면 */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; }
-        .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; }
+        .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; margin-bottom: 30px; }
         .light-pair { display: flex; flex-direction: column; gap: 5px; }
         .f1-light { width: 40px; height: 40px; background-color: rgba(255, 0, 0, 0.2); border-radius: 50%; border: 3px solid #222; transition: all 0.1s ease; }
         .f1-light.on { background-color: #ff0000; box-shadow: 0 0 30px #ff0000, 0 0 10px #ff0000 inset; border-color: #500; }
-        .loading-text { margin-top: 30px; color: #fff; font-family: var(--font-display); font-size: 14px; letter-spacing: 2px; animation: blink 1s infinite; }
+        
+        .loading-text { color: #fff; font-family: var(--font-display); font-size: 14px; letter-spacing: 2px; animation: blink 1s infinite; margin-bottom: 20px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* 엔진 스타트 버튼 (오디오 정책 우회용) */
+        #start-engine-btn {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 15px 40px;
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+        #start-engine-btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 30px rgba(255,255,255,0.6);
+        }
+
+        /* 유튜브 플레이어 숨김 (오디오만 사용) */
+        #bgm-player { position: absolute; top: -9999px; left: -9999px; visibility: hidden; pointer-events: none; }
 
 
         .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 20px; z-index: 100; align-items: flex-start; justify-content: space-between; }
@@ -137,6 +162,7 @@
         .rec-value { font-size: 14px; color: var(--team-accent); font-weight: bold; font-family: var(--font-display); }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body class="redbull">
 
@@ -148,8 +174,11 @@
             <div class="light-pair"><div class="f1-light" id="light-4"></div><div class="f1-light" id="light-4b"></div></div>
             <div class="light-pair"><div class="f1-light" id="light-5"></div><div class="f1-light" id="light-5b"></div></div>
         </div>
-        <div class="loading-text">TIERED GRID FORMATION...</div>
+        <div class="loading-text">REVS RISING...</div>
+        <button id="start-engine-btn" onclick="activateEngine()">START ENGINE</button>
     </div>
+
+    <div id="bgm-player"></div>
 
     <div id="celebration-overlay">
         <div class="celebration-content">
@@ -254,6 +283,28 @@
         let trackSpeedProfile = [];
         let raceStarted = false; 
 
+        // 🎵 유튜브 플레이어 변수
+        let bgmPlayer;
+        function onYouTubeIframeAPIReady() {
+            bgmPlayer = new YT.Player('bgm-player', {
+                height: '0',
+                width: '0',
+                videoId: 'YhX_Woa3kVA', // 🏎️ Brian Tyler - F1 Theme
+                playerVars: {
+                    'autoplay': 0, 
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'YhX_Woa3kVA' // 루프를 위해 필요
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+        function onPlayerReady(event) {
+            // 준비되면 할 일 (여기서는 버튼 클릭 대기)
+        }
+
         const driverList = [
             { id: 'VER', speed: 1.25 }, // Top Tier
             { id: 'HAM', speed: 1.18 },
@@ -274,7 +325,7 @@
         let aiDrivers = [];
 
         function init() {
-            startRaceSequence();
+            // startRaceSequence()는 이제 버튼을 누르면 호출됩니다.
 
             document.getElementById('bg-track').setAttribute('d', singaporeCircuitPath);
             document.getElementById('active-track').setAttribute('d', singaporeCircuitPath);
@@ -291,12 +342,21 @@
             if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
             
             generateTrackSpeedProfile();
-            // 💡 최초 로딩 시에만 차량을 생성하고 배치함
             initAIDrivers();
             requestAnimationFrame(animateAIDrivers);
             
-            updateDashboard(); // 💡 UI 텍스트만 업데이트
+            updateDashboard();
             updateTeamBtn();
+        }
+
+        // 🚦 버튼 클릭 시 실행: 음악 재생 + 시퀀스 시작
+        function activateEngine() {
+            document.getElementById('start-engine-btn').style.display = 'none'; // 버튼 숨김
+            if (bgmPlayer && bgmPlayer.playVideo) {
+                bgmPlayer.setVolume(70);
+                bgmPlayer.playVideo(); // 🎵 음악 큐!
+            }
+            startRaceSequence();
         }
 
         function startRaceSequence() {
@@ -394,7 +454,6 @@
             requestAnimationFrame(animateAIDrivers);
         }
 
-        // 🎲 배열 섞기 유틸리티
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -410,23 +469,18 @@
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             let heroElement = null;
 
-            // 💡 [티어별 랜덤 로직] 
-            // 1. 드라이버 리스트를 절반으로 나눔
             const midPoint = Math.ceil(driverList.length / 2);
-            const topTier = driverList.slice(0, midPoint); // 상위권 (빠른 차)
-            const bottomTier = driverList.slice(midPoint); // 하위권 (느린 차)
+            const topTier = driverList.slice(0, midPoint); 
+            const bottomTier = driverList.slice(midPoint); 
 
-            // 2. 각 그룹 내부에서 셔플
             const shuffledTop = shuffleArray([...topTier]);
             const shuffledBottom = shuffleArray([...bottomTier]);
 
-            // 3. 다시 합침 (상위권은 앞쪽, 하위권은 뒤쪽)
             const finalGrid = [...shuffledTop, ...shuffledBottom];
 
             finalGrid.forEach((d, index) => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
-                // data-id 속성 추가 (스타일 업데이트용)
                 g.setAttribute("data-id", d.id); 
 
                 if (d.id === heroId) g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
@@ -453,13 +507,12 @@
 
                 if (isHero) heroElement = g;
 
-                // 🏁 그리드 배치
                 const startPos = 0.999;
                 const gridGap = 0.015;
                 const initialProgress = startPos - (index * gridGap);
 
                 aiDrivers.push({
-                    id: d.id, // ID 저장
+                    id: d.id, 
                     element: g,
                     baseSpeed: d.speed, 
                     progress: initialProgress,
@@ -472,7 +525,6 @@
             }
         }
         
-        // 🛠️ 피트 스탑 후 차량 색상/스타일만 업데이트하는 함수 (위치 리셋 안 함!)
         function updateDriverStyles() {
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             const layer = document.getElementById('ai-cars-layer');
@@ -480,17 +532,10 @@
 
             allCars.forEach(g => {
                 const id = g.getAttribute('data-id');
-                // 기존 클래스 제거
                 g.classList.remove('hero-redbull', 'hero-mercedes');
-                
-                // rect, text, circle은 CSS로 제어되지만, DOM 순서를 바꾸려면 복잡하므로 
-                // 여기서는 색상 클래스만 토글합니다. 
-                // (단, SVG z-index는 순서를 바꿔야 하므로 완벽한 z-index 처리를 위해선 DOM 이동이 필요하지만, 
-                // 피트스탑 중에는 색상만 바뀌어도 충분합니다)
                 
                 if (id === heroId) {
                     g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
-                    // 주인공을 맨 앞으로 (레이어) 보내기
                     layer.appendChild(g); 
                 }
             });
@@ -509,8 +554,8 @@
             return `${y}-${m}-${d}`;
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_17_tiered', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_17_tiered'); if (stored) state = JSON.parse(stored); }
+        function saveData() { localStorage.setItem('f1_tracker_v11_18_bgm', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_18_bgm'); if (stored) state = JSON.parse(stored); }
 
         function showTooltip(msg) {
             const tip = document.getElementById('msg-tooltip');
@@ -552,7 +597,7 @@
             if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
             saveData(); 
-            updateDashboard(); // 돈 냈을 때도 대시보드만 업데이트
+            updateDashboard(); 
         }
 
         function triggerCelebration(sessionName) {
@@ -582,8 +627,6 @@
             frame();
         }
 
-        // 💡 [UI 업데이트 함수 분리]
-        // 이 함수는 텍스트/숫자 정보만 갱신하며, 절대 차량 위치를 리셋하지 않습니다.
         function updateDashboard() {
             document.body.className = state.team;
             state.driver = (state.team === 'mercedes') ? 'ANTONELLI' : 'VERSTAPPEN';
@@ -658,17 +701,16 @@
             state.targetDate = document.getElementById('target-date').value;
             
             saveData(); 
-            updateDashboard(); // 💡 정보만 업데이트
+            updateDashboard(); 
             
             document.getElementById('settings-modal').style.display = 'none';
         }
         
-        // 💡 팀 변경 시: 정보 업데이트 + 차량 스타일 업데이트(위치 유지)
         function setTeam(t) { 
             state.team = t; 
             updateTeamBtn(); 
             updateDashboard();
-            updateDriverStyles(); // 💡 차량 색상/스타일만 즉시 반영
+            updateDriverStyles(); 
         }
 
         function updateTeamBtn() {
