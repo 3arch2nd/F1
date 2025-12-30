@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <title>Race to Singapore 2026</title>
+    <title>Race to Singapore 2030</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -149,6 +149,7 @@
             transition: background 0.5s ease; 
         }
 
+        /* 🚦 F1 스타트 로딩 화면 */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; }
         .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; margin-bottom: 30px; }
         .light-pair { display: flex; flex-direction: column; gap: 5px; }
@@ -208,7 +209,7 @@
 
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         
-        /* 💡 수정됨: 모바일 터치 최적화 스타일 */
+        /* 💡 모바일 터치 이슈 해결을 위한 핵심 CSS */
         .box-btn { 
             background-color: transparent; 
             color: var(--team-primary); 
@@ -221,14 +222,15 @@
             text-transform: uppercase; 
             cursor: pointer; 
             box-shadow: none; 
-            transition: all 0.1s ease; 
+            transition: all 0.1s ease; /* 반응 속도 개선 */
             position: relative; 
             width: 100%; 
             max-width: 300px; 
-            -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
+            -webkit-tap-highlight-color: transparent; /* 터치 하이라이트 제거 */
+            user-select: none;
         }
 
-        /* PC(마우스)에서만 호버 효과 적용 */
+        /* 호버 효과는 마우스가 있는 기기에서만 작동 */
         @media (hover: hover) {
             .box-btn:hover { 
                 background-color: var(--team-primary); 
@@ -238,10 +240,10 @@
             }
         }
 
-        /* 터치했을 때 즉각 반응 */
+        /* 클릭(Active) 시 잠깐 눌리는 효과 */
         .box-btn:active { transform: scale(0.98); }
         
-        /* JS로 제어할 강제 점등 클래스 */
+        /* JS로 제어하는 강제 점등 클래스 (터치 피드백용) */
         .box-btn.flash-active { 
             background-color: var(--team-primary) !important; 
             color: #000 !important; 
@@ -430,11 +432,14 @@
             haas: { name: 'Haas F1', drivers: ['OCON', 'BEARMAN'] }
         };
 
+        /* 💡 2030 예산 업데이트: Q1(숙소) 160만, Q2(항공) 80만, Q3(티켓) 100만 */
         let state = { 
             currentAmount: 0, 
             team: 'redbull', 
             driver: 'VERSTAPPEN', 
-            q1: 3500000, q2: 1500000, q3: 900000, 
+            q1: 1600000, 
+            q2: 800000, 
+            q3: 1000000, 
             lastSession: 'Q1', 
             savingsDay: 25, 
             depositUnit: 100000, 
@@ -480,7 +485,8 @@
                 container.appendChild(bar);
             }
             loadData(); 
-            if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
+            initCircuitSelect();
+            if (!state.targetDate) state.targetDate = getSingaporeGPDate2030();
             
             generateTrackSpeedProfile();
             initAIDrivers();
@@ -489,8 +495,19 @@
             updateTeamSelectUI(); 
         }
 
-        /* 💡 드롭박스 관련 코드 제거됨 */
-        function updateCircuit() {}
+        /* 💡 싱가포르 고정 처리 */
+        function initCircuitSelect() {
+            const select = document.getElementById('circuit-select');
+            select.innerHTML = '';
+            const option = document.createElement('option');
+            option.value = 'sin';
+            option.text = "SINGAPORE - Marina Bay Street Circuit";
+            option.selected = true;
+            select.appendChild(option);
+            select.disabled = true; // 선택 불가
+        }
+
+        function updateCircuit() { /* 고정 */ }
 
         function initAIDrivers() {
             const layer = document.getElementById('ai-cars-layer');
@@ -720,16 +737,9 @@
             return name.substring(0,3).toUpperCase();
         }
 
-        function getFiveYearsLaterGPDate() {
-            const now = new Date();
-            const targetYear = now.getFullYear() + 5;
-            const date = new Date(targetYear, 8, 30);
-            const day = date.getDay();
-            date.setDate(date.getDate() - day);
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
+        /* 💡 2030년 10월 6일(일요일) 자동 설정 */
+        function getSingaporeGPDate2030() {
+            return "2030-10-06";
         }
 
         function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -747,7 +757,7 @@
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
         function addMoney() {
-            // 💡 모바일 버튼 플래시 효과 (JS)
+            // 💡 모바일 터치 피드백 강화
             const btn = document.querySelector('.box-btn');
             btn.classList.add('flash-active');
             setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
@@ -873,7 +883,7 @@
             document.getElementById('settings-modal').style.display = 'none';
         }
         
-        function setDriver(d) { /* UI 변경용, 실제 저장은 버튼 클릭 시 */ }
+        function setDriver(d) { /* UI 변경용 */ }
 
         function updateDriverList(teamKey) {
             const driverSelect = document.getElementById('driver-select');
