@@ -27,142 +27,168 @@
         body.redbull { --team-bg: #0A0045; --team-radio-bg: rgba(10, 0, 69, 0.9); --team-primary: #FF1E00; --team-accent: #FFEC00; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        /* 전체 화면 높이를 꽉 채우되 넘치지 않게 설정 */
         body { 
             background-color: var(--team-bg); 
             color: var(--text-color); 
             font-family: var(--font-display); 
-            height: 100dvh; /* dynamic vh 사용 */
+            height: 100vh;
+            height: 100dvh; 
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
-            transition: background 0.5s ease;
-            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+            transition: background 0.5s ease; 
         }
 
-        /* 헤더 섹션: 상단 고정 */
+        /* 헤더 & 라디오 */
         .header-container { 
-            padding: 15px 15px 5px 15px; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%;
+            padding: 40px 20px 0 20px; 
             display: flex; 
             gap: 8px; 
             z-index: 100; 
-            align-items: stretch;
-            height: auto;
+            align-items: stretch; 
         }
         
         .logo-box { 
-            flex: 0.8; 
+            flex: 0 0 auto; 
+            width: 120px;
+            background: transparent; 
+            border: none; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
+            padding: 0 10px; 
         }
-        .f1-logo { width: 100%; max-width: 80px; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
         
-        /* 세션 상태: 요청하신 대로 간결하게 수정 */
-        .session-status { 
-            font-size: 11px; 
+        .f1-logo { width: 100%; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 5px; }
+        
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 2px;
+        }
+        .session-step {
+            font-size: 10px; 
             font-weight: bold; 
             color: var(--team-accent); 
-            text-align: center; 
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 4px 6px; 
-            border-radius: 2px; 
-            width: 100%; 
+            letter-spacing: 1px;
+        }
+        .session-name {
+            font-size: 10px; 
+            font-weight: bold; 
+            color: #fff; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .radio-box { 
-            flex: 1.2; 
+            flex: 1; 
             background: var(--team-radio-bg); 
-            border: 3px solid rgba(255, 255, 255, 0.1); 
+            border: 4px solid rgba(255, 255, 255, 0.1); 
             border-radius: 4px; 
             display: flex; 
             flex-direction: column; 
-            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            min-width: 0; 
         }
-        .radio-top-section { padding: 8px 12px 0 12px; text-align: right; }
-        .driver-name { font-size: 14px; font-weight: bold; color: #fff; text-transform: uppercase; transform: scaleX(1.1); transform-origin: right; }
-        .radio-label { display: block; font-size: 8px; font-weight: bold; color: #fff; opacity: 0.6; }
+        .radio-top-section { padding: 12px 15px 0px 15px; text-align: right; }
+        .driver-name { font-size: 16px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -1px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
+        .driver-name span { color: var(--team-accent); }
+        .radio-label { display: block; margin-top: 2px; font-size: 9px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
         
-        .audio-wave-divider { width: 100%; height: 15px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; }
+        /* 오디오 웨이브 */
+        .audio-wave-divider { width: 100%; height: 20px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; margin: 5px 0; }
         .bar { flex: 1; margin: 0 1px; background-color: var(--team-primary); transform-origin: bottom; }
-        @keyframes equalizer { 0%, 100% { height: 2px; } 50% { height: 12px; } }
+        @keyframes equalizer { 0%, 100% { height: 4px; } 50% { height: 14px; } }
         
-        .radio-content-section { padding: 5px 12px 8px 12px; display: flex; flex-direction: column; }
-        .quote-box { font-family: var(--font-display); font-style: italic; font-size: 11px; line-height: 1.2; }
-        .top-msg { color: #fff; margin-bottom: 2px; }
+        .radio-content-section { padding: 8px 15px 15px 15px; display: flex; flex-direction: column; gap: 5px; }
+        .quote-box { 
+            font-family: var(--font-display); 
+            font-style: italic; 
+            font-weight: 400; 
+            font-size: 12px; 
+            letter-spacing: -0.5px; 
+            line-height: 1.3;
+        }
+        .quote-box::before { content: "“"; color: #fff; margin-right: 4px; }
+        .quote-box::after { content: "”"; color: #fff; margin-left: 4px; }
+        
+        .top-msg { text-align: left; color: #fff; }
         .bottom-data { text-align: right; color: var(--team-accent); }
-        .amount-row { display: block; font-size: 11px; }
-        .amount-goal { font-size: 8px; opacity: 0.6; }
+        .amount-container { display: inline-block; text-align: right; }
+        .amount-row { display: block; line-height: 1.2; }
+        .amount-goal { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; font-family: var(--font-display); }
 
-        /* 트랙 섹션: 화면 중앙에서 유연하게 크기 조절 */
+        /* 서킷 */
         .track-container { 
             flex: 1; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             position: relative; 
-            padding: 10px; 
+            padding: 140px 20px 20px 20px; 
             overflow: hidden; 
-            min-height: 0; /* flex 자식 요소의 오버플로우 방지 */
+            min-height: 0; 
         }
-        svg.track-svg { width: 100%; height: 100%; max-height: 50vh; overflow: visible; }
-        .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 16; stroke-linecap: round; }
-        .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 16; stroke-linecap: round; filter: drop-shadow(0 0 8px var(--team-primary)); }
-        .finish-line { stroke: #fff; stroke-width: 20; stroke-dasharray: 4; }
-        .car-dot { fill: var(--team-primary); stroke: #fff; stroke-width: 3; }
+        svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
+        .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+        .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); }
+        .finish-line { stroke: #fff; stroke-width: 20; stroke-dasharray: 4; filter: drop-shadow(0 0 5px #fff); }
+        .car-dot { fill: var(--team-primary); stroke: #fff; stroke-width: 3; filter: drop-shadow(0 0 10px #fff); }
         .driver-tag-bg { fill: #000; stroke: #fff; stroke-width: 1.5; }
         .driver-tag-text { fill: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; }
 
-        /* 하단 컨트롤: 아래쪽 잘림 방지 */
+        /* 하단 컨트롤 */
         .controls { 
-            padding: 20px 0 30px 0; 
+            padding: 20px 30px 40px 30px; 
             text-align: center; 
             z-index: 20; 
+            position: relative; 
+            margin-top: auto; 
+            flex-shrink: 0; 
         }
         .box-btn { 
-            background-color: var(--team-primary); 
-            color: #fff; 
-            font-family: var(--font-display); 
-            font-size: 16px; 
-            font-weight: bold; 
-            border: none; 
-            padding: 15px 40px; 
-            border-radius: 4px; 
-            box-shadow: 0 0 15px var(--team-primary);
-            cursor: pointer;
+            background-color: var(--team-primary); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: bold; border: none; padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; 
+            box-shadow: 0 0 20px var(--team-primary); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; position: relative; 
+            width: 100%; max-width: 300px; 
         }
-        .settings-btn { 
-            background: none; 
-            border: 1px solid #444; 
-            color: #888; 
-            padding: 6px 12px; 
-            margin-top: 15px; 
-            border-radius: 4px; 
-            font-size: 10px; 
-            font-family: var(--font-display); 
-        }
+        .box-btn:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--team-primary); }
 
-        /* 툴팁 */
+        /* 말풍선 */
         .tooltip {
-            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-10px);
-            background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 8px 15px; border-radius: 4px; font-size: 10px;
-            white-space: nowrap; opacity: 0; transition: 0.3s;
+            position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px);
+            background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display);
+            white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
-        .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(-20px); }
+        .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: var(--team-primary); }
 
-        /* 모달 레이어 동일 유지 */
+        .settings-btn { background: none; border: 1px solid #444; color: #888; padding: 8px 15px; margin-top: 15px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: var(--font-display); }
+
+        /* 모달 및 축하 화면 */
         #celebration-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); }
+        .celebration-content { background: #000; border: 2px solid var(--f1-purple); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: 0 0 50px var(--f1-purple); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fastest-lap-title { color: var(--f1-purple); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
+        .fastest-lap-driver { color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
+        .next-session-btn { background: var(--f1-purple); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; font-weight: 900; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--team-radio-bg); padding: 25px; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid #333; overflow-y: auto; max-height: 85vh; }
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
-        .input-group input { width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 12px; }
-        .radio-option { flex: 1; padding: 10px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; }
-        .radio-option.selected { border-color: var(--team-accent); color: var(--team-accent); }
-        .close-btn { width: 100%; padding: 15px; background: var(--team-accent); color: #000; border: none; margin-top: 10px; font-weight: bold; cursor: pointer; }
+        .modal-content { background: var(--team-radio-bg); padding: 25px; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid #333; overflow-y: auto; max-height: 80vh; }
+        .modal h2 { font-family: var(--font-display); font-size: 16px; margin-bottom: 20px; color: var(--team-accent); text-transform: uppercase; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 6px; font-family: var(--font-display); text-transform: uppercase; }
+        .input-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-display); font-size: 12px; }
+        .radio-option { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; font-family: var(--font-display); color: #888; }
+        .radio-option.selected { border-color: var(--team-accent); color: var(--team-accent); background: rgba(255,255,255,0.1); }
+        .close-btn { width: 100%; padding: 15px; background: var(--team-accent); color: #000; border: none; margin-top: 10px; font-weight: bold; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body class="mercedes">
@@ -171,14 +197,17 @@
         <div class="celebration-content">
             <div class="fastest-lap-title" id="lap-session-title">[Q1] FASTEST LAP</div>
             <div class="fastest-lap-driver" id="lap-driver-name">ANTONELLI</div>
-            <button class="next-session-btn" style="background: var(--f1-purple); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; border-radius: 4px; margin-top: 20px;" onclick="closeCelebration()">PUSH FOR NEXT LAP</button>
+            <button class="next-session-btn" onclick="closeCelebration()">PUSH FOR NEXT LAP</button>
         </div>
     </div>
 
     <div class="header-container">
         <div class="logo-box">
             <img src="https://i.imgur.com/jan8CSk.png" alt="F1 Logo" class="f1-logo">
-            <div id="session-status" class="session-status">[Q1]</div>
+            <div class="status-container">
+                <div id="session-step" class="session-step">[Q1]</div>
+                <div id="session-name" class="session-name">HOTEL</div>
+            </div>
         </div>
         <div class="radio-box">
             <div class="radio-top-section">
@@ -189,45 +218,45 @@
             <div class="radio-content-section">
                 <div class="quote-box top-msg">Balance check.</div>
                 <div class="quote-box bottom-data">
-                    <span class="amount-row" id="txt-current">CUR ₩0</span>
-                    <span class="amount-row amount-goal" id="txt-goal">TAR ₩0</span>
+                    <div class="amount-container">
+                        <span class="amount-row" id="txt-current">CUR ₩0</span>
+                        <span class="amount-row amount-goal" id="txt-goal">TAR ₩5,000,000</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="track-container">
-        <svg class="track-svg" viewBox="0 0 1200 700">
+        <svg class="track-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet">
             <path id="bg-track" class="track-path-bg" />
             <path id="active-track" class="track-path-active" />
-            <line id="start-line" class="finish-line" x1="1050" y1="435" x2="1050" y2="465" />
+            <line id="start-line" class="finish-line" x1="1050" y1="440" x2="1050" y2="460" />
             <g id="driver-marker">
                 <rect class="driver-tag-bg" x="-55" y="-85" width="110" height="45" rx="4" />
                 <text id="tag-name" class="driver-tag-text" x="0" y="-60">ANT</text>
-                <circle class="car-dot" cx="0" cy="0" r="10" />
+                <circle class="car-dot" cx="0" cy="0" r="8" />
             </g>
         </svg>
     </div>
 
     <div class="controls">
-        <div style="position:relative; display:inline-block;">
-            <div id="msg-tooltip" class="tooltip">NOT YET</div>
-            <button class="box-btn" onclick="addMoney()">BOX BOX</button>
-        </div>
+        <div id="msg-tooltip" class="tooltip">NOT YET, STAY IN GARAGE</div>
+        <button class="box-btn" onclick="addMoney()">BOX BOX</button>
         <br>
         <button class="settings-btn" onclick="openSettings()">STRATEGY SETTINGS</button>
     </div>
 
     <div class="modal" id="settings-modal">
         <div class="modal-content">
-            <h2 style="font-size:14px; margin-bottom:15px; color:var(--team-accent);">STRATEGY</h2>
+            <h2>Strategy Settings</h2>
             <div class="input-group"><label>Constructor</label><div class="radio-group" style="display:flex; gap:10px;"><div class="radio-option" id="opt-mercedes" onclick="setTeam('mercedes')">Mercedes</div><div class="radio-option" id="opt-redbull" onclick="setTeam('redbull')">Red Bull</div></div></div>
-            <div class="input-group"><label>Savings Day (1-31)</label><input type="number" id="savings-day" min="1" max="31"></div>
+            <div class="input-group"><label>Monthly Savings Day (1-31)</label><input type="number" id="savings-day" min="1" max="31"></div>
             <div class="input-group"><label>Monthly Amount (₩)</label><input type="number" id="deposit-unit"></div>
-            <div class="input-group"><label>Current Total (₩)</label><input type="number" id="manual-amount"></div>
-            <div class="input-group"><label>[Q1] Goal (₩)</label><input type="number" id="q1-goal"></div>
-            <div class="input-group"><label>[Q2] Goal (₩)</label><input type="number" id="q2-goal"></div>
-            <div class="input-group"><label>[Q3] Goal (₩)</label><input type="number" id="q3-goal"></div>
+            <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount"></div>
+            <div class="input-group"><label>[Q1] Hotel (₩)</label><input type="number" id="q1-goal"></div>
+            <div class="input-group"><label>[Q2] Flight (₩)</label><input type="number" id="q2-goal"></div>
+            <div class="input-group"><label>[Q3] Flex (₩)</label><input type="number" id="q3-goal"></div>
             <button class="close-btn" onclick="saveAndCloseSettings()">Apply Strategy</button>
         </div>
     </div>
@@ -242,7 +271,7 @@
             document.getElementById('active-track').setAttribute('d', singaporeCircuitPath);
             const container = document.getElementById('wave-container');
             container.innerHTML = '';
-            for(let i=0; i<25; i++) {
+            for(let i=0; i<30; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'bar';
                 bar.style.animation = `equalizer ${0.4 + Math.random() * 0.4}s infinite ease-in-out`;
@@ -252,8 +281,8 @@
             loadData(); updateUI();
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_3', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_3'); if (stored) state = JSON.parse(stored); }
+        function saveData() { localStorage.setItem('f1_tracker_v11_5', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_5'); if (stored) state = JSON.parse(stored); }
 
         function showTooltip(msg) {
             const tip = document.getElementById('msg-tooltip');
@@ -261,21 +290,38 @@
             setTimeout(() => tip.classList.remove('show'), 2500);
         }
 
+        // 💡 날짜 서수 변환 함수 (예: 1 -> 1st, 2 -> 2nd, 3 -> 3rd, 4 -> 4th)
+        function getOrdinal(n) {
+            const s = ["th", "st", "nd", "rd"];
+            const v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
+
         function addMoney() {
-            const now = new Date(), todayStr = now.toISOString().split('T')[0], currentDay = now.getDate();
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${y}-${m}-${d}`;
+            const currentDay = now.getDate();
+
             if (currentDay !== state.savingsDay) {
-                const diff = state.savingsDay - currentDay;
-                const waitDays = diff > 0 ? diff : (new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - currentDay + state.savingsDay);
-                showTooltip(`BOX IN ${waitDays} DAYS`); 
+                // 💡 변경: D-Day 계산을 없애고, 목표 날짜를 직관적으로 영어 서수로 표시
+                const dayStr = getOrdinal(state.savingsDay);
+                showTooltip(`NOT YET, BOX ON THE ${dayStr}`); 
                 return;
             }
-            if (state.lastDepositDate === todayStr) { showTooltip("ALREADY BOXED"); return; }
+            
+            if (state.lastDepositDate === todayStr) { 
+                showTooltip("ENOUGH NOW"); 
+                return; 
+            }
             
             const totalGoal = state.q1 + state.q2 + state.q3;
             state.currentAmount += state.depositUnit;
             if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
             state.lastDepositDate = todayStr;
-            showTooltip("COPY, BOXING!"); 
+            showTooltip("COPY THAT, BOXING NOW!"); 
 
             let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
             if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
@@ -288,7 +334,9 @@
             document.getElementById('lap-session-title').innerText = `[${sessionName}] FASTEST LAP`;
             document.getElementById('lap-driver-name').innerText = state.driver;
             overlay.style.display = 'flex';
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
+            const teamPrimary = getComputedStyle(document.body).getPropertyValue('--team-primary').trim();
+            const teamAccent = getComputedStyle(document.body).getPropertyValue('--team-accent').trim();
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, zIndex: 10001, colors: [teamPrimary, teamAccent, '#ffffff'] });
         }
 
         function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
@@ -297,7 +345,7 @@
             if (animId) cancelAnimationFrame(animId);
             const activeTrack = document.getElementById('active-track'), marker = document.getElementById('driver-marker'), totalLength = activeTrack.getTotalLength();
             function frame() {
-                let diff = target - visualProgress; visualProgress += diff * 0.05;
+                let diff = target - visualProgress; visualProgress += diff * 0.08;
                 activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
                 const point = activeTrack.getPointAtLength(totalLength * visualProgress);
                 marker.setAttribute('transform', `translate(${point.x}, ${point.y})`);
@@ -312,23 +360,32 @@
             document.getElementById('tag-name').textContent = (state.team === 'mercedes') ? 'ANT' : 'VER';
             const totalGoal = state.q1 + state.q2 + state.q3;
             
-            let targetP = 0, statusText = "";
+            let targetP = 0;
+            let stepText = "[Q1]";
+            let nameText = "HOTEL";
+
             if (state.currentAmount < state.q1) { 
-                targetP = state.currentAmount / state.q1; statusText = "[Q1]"; 
-            } else if (state.currentAmount < (state.q1 + state.q2)) { 
-                targetP = (state.currentAmount - state.q1) / state.q2; statusText = "[Q2]"; 
-            } else { 
-                targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; statusText = "[Q3]"; 
-                if (state.currentAmount >= totalGoal) { targetP = 1; statusText = "POLE"; }
+                targetP = state.currentAmount / state.q1; 
+                stepText = "[Q1]"; nameText = "HOTEL";
+            }
+            else if (state.currentAmount < (state.q1 + state.q2)) { 
+                targetP = (state.currentAmount - state.q1) / state.q2; 
+                stepText = "[Q2]"; nameText = "FLIGHT";
+            }
+            else { 
+                targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; 
+                stepText = "[Q3]"; nameText = "TICKET"; 
+                if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } 
             }
             
-            document.getElementById('session-status').innerText = statusText;
+            document.getElementById('session-step').innerText = stepText;
+            document.getElementById('session-name').innerText = nameText;
+
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
             syncMarker(targetP);
             
-            // 모달 데이터 동기화
             document.getElementById('savings-day').value = state.savingsDay;
             document.getElementById('deposit-unit').value = state.depositUnit;
             document.getElementById('manual-amount').value = state.currentAmount;
@@ -338,7 +395,7 @@
             updateTeamBtn();
         }
 
-        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateUI(); }
         function saveAndCloseSettings() {
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
