@@ -23,8 +23,24 @@
             --f1-purple: #B624FF;
         }
 
-        body.mercedes { --team-bg: #121212; --team-radio-bg: rgba(20, 20, 20, 0.9); --team-primary: #00D2BE; --team-accent: #00D2BE; }
-        body.redbull { --team-bg: #0A0045; --team-radio-bg: rgba(10, 0, 69, 0.9); --team-primary: #FF1E00; --team-accent: #FFEC00; }
+        /* 💡 수정됨: 트랙 색상(--track-active-color)을 팀 컬러와 분리 
+           Mercedes: 트랙 = 팀 컬러 (Teal)
+           Red Bull: 트랙 = 퍼플 섹터 (#D500F9), 팀 컬러 = 레드 (#FF1E00)
+        */
+        body.mercedes { 
+            --team-bg: #121212; 
+            --team-radio-bg: rgba(20, 20, 20, 0.9); 
+            --team-primary: #00D2BE; 
+            --team-accent: #00D2BE; 
+            --track-active-color: #00D2BE; /* 메르세데스는 그대로 */
+        }
+        body.redbull { 
+            --team-bg: #0A0045; 
+            --team-radio-bg: rgba(10, 0, 69, 0.9); 
+            --team-primary: #FF1E00; 
+            --team-accent: #FFEC00; 
+            --track-active-color: #D500F9; /* 💜 레드불 트랙만 퍼플 섹터 색상! */
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -101,7 +117,17 @@
         .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 140px 20px 20px 20px; overflow: hidden; min-height: 0; }
         svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
         .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
-        .track-path-active { fill: none; stroke: var(--team-primary); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--team-primary)); transition: stroke-dasharray 0.5s ease; }
+        
+        /* 💡 수정됨: 트랙 색상을 --track-active-color로 변경 */
+        .track-path-active { 
+            fill: none; 
+            stroke: var(--track-active-color); 
+            stroke-width: 14; 
+            stroke-linecap: round; 
+            stroke-linejoin: round; 
+            filter: drop-shadow(0 0 10px var(--track-active-color)); /* 광원 효과도 트랙 색상 따라감 */
+            transition: stroke-dasharray 0.5s ease, stroke 0.5s ease; 
+        }
         
         .checker-box { stroke: none; }
         .checker-white { fill: #fff; }
@@ -110,11 +136,10 @@
         /* 차량 디자인 */
         .ai-marker { cursor: default; pointer-events: none; }
         .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
-        /* 💡 수정 1: 기본 AI 차량 테두리 제거 (stroke: none) */
         .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: none; }
         .ai-marker text { fill: #fff; font-weight: 900; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* 주인공 하이라이트 (여기서만 테두리 적용) */
+        /* 주인공 하이라이트 */
         .ai-marker.hero-redbull rect { fill: #FFEC00 !important; stroke: #FF1E00 !important; stroke-width: 3px; opacity: 1; }
         .ai-marker.hero-redbull text { fill: #000 !important; font-weight: 900; }
         .ai-marker.hero-redbull circle { fill: #FF1E00 !important; r: 5; }
@@ -412,7 +437,6 @@
             return array;
         }
 
-        // 💡 헬퍼 함수: 주인공 여부와 모바일 여부에 따라 크기 계산
         function getMarkerDimensions(isHero) {
             const isMobile = window.innerWidth < 600;
             let rectW, rectH, fontSize, circleR;
@@ -445,8 +469,6 @@
                 if (d.id === heroId) g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
                 
                 const isHero = (d.id === heroId);
-                
-                // 💡 헬퍼 함수 사용하여 크기 가져오기
                 const dim = getMarkerDimensions(isHero);
                 const isMobile = window.innerWidth < 600;
 
@@ -483,7 +505,6 @@
             if (heroElement) layer.appendChild(heroElement);
         }
         
-        // 💡 수정된 함수: 팀 변경 시 스타일뿐만 아니라 크기도 재계산하여 적용
         function updateDriverStyles() {
             const heroId = (state.team === 'mercedes') ? 'ANT' : 'VER';
             const layer = document.getElementById('ai-cars-layer');
@@ -497,14 +518,12 @@
                 const text = g.querySelector('text');
                 const circle = g.querySelector('circle');
 
-                // 1. 스타일 클래스 업데이트 (색상)
                 g.classList.remove('hero-redbull', 'hero-mercedes');
                 if (isHero) {
                     g.classList.add(state.team === 'redbull' ? 'hero-redbull' : 'hero-mercedes');
-                    layer.appendChild(g); // 주인공을 맨 앞으로
+                    layer.appendChild(g); 
                 }
 
-                // 2. 크기 업데이트 (SVG 속성 재계산)
                 const dim = getMarkerDimensions(isHero);
                 
                 rect.setAttribute("x", -dim.rectW/2);
@@ -531,8 +550,8 @@
             return `${y}-${m}-${d}`;
         }
 
-        function saveData() { localStorage.setItem('f1_tracker_v11_22_final_fixes', JSON.stringify(state)); }
-        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_22_final_fixes'); if (stored) state = JSON.parse(stored); }
+        function saveData() { localStorage.setItem('f1_tracker_v11_23_purple_track', JSON.stringify(state)); }
+        function loadData() { const stored = localStorage.getItem('f1_tracker_v11_23_purple_track'); if (stored) state = JSON.parse(stored); }
         function showTooltip(msg) { const tip = document.getElementById('msg-tooltip'); tip.innerText = msg; tip.classList.add('show'); setTimeout(() => tip.classList.remove('show'), 2500); }
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
