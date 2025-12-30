@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <title>Race to Singapore 2026</title>
+    <title>Race to Singapore 2030</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -208,7 +208,7 @@
 
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
         
-        /* 💡 수정됨: 모바일 터치 최적화 스타일 */
+        /* 💡 수정됨: 모바일 호버 이슈 해결 */
         .box-btn { 
             background-color: transparent; 
             color: var(--team-primary); 
@@ -225,7 +225,7 @@
             position: relative; 
             width: 100%; 
             max-width: 300px; 
-            -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* PC(마우스)에서만 호버 효과 적용 */
@@ -238,10 +238,15 @@
             }
         }
 
-        /* 터치했을 때 즉각 반응 */
-        .box-btn:active { transform: scale(0.98); }
+        /* 터치 및 클릭 시 즉각 반응 (Active) */
+        .box-btn:active { 
+            transform: scale(0.98); 
+            background-color: var(--team-primary) !important; 
+            color: #000 !important; 
+            box-shadow: 0 0 10px var(--team-primary) !important; 
+        }
         
-        /* JS로 제어할 강제 점등 클래스 */
+        /* JS로 제어할 강제 점등 클래스 (시각적 피드백) */
         .box-btn.flash-active { 
             background-color: var(--team-primary) !important; 
             color: #000 !important; 
@@ -322,7 +327,7 @@
             </div>
             <div id="wave-container" class="audio-wave-divider"></div>
             <div class="radio-content-section">
-                <div class="quote-box top-msg">Balance check.</div>
+                <div class="quote-box top-msg">Strategy updated.</div>
                 <div class="quote-box bottom-data">
                     <div class="amount-container">
                         <span class="amount-row" id="txt-current">CUR ₩0</span>
@@ -400,9 +405,9 @@
 
             <div class="input-group"><label>Monthly Amount (₩)</label><input type="number" id="deposit-unit" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount" oninput="calculateRecommendation()"></div>
-            <div class="input-group"><label>[Q1] Hotel (₩)</label><input type="number" id="q1-goal" oninput="calculateRecommendation()"></div>
-            <div class="input-group"><label>[Q2] Flight (₩)</label><input type="number" id="q2-goal" oninput="calculateRecommendation()"></div>
-            <div class="input-group"><label>[Q3] TICKET (₩)</label><input type="number" id="q3-goal" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q1] HOTEL (₩) - BASE</label><input type="number" id="q1-goal" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q2] FLIGHT (₩) - ENTRY</label><input type="number" id="q2-goal" oninput="calculateRecommendation()"></div>
+            <div class="input-group"><label>[Q3] TICKET+ETC (₩) - RACE</label><input type="number" id="q3-goal" oninput="calculateRecommendation()"></div>
             
             <div class="recommendation-box" id="rec-box" style="display:none;">
                 <div class="rec-title">Race Engineer Strategy</div>
@@ -414,7 +419,8 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'f1_tracker_v11_23_purple_track';
+        // 🚀 새로운 2030 플랜을 위해 키 버전 업그레이드
+        const STORAGE_KEY = 'f1_singapore_2030_plan_v1';
 
         const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
         
@@ -434,10 +440,17 @@
             currentAmount: 0, 
             team: 'redbull', 
             driver: 'VERSTAPPEN', 
-            q1: 3500000, q2: 1500000, q3: 900000, 
+            // 💡 2030 싱가포르 플랜 예산 설정 (단위: 원)
+            // Q1 (숙소 - 4박, 160만): 레이스의 기초
+            q1: 1600000, 
+            // Q2 (항공권 - 80만): 현장 도착
+            q2: 800000, 
+            // Q3 (티켓 + 식비/쇼핑/예비비 - 260만): 그랑프리 즐기기 (티켓 90 + 여유자금 170)
+            q3: 2600000, 
             lastSession: 'Q1', 
             savingsDay: 25, 
-            depositUnit: 100000, 
+            // 월 납입금 (500만 / 60개월 = 약 84,000원)
+            depositUnit: 84000, 
             lastDepositDate: '', 
             targetDate: '',
             circuitId: 'sin' 
@@ -480,7 +493,8 @@
                 container.appendChild(bar);
             }
             loadData(); 
-            if (!state.targetDate) state.targetDate = getFiveYearsLaterGPDate();
+            // 💡 2030년 싱가포르 GP 날짜 자동 설정 (2025+5년)
+            if (!state.targetDate) state.targetDate = get2030SingaporeDate();
             
             generateTrackSpeedProfile();
             initAIDrivers();
@@ -488,9 +502,6 @@
             updateDashboard();
             updateTeamSelectUI(); 
         }
-
-        /* 💡 드롭박스 관련 코드 제거됨 */
-        function updateCircuit() {}
 
         function initAIDrivers() {
             const layer = document.getElementById('ai-cars-layer');
@@ -720,16 +731,10 @@
             return name.substring(0,3).toUpperCase();
         }
 
-        function getFiveYearsLaterGPDate() {
-            const now = new Date();
-            const targetYear = now.getFullYear() + 5;
-            const date = new Date(targetYear, 8, 30);
-            const day = date.getDay();
-            date.setDate(date.getDate() - day);
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
+        // 💡 2030년 싱가포르 GP 예상 날짜 (9월 마지막 주 일요일) 계산
+        function get2030SingaporeDate() {
+            // 2030년 9월 29일(일) 예상
+            return '2030-09-29';
         }
 
         function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -747,7 +752,7 @@
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
         function addMoney() {
-            // 💡 모바일 버튼 플래시 효과 (JS)
+            // 💡 모바일 버튼 시각 효과 (Active 강제 트리거)
             const btn = document.querySelector('.box-btn');
             btn.classList.add('flash-active');
             setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
@@ -798,16 +803,29 @@
             
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             
-            // 싱가포르 고정 텍스트
             document.getElementById('disp-country').innerText = "SINGAPORE";
             document.getElementById('disp-circuit').innerText = "Marina Bay Street Circuit";
 
             const totalGoal = state.q1 + state.q2 + state.q3;
             let targetP = 0;
             let stepText = "[Q1]"; let nameText = "HOTEL";
-            if (state.currentAmount < state.q1) { targetP = state.currentAmount / state.q1; stepText = "[Q1]"; nameText = "HOTEL"; }
-            else if (state.currentAmount < (state.q1 + state.q2)) { targetP = (state.currentAmount - state.q1) / state.q2; stepText = "[Q2]"; nameText = "FLIGHT"; }
-            else { targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; stepText = "[Q3]"; nameText = "GRANDSTAND"; if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } }
+            
+            // Q1: 호텔 확보 구간 (160만)
+            if (state.currentAmount < state.q1) { 
+                targetP = state.currentAmount / state.q1; 
+                stepText = "[Q1]"; nameText = "HOTEL"; 
+            } 
+            // Q2: 항공권 확보 구간 (누적 240만)
+            else if (state.currentAmount < (state.q1 + state.q2)) { 
+                targetP = (state.currentAmount - state.q1) / state.q2; 
+                stepText = "[Q2]"; nameText = "FLIGHT"; 
+            } 
+            // Q3: 티켓 및 체류비 구간 (누적 500만)
+            else { 
+                targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; 
+                stepText = "[Q3]"; nameText = "TICKET"; 
+                if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } 
+            } 
             
             document.getElementById('session-step').innerText = stepText;
             document.getElementById('session-name').innerText = nameText;
