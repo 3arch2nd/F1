@@ -114,6 +114,17 @@
             --marker-text: #000000; 
         }
 
+/* [추가] 10. McLaren (파파야 오렌지 & 크롬/블랙) */
+        body.mclaren { 
+            --team-bg: #151515; /* 짙은 카본 블랙 */
+            --team-radio-bg: rgba(21, 21, 21, 0.95); 
+            --team-primary: #FF8000; /* 시그니처 파파야 오렌지 */
+            --team-accent: #47C7FC; /* 포인트 컬러 (구글 크롬 블루 느낌) */
+            --track-active-color: #FF8000;
+            --marker-bg: #FF8000;
+            --marker-text: #000000; /* 오렌지 배경 위엔 검은 글씨 */
+        }
+
         /* 8. Alpine */
         body.alpine { 
             --team-bg: #00102A; 
@@ -558,6 +569,7 @@
                     <option value="redbull">ORACLE RED BULL RACING</option>
                     <option value="mercedes">MERCEDES-AMG PETRONAS</option>
                     <option value="ferrari">SCUDERIA FERRARI HP</option>
+                    <option value="mclaren">MCLAREN F1 TEAM</option>
                     <option value="astonmartin">ASTON MARTIN ARAMCO</option>
                     <option value="alpine">BWT ALPINE F1 TEAM</option>
                     <option value="williams">WILLIAMS RACING</option>
@@ -609,6 +621,7 @@
             redbull: { name: 'Red Bull Racing', drivers: ['VERSTAPPEN', 'LAWSON'] },
             mercedes: { name: 'Mercedes-AMG', drivers: ['ANTONELLI', 'RUSSELL'] },
             ferrari: { name: 'Ferrari HP', drivers: ['LECLERC', 'HAMILTON'] },
+            mclaren: { name: 'McLaren F1', drivers: ['NORRIS', 'PIASTRI'] },
             astonmartin: { name: 'Aston Martin', drivers: ['ALONSO', 'STROLL'] },
             alpine: { name: 'Alpine', drivers: ['GASLY', 'DOOHAN'] },
             williams: { name: 'Williams', drivers: ['ALBON', 'SAINZ'] },
@@ -701,7 +714,7 @@ let isMuted = false;
         function onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) bgmPlayer.playVideo(); }
 
         const driverList = [
-            { id: 'VER', speed: 1.25 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
+            { id: 'VER', speed: 1.25 }, { id: 'NOR', speed: 1.22 }, { id: 'PIA', speed: 1.19 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
             { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, { id: 'PER', speed: 1.05 },
             { id: 'GAS', speed: 1.02 }, { id: 'OCO', speed: 1.00 }, { id: 'ALB', speed: 0.98 }, { id: 'BEA', speed: 0.97 },
             { id: 'TSU', speed: 0.96 }, { id: 'STR', speed: 0.95 }, { id: 'HUL', speed: 0.96 }, 
@@ -967,6 +980,8 @@ let isMuted = false;
             if(name === 'ANTONELLI') return 'ANT';
             if(name === 'LECLERC') return 'LEC';
             if(name === 'HAMILTON') return 'HAM';
+            if(name === 'NORRIS') return 'NOR';   // 💡 [추가]
+            if(name === 'PIASTRI') return 'PIA';  // 💡 [추가]
             if(name === 'ALONSO') return 'ALO';
             if(name === 'STROLL') return 'STR';
             if(name === 'GASLY') return 'GAS';
