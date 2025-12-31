@@ -20,33 +20,57 @@
             --text-color: #ffffff;
             --font-display: 'Michroma', sans-serif;
             --gray-track: rgba(255, 255, 255, 0.4); 
-            --f1-purple: #B624FF;
+            --f1-purple: #B624FF; /* Fastest Lap Purple */
             
-            /* 기본값 */
+            /* 기본값: 트랙은 이제 전 팀 공통으로 보라색입니다 💜 */
             --team-bg: #060025;
             --team-radio-bg: rgba(6, 0, 37, 0.95);
             --team-primary: #3671C6;
             --team-accent: #FF1E00;
-            --track-active-color: #3671C6;
+            --track-active-color: var(--f1-purple); 
             --marker-bg: #3671C6;
             --marker-text: #ffffff;
         }
 
         /* 🎨 2026 F1 Team Colors */
 
-        /* 1. Red Bull */
+        /* 1. Red Bull - 블루 텍스트 & 파형 / 레드 버튼 / 보라색 트랙 */
         body.redbull { 
             --team-bg: #060025; 
             --team-radio-bg: rgba(6, 0, 37, 0.95); 
-            --team-primary: #3671C6; 
+            --team-primary: #3671C6; /* 팀 블루 (파형) */
             --team-accent: #FCD116; 
-            --track-active-color: #D500F9; 
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #FFEC00; 
             --marker-text: #000000; 
         }
-        body.redbull .bar { background-color: #FF1E00 !important; } 
-        body.redbull .radio-label { color: #FF1E00 !important; } 
-        body.redbull .radio-box { border-color: rgba(255, 30, 0, 0.4); } 
+
+        /* [Red Bull] 드라이버 이름 & CUR 금액 -> 팀 블루 */
+        body.redbull .driver-name span,
+        body.redbull #txt-current { 
+            color: #3671C6 !important; 
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* [Red Bull] 타겟 금액 -> 연한 흰색 */
+        body.redbull #txt-goal { color: rgba(255, 255, 255, 0.6); }
+
+        /* [Red Bull] 라디오 라벨 -> 흰색 */
+        body.redbull .radio-label { color: #ffffff !important; }
+
+        /* [Red Bull] 버튼 -> 레드 포인트 🏎️🔥 */
+        body.redbull .box-btn {
+            color: #FF1E00;
+            border-color: #FF1E00;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            body.redbull .box-btn:hover { 
+                background-color: #FF1E00; color: #fff; box-shadow: 0 0 20px rgba(255, 30, 0, 0.6); 
+            }
+        }
+        body.redbull .box-btn:active, body.redbull .box-btn.flash-active { 
+            background-color: #FF1E00 !important; color: #fff !important; box-shadow: 0 0 20px rgba(255, 30, 0, 0.8) !important; 
+        }
 
         /* 2. Mercedes */
         body.mercedes { 
@@ -54,7 +78,7 @@
             --team-radio-bg: rgba(20, 20, 20, 0.95); 
             --team-primary: #00D2BE; 
             --team-accent: #00D2BE; 
-            --track-active-color: #00D2BE;
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #00D2BE;
             --marker-text: #000000; 
         }
@@ -65,7 +89,7 @@
             --team-radio-bg: rgba(40, 0, 0, 0.95); 
             --team-primary: #FF2800; 
             --team-accent: #FFF200; 
-            --track-active-color: #FF2800;
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #FF2800;
             --marker-text: #ffffff; 
         }
@@ -76,7 +100,7 @@
             --team-radio-bg: rgba(28, 28, 28, 0.95); 
             --team-primary: #C0C0C0; 
             --team-accent: #FF0000; 
-            --track-active-color: #C0C0C0; 
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #C0C0C0;
             --marker-text: #000000; 
         }
@@ -87,42 +111,71 @@
             --team-radio-bg: rgba(10, 10, 10, 0.95); 
             --team-primary: #E6002B; 
             --team-accent: #FFFFFF; 
-            --track-active-color: #E6002B;
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #E6002B;
             --marker-text: #ffffff;
         }
 
-        /* 6. Aston Martin */
+        /* 6. Aston Martin - 네온 연두 포인트 */
         body.astonmartin { 
             --team-bg: #002420; 
             --team-radio-bg: rgba(0, 36, 32, 0.95); 
-            --team-primary: #00594F; 
+            --team-primary: #CEDC00; 
             --team-accent: #CEDC00; 
-            --track-active-color: #CEDC00; 
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #CEDC00;
             --marker-text: #000000; 
         }
+        body.astonmartin .box-btn { color: #CEDC00; border-color: #CEDC00; }
+        @media (hover: hover) and (pointer: fine) {
+            body.astonmartin .box-btn:hover { background-color: #CEDC00; color: #002420; box-shadow: 0 0 20px rgba(206, 220, 0, 0.6); }
+        }
+        body.astonmartin .box-btn:active, body.astonmartin .box-btn.flash-active { 
+            background-color: #CEDC00 !important; color: #002420 !important; box-shadow: 0 0 25px rgba(206, 220, 0, 0.8) !important; 
+        }
         
-        /* 7. RB */
+        /* 7. RB (Visa Cash App RB) - 블루 파형 / 그린 텍스트 & 버튼 / 보라색 트랙 */
         body.rb { 
-            --team-bg: #08082A; 
-            --team-radio-bg: rgba(8, 8, 42, 0.95); 
-            --team-primary: #1633C8; 
-            --team-accent: #FFFFFF; 
-            --track-active-color: #1633C8;
+            --team-bg: #040814; 
+            --team-radio-bg: rgba(4, 8, 20, 0.95); 
+            --team-primary: #3671C6; /* 파형: 블루 🔵 */
+            --team-accent: #00D632;  /* 포인트: 그린 🟢 */
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #FFFFFF;
-            --marker-text: #000000; 
+            --marker-text: #040814; 
         }
 
-/* [추가] 10. McLaren (파파야 오렌지 & 크롬/블랙) */
+        /* [RB] 텍스트 정보 -> 그린 */
+        body.rb .driver-name span, body.rb .session-step, body.rb .circuit-country { color: #00D632 !important; }
+        /* [RB] 라디오 라벨 -> 흰색 */
+        body.rb .radio-label { color: #ffffff !important; opacity: 0.8; }
+        /* [RB] 파형 -> 블루 */
+        body.rb .bar { background-color: #3671C6 !important; }
+        /* [RB] 버튼 -> 그린 */
+        body.rb .box-btn { color: #00D632; border-color: #00D632; }
+        @media (hover: hover) and (pointer: fine) {
+            body.rb .box-btn:hover { background-color: #00D632; color: #ffffff; box-shadow: 0 0 20px rgba(0, 214, 50, 0.5); }
+        }
+        body.rb .box-btn:active, body.rb .box-btn.flash-active { 
+            background-color: #00D632 !important; color: #ffffff !important; box-shadow: 0 0 25px rgba(0, 214, 50, 0.7) !important; 
+        }
+
+        /* 10. McLaren - 파파야 오렌지 */
         body.mclaren { 
-            --team-bg: #151515; /* 짙은 카본 블랙 */
+            --team-bg: #151515; 
             --team-radio-bg: rgba(21, 21, 21, 0.95); 
-            --team-primary: #FF8000; /* 시그니처 파파야 오렌지 */
-            --team-accent: #47C7FC; /* 포인트 컬러 (구글 크롬 블루 느낌) */
-            --track-active-color: #FF8000;
+            --team-primary: #FF8000; 
+            --team-accent: #FF8000; 
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #FF8000;
-            --marker-text: #000000; /* 오렌지 배경 위엔 검은 글씨 */
+            --marker-text: #000000; 
+        }
+        body.mclaren .box-btn { color: #FF8000; border-color: #FF8000; }
+        @media (hover: hover) and (pointer: fine) {
+            body.mclaren .box-btn:hover { background-color: #FF8000; color: #000000; box-shadow: 0 0 20px rgba(255, 128, 0, 0.6); }
+        }
+        body.mclaren .box-btn:active, body.mclaren .box-btn.flash-active { 
+            background-color: #FF8000 !important; color: #000000 !important; box-shadow: 0 0 20px rgba(255, 128, 0, 0.8) !important; 
         }
 
         /* 8. Alpine */
@@ -131,7 +184,7 @@
             --team-radio-bg: rgba(0, 16, 42, 0.95); 
             --team-primary: #0090FF; 
             --team-accent: #FD4BC7; 
-            --track-active-color: #0090FF;
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #0090FF;
             --marker-text: #ffffff;
         }
@@ -142,7 +195,7 @@
             --team-radio-bg: rgba(4, 0, 21, 0.95); 
             --team-primary: #00A0DE; 
             --team-accent: #FFFFFF; 
-            --track-active-color: #00A0DE;
+            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
             --marker-bg: #00A0DE;
             --marker-text: #ffffff;
         }
