@@ -381,17 +381,23 @@
             0%, 100% { height: 3px; } 
             50% { height: var(--eq-height, 10px); } 
         }
+        /* 💡 [수정] 엔지니어 메시지: 은은한 흐린 흰색으로 변경 */
         .quote-box { 
             font-family: var(--font-display); 
             font-style: italic; 
             font-weight: 400; 
             font-size: 11px; 
             letter-spacing: -0.5px; 
-            line-height: 1.5; /* 💡 줄간격(행간)을 넓혀 가독성 개선 (1.3 -> 1.5) */
+            line-height: 1.5; 
+            color: rgba(255, 255, 255, 0.6); /* 💡 쨍한 흰색 대신 흐린 흰색 적용 */
         }
-        .quote-box::before { content: "“"; color: #fff; margin-right: 4px; }
-        .quote-box::after { content: "”"; color: #fff; margin-left: 4px; }
-        .top-msg { text-align: left; color: #fff; }
+        
+        /* 따옴표 색상도 텍스트와 동일하게 흐리게 처리 */
+        .quote-box::before { content: "“"; color: rgba(255, 255, 255, 0.6); margin-right: 4px; }
+        .quote-box::after { content: "”"; color: rgba(255, 255, 255, 0.6); margin-left: 4px; }
+        
+        /* .top-msg의 강제 흰색(#fff) 제거 -> 위에서 설정한 흐린 색을 따름 */
+        .top-msg { text-align: left; }
         .bottom-data { text-align: right; color: var(--team-accent); }
         .amount-container { display: inline-block; text-align: right; }
         .amount-row { display: block; line-height: 1.2; font-size: 11px; font-weight: bold; }
