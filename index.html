@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <title>Race to Singapore</title>
+    <title>Race to World Tour</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,199 +19,131 @@
             --bg-color: #121212;
             --text-color: #ffffff;
             --font-display: 'Michroma', sans-serif;
-            --gray-track: rgba(255, 255, 255, 0.4); 
-            --f1-purple: #B624FF; /* Fastest Lap Purple */
-            
-            /* 기본값: 트랙은 이제 전 팀 공통으로 보라색입니다 💜 */
+            --gray-track: rgba(255, 255, 255, 0.4);
+            --f1-purple: #B624FF;
             --team-bg: #060025;
             --team-radio-bg: rgba(6, 0, 37, 0.95);
             --team-primary: #3671C6;
             --team-accent: #FF1E00;
-            --track-active-color: var(--f1-purple); 
+            --track-active-color: var(--f1-purple);
             --marker-bg: #3671C6;
             --marker-text: #ffffff;
+            --dynamic-stroke: 10px;
         }
 
-        /* 🎨 2026 F1 Team Colors */
-
-        /* 1. Red Bull - 블루 텍스트 & 파형 / 레드 버튼 / 보라색 트랙 */
-        body.redbull { 
-            --team-bg: #060025; 
-            --team-radio-bg: rgba(6, 0, 37, 0.95); 
-            --team-primary: #3671C6; /* 팀 블루 (파형) */
-            --team-accent: #FCD116; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #FFEC00; 
-            --marker-text: #000000; 
+        /* 💡 [수정] 리더보드 위치 */
+        #leaderboard {
+            position: absolute;
+            top: 230px;
+            left: 15px;
+            width: 120px;
+            z-index: 900;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            pointer-events: none;
         }
 
-        /* [Red Bull] 드라이버 이름 & CUR 금액 -> 팀 블루 */
-        body.redbull .driver-name span,
-        body.redbull #txt-current { 
-            color: #3671C6 !important; 
-            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        /* 💡 [수정] 글자가 길어도 절대 줄바꿈 안 되게 설정 & 중앙 정렬 느낌 */
+        #race-status-display {
+            position: absolute;
+            top: 195px;
+            left: 15px;
+            width: auto;
+            min-width: 120px;
+            padding: 0 12px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 11px;
+            font-family: var(--font-display);
+            border-radius: 4px;
+            z-index: 901;
+            opacity: 0;
+            transition: opacity 0.3s;
+            letter-spacing: 1px;
+            white-space: nowrap; /* 🚨 핵심: 줄바꿈 절대 금지 */
+            box-sizing: border-box;
         }
 
-        /* [Red Bull] 타겟 금액 -> 연한 흰색 */
+        /* 상태별 스타일 */
+        .status-sc { background-color: #FF8700; color: #000; box-shadow: 0 0 10px #FF8700; }
+        .status-yellow { background-color: #FFD700; color: #000; box-shadow: 0 0 10px #FFD700; }
+        .status-green { background-color: #00D632; color: #fff; box-shadow: 0 0 10px #00D632; }
+
+        /* 고장난 차량 스타일 (깜빡임) */
+        .ai-marker.stopped rect { fill: #333 !important; stroke: #FF0000 !important; stroke-width: 2px; }
+        .ai-marker.stopped text { fill: #FF0000 !important; }
+
+        /* 행 높이 및 폰트 축소 */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            height: 20px; /* 24px -> 20px로 축소 */
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 2px;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            width: 100%;
+        }
+
+        .lb-pos {
+            width: 22px; /* 너비 축소 */
+            text-align: center;
+            font-size: 9px; /* 폰트 축소 */
+            font-weight: bold;
+            color: #ffffff !important;
+            font-family: var(--font-display);
+        }
+
+        .lb-color-strip {
+            width: 3px; /* 4px -> 3px */
+            height: 100%;
+        }
+
+        .lb-name {
+            flex: 1;
+            font-size: 10px; /* 12px -> 10px */
+            font-weight: bold;
+            color: #ffffff;
+            font-family: var(--font-display);
+            letter-spacing: 0px;
+            padding-left: 5px;
+        }
+
+        /* 📱 반응형 가시성 제어 */
+        @media (max-width: 1024px) or (max-height: 750px) {
+            #leaderboard { display: none; }
+        }
+
+        /* Team Styles */
+        body.redbull { --team-bg: #060025; --team-radio-bg: rgba(6, 0, 37, 0.95); --team-primary: #3671C6; --team-accent: #FCD116; --track-active-color: var(--f1-purple); --marker-bg: #FFEC00; --marker-text: #000000; }
+        body.redbull .driver-name span, body.redbull #txt-current { color: #3671C6 !important; text-shadow: 0 0 2px rgba(0, 0, 0, 0.5); }
         body.redbull #txt-goal { color: rgba(255, 255, 255, 0.6); }
-
-        /* [Red Bull] 라디오 라벨 -> 흰색 */
         body.redbull .radio-label { color: #ffffff !important; }
+        body.redbull .box-btn { color: #FF1E00; border-color: #FF1E00; }
+        @media (hover: hover) and (pointer: fine) { body.redbull .box-btn:hover { background-color: #FF1E00; color: #fff; box-shadow: 0 0 20px rgba(255, 30, 0, 0.6); } }
+        body.redbull .box-btn:active, body.redbull .box-btn.flash-active { background-color: #FF1E00 !important; color: #fff !important; box-shadow: 0 0 20px rgba(255, 30, 0, 0.8) !important; }
 
-        /* [Red Bull] 버튼 -> 레드 포인트 🏎️🔥 */
-        body.redbull .box-btn {
-            color: #FF1E00;
-            border-color: #FF1E00;
-        }
-        @media (hover: hover) and (pointer: fine) {
-            body.redbull .box-btn:hover { 
-                background-color: #FF1E00; color: #fff; box-shadow: 0 0 20px rgba(255, 30, 0, 0.6); 
-            }
-        }
-        body.redbull .box-btn:active, body.redbull .box-btn.flash-active { 
-            background-color: #FF1E00 !important; color: #fff !important; box-shadow: 0 0 20px rgba(255, 30, 0, 0.8) !important; 
-        }
-
-        /* 2. Mercedes */
-        body.mercedes { 
-            --team-bg: #121212; 
-            --team-radio-bg: rgba(20, 20, 20, 0.95); 
-            --team-primary: #00D2BE; 
-            --team-accent: #00D2BE; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #00D2BE;
-            --marker-text: #000000; 
-        }
-        
-        /* 3. Ferrari */
-        body.ferrari { 
-            --team-bg: #1A0000; 
-            --team-radio-bg: rgba(40, 0, 0, 0.95); 
-            --team-primary: #FF2800; 
-            --team-accent: #FFF200; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #FF2800;
-            --marker-text: #ffffff; 
-        }
-        
-        /* 4. Sauber / Audi */
-        body.sauber { 
-            --team-bg: #1C1C1C; 
-            --team-radio-bg: rgba(28, 28, 28, 0.95); 
-            --team-primary: #C0C0C0; 
-            --team-accent: #FF0000; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #C0C0C0;
-            --marker-text: #000000; 
-        }
-        
-        /* 5. Haas */
-        body.haas { 
-            --team-bg: #000000; 
-            --team-radio-bg: rgba(10, 10, 10, 0.95); 
-            --team-primary: #E6002B; 
-            --team-accent: #FFFFFF; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #E6002B;
-            --marker-text: #ffffff;
-        }
-
-        /* 6. Aston Martin - 네온 연두 포인트 */
-        body.astonmartin { 
-            --team-bg: #002420; 
-            --team-radio-bg: rgba(0, 36, 32, 0.95); 
-            --team-primary: #CEDC00; 
-            --team-accent: #CEDC00; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #CEDC00;
-            --marker-text: #000000; 
-        }
-        body.astonmartin .box-btn { color: #CEDC00; border-color: #CEDC00; }
-        @media (hover: hover) and (pointer: fine) {
-            body.astonmartin .box-btn:hover { background-color: #CEDC00; color: #002420; box-shadow: 0 0 20px rgba(206, 220, 0, 0.6); }
-        }
-        body.astonmartin .box-btn:active, body.astonmartin .box-btn.flash-active { 
-            background-color: #CEDC00 !important; color: #002420 !important; box-shadow: 0 0 25px rgba(206, 220, 0, 0.8) !important; 
-        }
-        
-        /* 7. RB (Visa Cash App RB) - 블루 파형 / 그린 텍스트 & 버튼 / 보라색 트랙 */
-        body.rb { 
-            --team-bg: #040814; 
-            --team-radio-bg: rgba(4, 8, 20, 0.95); 
-            --team-primary: #3671C6; /* 파형: 블루 🔵 */
-            --team-accent: #00D632;  /* 포인트: 그린 🟢 */
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #FFFFFF;
-            --marker-text: #040814; 
-        }
-
-        /* [RB] 텍스트 정보 -> 그린 */
-        body.rb .driver-name span, body.rb .session-step, body.rb .circuit-country { color: #00D632 !important; }
-        /* [RB] 라디오 라벨 -> 흰색 */
-        body.rb .radio-label { color: #ffffff !important; opacity: 0.8; }
-        /* [RB] 파형 -> 블루 */
-        body.rb .bar { background-color: #3671C6 !important; }
-        /* [RB] 버튼 -> 그린 */
-        body.rb .box-btn { color: #00D632; border-color: #00D632; }
-        @media (hover: hover) and (pointer: fine) {
-            body.rb .box-btn:hover { background-color: #00D632; color: #ffffff; box-shadow: 0 0 20px rgba(0, 214, 50, 0.5); }
-        }
-        body.rb .box-btn:active, body.rb .box-btn.flash-active { 
-            background-color: #00D632 !important; color: #ffffff !important; box-shadow: 0 0 25px rgba(0, 214, 50, 0.7) !important; 
-        }
-
-        /* 10. McLaren - 파파야 오렌지 */
-        body.mclaren { 
-            --team-bg: #151515; 
-            --team-radio-bg: rgba(21, 21, 21, 0.95); 
-            --team-primary: #FF8000; 
-            --team-accent: #FF8000; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #FF8000;
-            --marker-text: #000000; 
-        }
+        body.mercedes { --team-bg: #121212; --team-radio-bg: rgba(20, 20, 20, 0.95); --team-primary: #00D2BE; --team-accent: #00D2BE; --track-active-color: var(--f1-purple); --marker-bg: #00D2BE; --marker-text: #000000; }
+        body.ferrari { --team-bg: #1A0000; --team-radio-bg: rgba(40, 0, 0, 0.95); --team-primary: #FF2800; --team-accent: #FFF200; --track-active-color: var(--f1-purple); --marker-bg: #FF2800; --marker-text: #ffffff; }
+        body.mclaren { --team-bg: #151515; --team-radio-bg: rgba(21, 21, 21, 0.95); --team-primary: #FF8000; --team-accent: #FF8000; --track-active-color: var(--f1-purple); --marker-bg: #FF8000; --marker-text: #000000; }
         body.mclaren .box-btn { color: #FF8000; border-color: #FF8000; }
-        @media (hover: hover) and (pointer: fine) {
-            body.mclaren .box-btn:hover { background-color: #FF8000; color: #000000; box-shadow: 0 0 20px rgba(255, 128, 0, 0.6); }
-        }
-        body.mclaren .box-btn:active, body.mclaren .box-btn.flash-active { 
-            background-color: #FF8000 !important; color: #000000 !important; box-shadow: 0 0 20px rgba(255, 128, 0, 0.8) !important; 
-        }
-
-        /* 8. Alpine */
-        body.alpine { 
-            --team-bg: #00102A; 
-            --team-radio-bg: rgba(0, 16, 42, 0.95); 
-            --team-primary: #0090FF; 
-            --team-accent: #FD4BC7; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #0090FF;
-            --marker-text: #ffffff;
-        }
+        @media (hover: hover) and (pointer: fine) { body.mclaren .box-btn:hover { background-color: #FF8000; color: #000000; box-shadow: 0 0 20px rgba(255, 128, 0, 0.6); } }
+        body.mclaren .box-btn:active, body.mclaren .box-btn.flash-active { background-color: #FF8000 !important; color: #000000 !important; box-shadow: 0 0 20px rgba(255, 128, 0, 0.8) !important; }
         
-        /* 9. Williams */
-        body.williams { 
-            --team-bg: #040015; 
-            --team-radio-bg: rgba(4, 0, 21, 0.95); 
-            --team-primary: #00A0DE; 
-            --team-accent: #FFFFFF; 
-            --track-active-color: var(--f1-purple); /* 트랙: 보라 */
-            --marker-bg: #00A0DE;
-            --marker-text: #ffffff;
-        }
+        body.astonmartin { --team-bg: #002420; --team-primary: #CEDC00; --team-accent: #CEDC00; }
+        body.alpine { --team-bg: #00102A; --team-primary: #0090FF; --team-accent: #FD4BC7; }
+        body.williams { --team-bg: #040015; --team-primary: #00A0DE; --team-accent: #FFFFFF; }
+        body.rb { --team-bg: #040814; --team-primary: #3671C6; --team-accent: #00D632; }
+        body.sauber { --team-bg: #1C1C1C; --team-primary: #C0C0C0; --team-accent: #FF0000; }
+        body.haas { --team-bg: #000000; --team-primary: #E6002B; --team-accent: #FFFFFF; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background-color: var(--team-bg); 
-            color: var(--text-color); 
-            font-family: var(--font-display); 
-            height: 100vh;
-            height: 100dvh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            transition: background 0.5s ease; 
-        }
+        body { background-color: var(--team-bg); color: var(--text-color); font-family: var(--font-display); height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; transition: background 0.5s ease; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; }
         .lights-container { display: flex; gap: 15px; padding: 20px; background: #111; border-radius: 10px; border: 2px solid #333; margin-bottom: 30px; }
@@ -224,272 +156,129 @@
         #start-engine-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255,255,255,0.6); }
         #bgm-player { position: absolute; top: -9999px; left: -9999px; visibility: hidden; pointer-events: none; }
 
-        /* 💡 [수정] 헤더 레이아웃 개선: 높이 압축 및 왼쪽 정렬 */
-        .header-container { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            padding: 40px 20px 0 20px; 
-            display: flex; 
-            gap: 15px; 
-            z-index: 100; 
-            align-items: flex-start; /* 상단 기준 정렬 */
-            justify-content: space-between; 
-        }
+        .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 15px; z-index: 100; align-items: flex-start; justify-content: space-between; }
+        .logo-box { flex: 0 1 auto; width: auto; background: transparent; border: none; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 0; }
+        .f1-logo { width: 60px; height: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 15px; }
+        .circuit-info { text-align: left; margin-top: 0; width: 100%; }
+        .circuit-country { font-size: 10px; color: var(--team-accent); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        .circuit-name { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: normal; margin-top: 2px; line-height: 1.2; white-space: nowrap; }
+        .status-container { display: flex; flex-direction: row; align-items: center; gap: 6px; margin-top: 15px; }
+        .session-step { font-size: 11px; font-weight: bold; color: var(--team-accent); letter-spacing: 1px; }
+        .session-name { font-size: 11px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 
-        /* 왼쪽 정보 영역: 정렬을 왼쪽으로, 너비 자동 조정 */
-        .logo-box { 
-            flex: 0 1 auto; /* 필요한 만큼만 공간 차지 */
-            width: auto; 
-            background: transparent; 
-            border: none; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-start; 
-            align-items: flex-start; /* 왼쪽 정렬 핵심 */
-            padding: 0; 
-        }
-
-        /* 로고 크기 축소 */
-        .f1-logo { 
-            width: 60px; 
-            height: auto; 
-            object-fit: contain; 
-            filter: brightness(0) invert(1); 
-            margin-bottom: 15px; /* 💡 로고 아래 간격 증가 (8px -> 15px) */
-        }
-
-        /* 텍스트 왼쪽 정렬 및 여백 정리 */
-        .circuit-info { 
-            text-align: left; /* 왼쪽 정렬 */
-            margin-top: 0; 
-            width: 100%; 
-        }
-
-        .circuit-country { 
-            font-size: 10px; 
-            color: var(--team-accent); 
-            font-weight: bold; 
-            letter-spacing: 1px; 
-            text-transform: uppercase; 
-        }
-
-        .circuit-name { 
-            font-size: 9px; 
-            color: rgba(255,255,255,0.7); 
-            font-weight: normal; 
-            margin-top: 2px; 
-            line-height: 1.2; 
-            white-space: nowrap; /* 줄바꿈 방지 */
-        }
-
-        /* 상태 표시(Q1, HOTEL) 왼쪽 정렬 및 간격 조정 */
-        .status-container { 
-            display: flex; 
-            flex-direction: row; 
-            align-items: center; 
-            gap: 6px; 
-            margin-top: 15px; /* 💡 위쪽 요소와의 간격 증가 (10px -> 15px) */
-        }
-
-        .session-step { 
-            font-size: 11px; /* 가독성 위해 약간 키움 */
-            font-weight: bold; 
-            color: var(--team-accent); 
-            letter-spacing: 1px; 
-        }
-
-        .session-name { 
-            font-size: 11px; 
-            font-weight: bold; 
-            color: #fff; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            white-space: nowrap; 
-        }
-
-        /* 💡 [수정] 너비 축소 (220px -> 180px) */
-        .radio-box { 
-            flex: 0 0 auto; 
-            width: 180px; /* 모바일 안전폭으로 변경 */
-            background: var(--team-radio-bg); 
-            border: 4px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 4px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            margin-left: auto; 
-            border: 1px solid rgba(255,255,255,0.2); 
-        }
-
-/* 2. 오른쪽 라디오 박스: 내부 여백과 줄 간격 대폭 확보 */
-        .radio-content-section { 
-            padding: 15px 10px 20px 10px; /* 💡 위아래 패딩을 넉넉하게 늘림 */
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; /* 💡 질문과 답변 사이 간격 2배 이상 확보 (5px -> 12px) */
-            justify-content: center; /* 내용물을 세로 중앙에 배치 */
-            flex: 1; /* 박스 남은 공간을 채우도록 설정 */
-        }
-
-        .radio-top-section { 
-            padding: 8px 8px 0px 8px; /* 내부 여백도 살짝 줄임 */
-            text-align: right; 
-            overflow: hidden; 
-        }
-
-        /* 💡 [수정] 좁아진 폭에 맞춰 폰트 크기 미세 조정 (14px -> 13px) */
-        .driver-name { 
-            font-size: 13px; 
-            font-weight: bold; 
-            color: #fff; 
-            text-transform: uppercase; 
-            letter-spacing: -0.5px; 
-            transform: scaleX(1.1); 
-            transform-origin: right; 
-            display: inline-block; 
-            white-space: nowrap; 
-        }
-
+        .radio-box { flex: 0 0 auto; width: 180px; background: var(--team-radio-bg); border: 4px solid rgba(255, 255, 255, 0.1); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-left: auto; border: 1px solid rgba(255,255,255,0.2); }
+        .radio-content-section { padding: 15px 10px 20px 10px; display: flex; flex-direction: column; gap: 12px; justify-content: center; flex: 1; }
+        .radio-top-section { padding: 8px 8px 0px 8px; text-align: right; overflow: hidden; }
+        .driver-name { font-size: 13px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: -0.5px; transform: scaleX(1.1); transform-origin: right; display: inline-block; white-space: nowrap; }
         .driver-name span { color: var(--team-accent); }
-        
-
-
-        .radio-label { 
-            display: block; 
-            margin-top: 2px; 
-            font-size: 8px; 
-            font-weight: bold; 
-            color: #fff; 
-            letter-spacing: 2px; 
-            opacity: 0.8; 
-        }
+        .radio-label { display: block; margin-top: 2px; font-size: 8px; font-weight: bold; color: #fff; letter-spacing: 2px; opacity: 0.8; }
         .audio-wave-divider { width: 100%; height: 20px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px; margin: 5px 0; }
-        /* 💡 [수정] 오디오 바: 직각 형태(Square) & 단일 색상(Solid) */
-        .bar { 
-            flex: 1; 
-            margin: 0 1px; 
-            background-color: var(--team-primary); /* 팀 컬러 단색 유지 */
-            transform-origin: bottom; 
-            height: 3px; 
-            border-radius: 0; /* 💡 둥근 모서리 제거 -> 완전한 사각형 */
-        }
-
-        /* 💡 [수정] 투명도 변화 제거, 높이만 깔끔하게 변화 */
-        @keyframes equalizer { 
-            0%, 100% { height: 3px; } 
-            50% { height: var(--eq-height, 10px); } 
-        }
-        /* 💡 [수정] 엔지니어 메시지: 은은한 흐린 흰색으로 변경 */
-        .quote-box { 
-            font-family: var(--font-display); 
-            font-style: italic; 
-            font-weight: 400; 
-            font-size: 11px; 
-            letter-spacing: -0.5px; 
-            line-height: 1.5; 
-            color: rgba(255, 255, 255, 0.6); /* 💡 쨍한 흰색 대신 흐린 흰색 적용 */
-        }
-        
-        /* 따옴표 색상도 텍스트와 동일하게 흐리게 처리 */
+        .bar { flex: 1; margin: 0 1px; background-color: var(--team-primary); transform-origin: bottom; height: 3px; border-radius: 0; }
+        @keyframes equalizer { 0%, 100% { height: 3px; } 50% { height: var(--eq-height, 10px); } }
+        .quote-box { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 11px; letter-spacing: -0.5px; line-height: 1.5; color: rgba(255, 255, 255, 0.6); }
         .quote-box::before { content: "“"; color: rgba(255, 255, 255, 0.6); margin-right: 4px; }
         .quote-box::after { content: "”"; color: rgba(255, 255, 255, 0.6); margin-left: 4px; }
-        
-        /* .top-msg의 강제 흰색(#fff) 제거 -> 위에서 설정한 흐린 색을 따름 */
         .top-msg { text-align: left; }
         .bottom-data { text-align: right; color: var(--team-accent); }
         .amount-container { display: inline-block; text-align: right; }
         .amount-row { display: block; line-height: 1.2; font-size: 11px; font-weight: bold; }
         .amount-goal { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; font-family: var(--font-display); font-weight: normal; }
 
-        .track-container { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; padding: 140px 20px 20px 20px; overflow: hidden; min-height: 0; }
-        svg.track-svg { width: 100%; height: 100%; max-width: 900px; overflow: visible; }
-        .track-path-bg { fill: none; stroke: var(--gray-track); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
-        .track-path-active { fill: none; stroke: var(--track-active-color); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 10px var(--track-active-color)); transition: stroke-dasharray 0.5s ease, stroke 0.5s ease; }
+        .track-container { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: relative; 
+            overflow: hidden; 
+            min-height: 0; 
+            
+            /* 📱 [모바일 기본] */
+            padding: 190px 20px 60px 20px; 
+        }
+
+        /* 💻 [데스크탑/태블릿] */
+        @media (min-width: 768px) {
+            .track-container {
+                padding: 150px 120px 40px 100px; 
+            }
+        }
+
+        svg.track-svg { 
+            width: 100%; 
+            height: 100%; 
+            
+            /* 💡 [핵심] 기존 800px 제한을 풀고, 데스크탑에서 훨씬 커지도록 설정 */
+            max-width: 1400px;  
+            
+            /* 너무 위아래로 길어지는 것을 방지 (화면 높이의 80%까지만) */
+            max-height: 80vh; 
+            
+            overflow: visible; 
+            transition: all 0.5s ease; /* 크기 변할 때 부드럽게 */
+        }
+        /* 💡 트랙 굵기 조정 (14 -> 10) */
+        .track-path-bg { 
+            fill: none; 
+            stroke: var(--gray-track); 
+            stroke-width: var(--dynamic-stroke); 
+            stroke-linecap: round; 
+            stroke-linejoin: round; 
+        }
+        .track-path-active { 
+            fill: none; 
+            stroke: var(--track-active-color); 
+            stroke-width: var(--dynamic-stroke); 
+            stroke-linecap: round; 
+            stroke-linejoin: round; 
+            filter: drop-shadow(0 0 10px var(--track-active-color)); 
+            transition: stroke-dasharray 0.5s ease, stroke 0.5s ease; 
+        }
+
         .checker-box { stroke: none; }
         .checker-white { fill: #fff; }
         .checker-black { fill: #000; }
 
+        /* 💡 [수정] SC 마커: 검정 배경 + 주황 테두리 (명확한 구분) */
+        .sc-marker rect {
+            fill: #000000 !important; /* 검정색 */
+            stroke: #FF8700 !important; /* 주황색 외곽선 */
+            stroke-width: 2.5px;
+            box-shadow: 0 0 15px #FF8700;
+        }
+        .sc-marker text {
+            fill: #FF8700 !important; /* 글자도 주황색 */
+            font-weight: 900;
+            font-size: 13px; /* 글자 살짝 키움 */
+        }
+        /* 깜빡임 애니메이션 유지 */
+        .sc-marker {
+            animation: sc-blink 0.5s infinite alternate;
+            z-index: 2000 !important;
+        }
+
+        @keyframes sc-blink {
+            from { filter: drop-shadow(0 0 2px #FF8700); }
+            to { filter: drop-shadow(0 0 10px #FF8700); }
+        }
         .ai-marker { cursor: default; pointer-events: none; }
         .ai-marker circle { fill: #555; stroke: none; transition: fill 0.3s; }
         .ai-marker rect { fill: #222; rx: 4; opacity: 0.9; transition: fill 0.3s, stroke 0.3s; stroke: none; }
         .ai-marker text { fill: #fff; font-weight: 900; font-family: var(--font-display); text-anchor: middle; dominant-baseline: middle; transition: fill 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        
         .ai-marker.hero-marker rect { fill: var(--marker-bg) !important; stroke: none !important; opacity: 1; }
         .ai-marker.hero-marker text { fill: var(--marker-text) !important; font-weight: 900; text-shadow: none; }
         .ai-marker.hero-marker circle { fill: var(--team-accent) !important; r: 5; }
         .ai-marker.hero-marker { z-index: 999; filter: drop-shadow(0 0 8px var(--marker-bg)); }
 
         .controls { padding: 20px 30px 40px 30px; text-align: center; z-index: 20; position: relative; margin-top: auto; flex-shrink: 0; }
-        
-/* 💡 [수정] 모바일 호버 이슈 해결을 위한 버튼 스타일 재정의 */
-        .box-btn { 
-            background-color: transparent; 
-            color: var(--team-primary); 
-            font-family: var(--font-display); 
-            font-size: 18px; 
-            font-weight: bold; 
-            border: 2px solid var(--team-primary); 
-            padding: 18px 50px; 
-            border-radius: 4px; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            box-shadow: none; 
-            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s; 
-            position: relative; 
-            width: 100%; 
-            max-width: 300px; 
-            -webkit-tap-highlight-color: transparent; /* 모바일 탭 하이라이트 제거 */
-            outline: none; /* 포커스 아웃라인 제거 */
-        }
+        .box-btn { background-color: transparent; color: var(--team-primary); font-family: var(--font-display); font-size: 18px; font-weight: bold; border: 2px solid var(--team-primary); padding: 18px 50px; border-radius: 4px; text-transform: uppercase; cursor: pointer; box-shadow: none; transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s; position: relative; width: 100%; max-width: 300px; -webkit-tap-highlight-color: transparent; outline: none; }
+        @media (hover: hover) and (pointer: fine) { .box-btn:hover { background-color: var(--team-primary); color: #000; transform: scale(1.02); box-shadow: 0 0 15px var(--team-primary); } }
+        .box-btn:active, .box-btn.flash-active { transform: scale(0.96); background-color: var(--team-primary) !important; color: #000 !important; box-shadow: 0 0 15px var(--team-primary) !important; transition: none; }
 
-        /* PC(마우스) 환경에서만 호버 효과 적용 (모바일 제외) */
-        @media (hover: hover) and (pointer: fine) {
-            .box-btn:hover { 
-                background-color: var(--team-primary); 
-                color: #000; 
-                transform: scale(1.02); 
-                box-shadow: 0 0 15px var(--team-primary); 
-            }
-        }
-
-        /* 모바일 터치 및 클릭 시 즉각 반응 (Active) */
-        .box-btn:active, .box-btn.flash-active { 
-            transform: scale(0.96); 
-            background-color: var(--team-primary) !important; 
-            color: #000 !important; 
-            box-shadow: 0 0 15px var(--team-primary) !important; 
-            transition: none; /* 즉각 반응 */
-        }
-
-        /* 💡 [추가] 오디오 컨트롤 버튼 (좌측 하단 배치) */
-        .audio-container {
-            position: absolute;
-            bottom: 40px; /* controls 패딩과 높이 고려 */
-            left: 30px;
-            z-index: 50;
-        }
-
-        .audio-btn {
-            background: transparent;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: opacity 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
+        .audio-container { position: absolute; bottom: 40px; left: 30px; z-index: 50; }
+        .audio-btn { background: transparent; border: none; padding: 5px; cursor: pointer; opacity: 0.6; transition: opacity 0.3s; display: flex; align-items: center; justify-content: center; }
         .audio-btn:hover { opacity: 1; }
-        
-        .audio-icon {
-            width: 24px;
-            height: 24px;
-            fill: #888; /* 연한 회색 */
-        }
+        .audio-icon { width: 24px; height: 24px; fill: #888; }
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -519,10 +308,51 @@
         .fastest-lap-driver { color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
         .next-session-btn { background: var(--team-primary); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; font-weight: 900; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+/* 📱 [신규] 모바일 전용 상태 패널 스타일 */
+        .status-panel {
+            display: none; /* 평소엔 숨김 */
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 15px auto; /* 버튼과 간격 */
+            padding: 12px 0;
+            background: #000000; /* 완전 검정 배경 */
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            /* 💡 [요청] 글로우 효과(box-shadow) 없음 -> 눈부심 방지 */
+            box-shadow: none; 
+        }
+
+        /* 상태별 색상 (테두리와 글자색만 변경) */
+        .status-panel.sc { 
+            border: 2px solid #FF8700; 
+            color: #FF8700; 
+        }
+        .status-panel.yellow { 
+            border: 2px solid #FFD700; 
+            color: #FFD700; 
+        }
+        .status-panel.green { 
+            display: none !important; /* 초록불이면 즉시 숨김 */
+        }
+
+        /* PC에서는 굳이 보여줄 필요 없으므로 숨김 (원하시면 삭제 가능) */
+        @media (min-width: 1025px) {
+            .status-panel { display: none !important; }
+        }
     </style>
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body class="redbull">
+<div id="race-status-display">FLAG</div>
+
+<div id="leaderboard">
+    <div id="leaderboard-items"></div>
+</div>
 
     <div id="loading-overlay">
         <div class="lights-container">
@@ -550,8 +380,8 @@
         <div class="logo-box">
             <img src="https://i.imgur.com/jan8CSk.png" alt="F1 Logo" class="f1-logo">
             <div class="circuit-info">
-                <div class="circuit-country" id="disp-country">SINGAPORE</div>
-                <div class="circuit-name" id="disp-circuit">Marina Bay Street Circuit</div>
+                <div class="circuit-country" id="disp-country">AUSTRALIA</div>
+                <div class="circuit-name" id="disp-circuit">Albert Park Circuit</div>
             </div>
             <div class="status-container">
                 <div id="session-step" class="session-step">[Q1]</div>
@@ -568,8 +398,8 @@
                 <div class="quote-box top-msg">BUDGET CHECK.</div>
                 <div class="quote-box bottom-data">
                     <div class="amount-container">
-                        <span class="amount-row" id="txt-current">CUR ₩0</span>
-                        <span class="amount-row amount-goal" id="txt-goal">TAR ₩5,000,000</span>
+                        <div class="amount-row" id="txt-current">CUR ₩0</div>
+                        <div class="amount-row amount-goal" id="txt-goal">TAR ₩0</div>
                     </div>
                 </div>
             </div>
@@ -577,35 +407,19 @@
     </div>
 
     <div class="track-container">
-        <svg class="track-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet">
+        <svg class="track-svg" viewBox="-100 -100 1100 600" preserveAspectRatio="xMidYMid meet">
             <path id="bg-track" class="track-path-bg" />
             <path id="active-track" class="track-path-active" />
-            <g id="start-finish-line" transform="translate(1040, 435)">
-                 <rect x="0" y="0" width="10" height="5" class="checker-white"/>
-                 <rect x="10" y="0" width="10" height="5" class="checker-black"/>
-                 <rect x="0" y="5" width="10" height="5" class="checker-black"/>
-                 <rect x="10" y="5" width="10" height="5" class="checker-white"/>
-                 <rect x="0" y="10" width="10" height="5" class="checker-white"/>
-                 <rect x="10" y="10" width="10" height="5" class="checker-black"/>
-                 <rect x="0" y="15" width="10" height="5" class="checker-black"/>
-                 <rect x="10" y="15" width="10" height="5" class="checker-white"/>
-                 <rect x="0" y="20" width="10" height="5" class="checker-white"/>
-                 <rect x="10" y="20" width="10" height="5" class="checker-black"/>
-                 <rect x="0" y="25" width="10" height="5" class="checker-black"/>
-                 <rect x="10" y="25" width="10" height="5" class="checker-white"/>
-            </g>
+            <g id="start-finish-line"></g>
             <g id="ai-cars-layer"></g>
         </svg>
     </div>
 
     <div class="controls">
         <div id="msg-tooltip" class="tooltip">NOT YET, STAY IN GARAGE</div>
-        
         <button class="box-btn" onclick="addMoney()">BOX BOX</button>
         <br>
-        
         <button class="settings-btn" onclick="openSettings()">PIT STOP</button>
-
         <div class="audio-container">
             <button class="audio-btn" onclick="toggleAudio()" aria-label="Toggle Audio">
                 <svg id="icon-sound-on" class="audio-icon" viewBox="0 0 24 24">
@@ -621,7 +435,10 @@
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <h2>Strategy Settings</h2>
-            
+            <div class="input-group">
+                <label>Select Circuit</label>
+                <select id="circuit-select" onchange="updateCircuit()"></select>
+            </div>
             <div class="input-group">
                 <label>Constructor</label>
                 <select id="team-select" onchange="updateDriverList(this.value)">
@@ -637,13 +454,10 @@
                     <option value="haas">MONEYGRAM HAAS F1</option>
                 </select>
             </div>
-            
             <div class="input-group">
                 <label>Driver</label>
-                <select id="driver-select" onchange="setDriver(this.value)">
-                    </select>
+                <select id="driver-select" onchange="setDriver(this.value)"></select>
             </div>
-            
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1;">
                     <label>Deposit Day (DD)</label>
@@ -654,511 +468,944 @@
                     <input type="date" id="target-date" onchange="calculateRecommendation()">
                 </div>
             </div>
-
             <div class="input-group"><label>Monthly Amount (₩)</label><input type="number" id="deposit-unit" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>Current Total Capital (₩)</label><input type="number" id="manual-amount" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>[Q1] HOTEL (₩) - BASE</label><input type="number" id="q1-goal" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>[Q2] FLIGHT (₩) - ENTRY</label><input type="number" id="q2-goal" oninput="calculateRecommendation()"></div>
             <div class="input-group"><label>[Q3] TICKET+ETC (₩) - RACE</label><input type="number" id="q3-goal" oninput="calculateRecommendation()"></div>
-            
             <div class="recommendation-box" id="rec-box" style="display:none;">
                 <div class="rec-title">Race Engineer Strategy</div>
                 <div class="rec-value" id="rec-msg">Calculating...</div>
             </div>
-
             <button class="close-btn" onclick="saveAndCloseSettings()">PIT LIMITER OFF</button>
         </div>
     </div>
 
     <script>
-        // 🚀 새로운 2030 플랜을 위해 키 버전 업그레이드
-        const STORAGE_KEY = 'f1_singapore_2030_plan_v1';
+        const STORAGE_KEY = 'f1_world_tour_plan_v3_aus'; 
 
-        const singaporeCircuitPath = "M 1050,450 L 1050,300 C 1050,220 1000,200 950,200 L 900,200 L 880,250 L 840,250 L 500,220 L 450,150 L 350,200 L 300,350 L 200,300 L 100,500 C 100,650 250,650 250,550 L 300,400 L 550,420 L 550,500 L 700,500 L 700,470 L 800,470 L 800,500 L 950,500 C 1020,500 1050,480 1050,450 Z";
-        
+        const circuitAssets = {
+            'aus': {
+                viewBox: "-100 -100 1100 600",
+                path: "M 340 398 L 304 394 L 282 362 L 250 357 L 192 360 L 8 331 L -3 316 L 12 293 L 21 260 L -53 185 L -33 96 L -12 53 L 0 0 L 45 -1 L 73 -23 L 124 -44 L 179 -29 L 245 23 L 263 53 L 280 116 L 312 157 L 349 196 L 423 219 L 535 202 L 565 159 L 684 154 L 734 167 L 870 243 L 852 263 L 814 342 L 781 347 L 703 327 L 691 336 L 697 375 L 667 401 Z",
+                startLineTransform: "translate(460, 398) rotate(0)" 
+            },
+            'chn': {
+                viewBox: "-400 -100 1000 700",
+                path: "M -7 -9 L 3 -17 L 25 -30 L 42 -35 L 64 -33 L 86 -20 L 101 -7 L 101 9 L 98 24 L 83 32 L 70 30 L 62 21 L 45 15 L 34 15 L 23 22 L 21 43 L 40 69 L 57 78 L 217 52 L 241 54 L 366 89 L 364 102 L 325 117 L 187 110 L 155 112 L 127 132 L 114 145 L 116 192 L 153 253 L 161 281 L 159 313 L 129 328 L 53 328 L 45 335 L 60 383 L 70 389 L 330 395 L 334 389 L 323 365 L 336 344 L 367 343 L 405 363 L 405 417 L 349 454 L -345 460 L -353 447 L -318 419 L -161 417 L -146 406 Z",
+                startLineTransform: "translate(-76, 198) rotate(-72)" 
+            },
+            'ksa': {
+                viewBox: "-900 -200 1300 700",
+                path: "M 0 0 L -170 93 L -179 106 L -179 112 L -174 118 L -173 126 L -179 132 L -200 132 L -223 128 L -238 128 L -339 162 L -349 169 L -350 177 L -356 195 L -363 200 L -387 211 L -401 210 L -415 203 L -430 199 L -448 202 L -470 217 L -479 231 L -487 244 L -503 250 L -534 254 L -547 246 L -563 227 L -573 219 L -592 218 L -607 220 L -637 213 L -652 214 L -825 253 L -840 269 L -838 290 L -823 302 L -803 303 L -777 293 L -728 255 L -694 249 L -643 261 L -618 262 L -600 260 L -590 265 L -580 285 L -560 293 L -511 288 L -467 264 L -420 234 L -398 229 L -358 223 L -323 208 L -299 184 L -268 161 L -225 151 L -176 149 L -156 143 L -148 128 L -139 114 L -101 99 L -77 99 L -8 122 L 36 118 L 141 65 L 159 44 L 207 -23 L 220 -76 L 206 -92 L 190 -93 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(151)" 
+            },
+            'jpn': {
+                viewBox: "-800 -100 1200 600",
+                path: "M 0 0 L 203 40 L 234 65 L 238 95 L 223 114 L 213 114 L 196 113 L 132 95 L 107 95 L 83 113 L 61 114 L 29 91 L 3 87 L -22 104 L -50 113 L -80 101 L -100 49 L -130 37 L -193 58 L -221 95 L -227 174 L -224 196 L -230 212 L -275 254 L -288 255 L -394 159 L -411 108 L -426 107 L -432 117 L -422 199 L -448 251 L -490 276 L -573 287 L -641 268 L -677 246 L -695 251 L -729 290 L -729 305 L -715 322 L -660 332 L -571 323 L -295 222 L -266 191 L -254 148 L -246 52 L -240 40 L -230 40 L -218 43 L -211 37 L -207 18 L -193 -8 L -167 -21 L -147 -24 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(11)" 
+            },
+            'bhr': {
+                viewBox: "-600 -600 1000 700",
+                path: "M 0 0 L -486 2 L -497 -5 L -497 -16 L -467 -45 L -459 -58 L -461 -71 L -482 -138 L -484 -152 L -432 -505 L -423 -515 L -410 -518 L -394 -515 L -295 -406 L -278 -393 L -249 -384 L -232 -372 L -224 -356 L -228 -302 L -221 -282 L -109 -202 L -101 -192 L -101 -183 L -111 -173 L -128 -172 L -314 -193 L -338 -194 L -356 -189 L -387 -148 L -384 -139 L -373 -135 L -270 -130 L 79 -133 L 94 -140 L 103 -157 L 105 -184 L 77 -236 L 53 -252 L 26 -259 L -17 -274 L -48 -304 L -60 -351 L -53 -378 L -8 -464 L 15 -479 L 32 -477 L 307 -45 L 311 -30 L 305 -23 L 264 -5 L 251 -1 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(180)" 
+            },
+            'mia': {
+                viewBox: "-500 -200 1100 600",
+                path: "M 0 0 L 113 67 L 120 79 L 116 85 L 84 111 L 78 123 L 81 161 L 75 184 L 36 209 L -1 219 L -47 213 L -197 126 L -222 120 L -245 123 L -285 149 L -305 153 L -327 142 L -354 114 L -375 108 L -420 121 L -443 142 L -450 175 L -443 190 L -432 196 L -407 193 L -379 193 L -305 212 L -111 207 L 12 251 L 63 252 L 110 246 L 321 168 L 398 114 L 399 105 L 393 101 L 366 79 L 360 57 L 373 38 L 383 34 L 424 33 L 434 27 L 453 -10 L 447 -14 L 437 -14 L 434 -18 L 450 -68 L 443 -78 L -337 -101 L -346 -96 L -346 -82 L -286 -46 L -257 -46 L -180 -77 L -148 -78 L -129 -75 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(31)" 
+            },
+            'can': {
+                /* 💡 이몰라: 가로로 긴 형태에 맞춰 뷰박스 설정 */
+                viewBox: "-800 -100 1000 500",
+                
+                /* 💡 경로 데이터: 제공해주신 데이터 적용 (Start: 0,0) */
+                path: "M 0 0 L 36 3 L 106 20 L 123 17 L 136 2 L 147 0 L 160 7 L 160 18 L 134 76 L 63 127 L 53 128 L 37 118 L 32 118 L -23 143 L -41 162 L -59 169 L -136 151 L -151 154 L -159 163 L -157 181 L -163 196 L -174 202 L -303 186 L -441 131 L -446 127 L -445 100 L -449 93 L -617 27 L -638 25 L -699 31 L -708 24 L -709 7 L -699 4 L -653 9 L -616 6 L -493 -16 L -185 -14 L -178 -9 L -172 0 L -166 2 L 0 0",
+                
+                /* 💡 체커기 위치: 시작점(0,0) 배치 & 첫 진행 방향(미세한 우상향)에 맞춰 5도 회전 */
+                startLineTransform: "translate(0, 0) rotate(5)" 
+            },
+            'imo': {
+                viewBox: "-750 -150 950 450", 
+                path: "M 0 0 L 36 3 L 106 20 L 123 17 L 136 2 L 147 0 L 160 7 L 160 18 L 134 76 L 63 127 L 53 128 L 37 118 L 32 118 L -23 143 L -41 162 L -59 169 L -136 151 L -151 154 L -159 163 L -157 181 L -163 196 L -174 202 L -303 186 L -441 131 L -446 127 L -445 100 L -449 93 L -617 27 L -638 25 L -699 31 L -708 24 L -709 7 L -699 4 L -653 9 L -616 6 L -493 -16 L -185 -14 L -178 -9 L -172 0 L -166 2 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(5)" 
+            },
+            'mon': {
+                viewBox: "-200 -200 1200 600",
+                path: "M 0 0 L 107 -88 L 157 -108 L 177 -117 L 190 -117 L 199 -111 L 208 -91 L 304 -7 L 361 49 L 423 85 L 442 104 L 465 134 L 510 155 L 541 151 L 570 131 L 579 109 L 581 71 L 591 57 L 607 50 L 762 55 L 775 58 L 781 67 L 777 83 L 762 95 L 754 104 L 737 139 L 736 151 L 750 157 L 762 149 L 764 111 L 774 100 L 785 102 L 807 121 L 829 137 L 830 147 L 722 215 L 636 240 L 586 234 L 479 184 L 368 91 L 363 81 L 357 80 L 347 85 L 344 88 L 337 88 L 328 78 L 327 58 L 210 -63 L 186 -74 L 165 -72 L 90 -34 L 84 -27 L 85 -6 L 82 2 L 16 81 L 7 85 L -2 82 L -15 74 L -22 74 L -63 148 L -67 176 L -61 211 L -70 219 L -78 219 L -116 175 L -116 169 L -99 157 L -95 148 L -89 117 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(-39)" 
+            },
+            'esp': {
+                viewBox: "-900 -350 1200 450",
+                path: "M 0 0 L -651 0 L -667 -8 L -682 -20 L -679 -61 L -686 -72 L -705 -90 L -776 -113 L -794 -125 L -811 -161 L -809 -202 L -785 -240 L -717 -276 L -682 -282 L -504 -281 L -478 -270 L -466 -249 L -466 -227 L -479 -205 L -525 -177 L -545 -176 L -672 -177 L -692 -171 L -699 -155 L -694 -139 L -580 -67 L -548 -59 L -452 -58 L -430 -69 L -423 -78 L -424 -109 L -420 -123 L -324 -256 L -299 -265 L -263 -262 L -239 -253 L 64 -80 L 78 -80 L 94 -93 L 97 -116 L 83 -154 L 62 -171 L 20 -183 L 1 -196 L -6 -221 L 5 -253 L 27 -262 L 48 -263 L 154 -230 L 164 -219 L 157 -139 L 161 -129 L 183 -126 L 192 -115 L 189 -43 L 174 -21 L 145 -2 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(180)" 
+            },
+            'aut': {
+                viewBox: "-650 -450 900 600",
+                path: "M -4 -5 L -264 69 L -280 37 L -354 -48 L -396 -123 L -465 -271 L -526 -333 L -581 -387 L -580 -397 L -573 -403 L -467 -407 L -211 -363 L -117 -361 L -104 -353 L -100 -338 L -110 -320 L -150 -283 L -183 -271 L -220 -272 L -334 -287 L -351 -280 L -372 -256 L -371 -224 L -313 -123 L -287 -114 L -258 -120 L -241 -136 L -202 -178 L -182 -186 L -148 -191 L 106 -195 L 131 -191 L 147 -176 L 177 -78 L 174 -61 L 155 -48 L -4 -5",
+                startLineTransform: "translate(-4, -5) rotate(164)" 
+            },
+            'gbr': {
+                viewBox: "-600 -500 1000 600",
+                path: "M 0 0 L -136 -93 L -145 -113 L -149 -133 L -146 -192 L -150 -209 L -159 -224 L -217 -287 L -221 -306 L -218 -310 L -172 -327 L -165 -338 L -168 -345 L -219 -360 L -257 -359 L -270 -354 L -277 -346 L -451 -113 L -457 -87 L -451 -70 L -433 -63 L -398 -65 L -384 -53 L -378 -35 L -383 -24 L -395 -16 L -415 -15 L -505 -59 L -522 -81 L -538 -113 L -564 -319 L -557 -337 L -536 -358 L -428 -386 L -333 -392 L -314 -399 L -292 -412 L -278 -420 L -264 -422 L -218 -410 L -195 -410 L -182 -417 L -168 -431 L -140 -441 L -119 -435 L -109 -422 L -90 -389 L -70 -373 L -45 -362 L 250 -222 L 263 -201 L 267 -170 L 254 -149 L 232 -140 L 222 -138 L 180 -101 L 119 -40 L 114 -31 L 115 -21 L 129 -8 L 130 1 L 126 12 L 107 28 L 88 38 L 59 39 L 54 35 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(214)" 
+            },
+            'bel': {
+                viewBox: "-200 -450 1000 700",
+                path: "M 0 0 L -114 78 L -122 78 L -129 71 L -90 -17 L -73 -44 L 7 -121 L 23 -139 L 29 -155 L 42 -172 L 76 -182 L 91 -187 L 114 -205 L 179 -254 L 473 -366 L 483 -365 L 496 -358 L 505 -345 L 512 -343 L 522 -344 L 549 -356 L 563 -357 L 574 -351 L 652 -254 L 653 -241 L 642 -225 L 627 -221 L 614 -225 L 606 -232 L 575 -273 L 568 -275 L 555 -274 L 494 -245 L 400 -222 L 382 -212 L 374 -197 L 374 -164 L 385 -140 L 404 -122 L 422 -115 L 533 -82 L 549 -68 L 551 -50 L 547 -36 L 537 -14 L 539 -6 L 547 4 L 619 41 L 627 57 L 624 74 L 594 118 L 578 124 L 551 126 L 528 117 L 496 100 L 452 63 L 392 -27 L 382 -42 L 360 -52 L 282 -82 L 265 -82 L 179 -38 L 79 -19 L 70 -19 L 66 -27 L 68 -44 L 63 -49 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(146)" 
+            },
+            'hun': {
+                viewBox: "-420 -580 650 650",
+                path: "M 0 0 L -346 -4 L -358 -15 L -357 -24 L -285 -70 L -253 -75 L -252 -75 L -123 -78 L -103 -90 L -101 -108 L -108 -124 L -172 -152 L -183 -165 L -187 -181 L -232 -378 L -231 -415 L -235 -425 L -319 -491 L -324 -519 L -307 -543 L -280 -546 L -167 -533 L -160 -530 L -155 -520 L -155 -504 L -149 -498 L -83 -455 L -71 -455 L -64 -457 L -17 -483 L -5 -483 L 11 -477 L 16 -470 L 53 -401 L 73 -384 L 106 -373 L 140 -366 L 160 -345 L 166 -326 L 154 -123 L 144 -112 L 133 -112 L 72 -124 L 26 -122 L 16 -112 L 14 -89 L 23 -81 L 34 -75 L 120 -74 L 135 -59 L 139 -38 L 134 -16 L 118 -3 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(179)" 
+            },
+            'ned': {
+                viewBox: "-250 -550 600 600",
+                path: "M 0 0 L -162 0 L -182 -10 L -196 -32 L -188 -55 L -169 -61 L -156 -66 L -79 -65 L -28 -81 L -7 -81 L 9 -71 L 35 -38 L 56 -35 L 68 -46 L 69 -61 L 58 -74 L 9 -130 L -3 -163 L -16 -236 L -29 -269 L -53 -293 L -86 -313 L -115 -347 L -148 -454 L -139 -486 L -117 -503 L -84 -515 L 1 -498 L 59 -490 L 73 -485 L 83 -470 L 98 -425 L 94 -389 L 81 -353 L 60 -347 L 31 -361 L 19 -384 L 8 -407 L -19 -432 L -37 -439 L -61 -427 L -64 -404 L -53 -372 L -22 -298 L 44 -208 L 108 -153 L 113 -140 L 109 -132 L 101 -118 L 107 -101 L 127 -98 L 136 -105 L 262 -184 L 280 -186 L 301 -179 L 311 -163 L 331 -101 L 326 -53 L 306 -20 L 263 1 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(180)" 
+            },
+            'ita': {
+                viewBox: "-600 -450 1000 600",
+                path: "M 0 0 L -225 10 L -231 4 L -229 -5 L -235 -10 L -274 7 L -350 15 L -398 0 L -441 -47 L -458 -77 L -485 -235 L -491 -240 L -502 -244 L -506 -251 L -547 -357 L -544 -368 L -536 -380 L -520 -383 L -437 -398 L -427 -391 L -356 -286 L -171 -116 L -161 -113 L -135 -118 L -117 -113 L -103 -94 L -94 -90 L 265 -89 L 284 -75 L 290 -60 L 271 -28 L 217 0 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(177)" 
+            },
+            'aze': {
+                viewBox: "-900 -250 1200 500",
+                path: "M 0 0 L 134 1 L 139 -5 L 142 -16 L 137 -154 L 134 -158 L 129 -162 L -237 -160 L -243 -157 L -245 -151 L -245 -56 L -249 -53 L -315 -51 L -391 -40 L -400 -32 L -398 -23 L -401 -15 L -526 19 L -540 19 L -552 26 L -557 24 L -548 -53 L -552 -61 L -561 -66 L -561 -72 L -565 -78 L -582 -86 L -589 -91 L -590 -112 L -598 -120 L -679 -120 L -752 -111 L -765 -108 L -805 -59 L -822 -40 L -829 -32 L -852 48 L -859 53 L -865 64 L -862 69 L -851 78 L -773 172 L -759 185 L -751 184 L -739 176 L -716 149 L -691 129 L -599 98 L -588 92 L -583 82 L -558 44 L -546 40 L -392 -2 L -378 -3 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(0)" 
+            },
+            'sin': {
+                viewBox: "-900 -350 1100 800",
+                path: "M 0 0 L -15 -128 L -19 -176 L -26 -187 L -39 -190 L -53 -186 L -66 -189 L -76 -200 L -82 -215 L -96 -219 L -112 -215 L -117 -206 L -120 -187 L -122 -177 L -124 -147 L -115 -116 L -101 -84 L -95 -64 L -90 -14 L -95 -2 L -111 3 L -317 -12 L -339 -19 L -506 -109 L -522 -104 L -550 -65 L -566 -30 L -574 -16 L -580 -16 L -630 -73 L -646 -80 L -676 -67 L -686 -54 L -772 107 L -776 128 L -772 144 L -760 161 L -728 175 L -719 176 L -718 182 L -715 214 L -707 230 L -666 260 L -647 289 L -636 293 L -625 289 L -618 272 L -591 83 L -564 11 L -561 9 L -459 99 L -448 100 L -407 104 L -405 110 L -402 140 L -390 152 L -276 160 L -267 156 L -259 115 L -253 111 L -193 117 L -189 123 L -186 149 L -179 161 L -28 170 L -19 165 L 14 117 L 16 110 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(-97)" 
+            },
+            'usa': {
+                viewBox: "-200 -450 1200 800",
+                path: "M 0 0 L 241 191 L 258 194 L 265 186 L 263 171 L 238 104 L 239 73 L 252 48 L 332 -1 L 349 -14 L 366 -55 L 370 -58 L 399 -71 L 412 -80 L 421 -123 L 428 -133 L 458 -155 L 471 -157 L 534 -134 L 543 -133 L 582 -171 L 602 -180 L 624 -175 L 636 -162 L 643 -157 L 740 -176 L 859 -331 L 857 -338 L 850 -339 L 589 -261 L 511 -249 L 278 -220 L 273 -210 L 277 -204 L 326 -148 L 332 -124 L 328 -119 L 285 -120 L 280 -124 L 273 -154 L 249 -174 L 220 -175 L 218 -169 L 260 -93 L 267 -73 L 252 -36 L 246 -30 L 202 -11 L 192 -11 L 147 -27 L 136 -39 L 87 -113 L 75 -118 L -48 -67 L -55 -57 L -51 -46 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(38)" 
+            },
+            'mex': {
+                viewBox: "-200 -100 1000 700",
+                path: "M 0 0 L 213 32 L 575 74 L 580 81 L 576 119 L 579 126 L 602 138 L 602 149 L 553 255 L 445 427 L 445 440 L 450 446 L 467 458 L 467 463 L 421 497 L 409 490 L 407 481 L 427 335 L 419 329 L 386 308 L 380 301 L 367 270 L 353 261 L 279 250 L 272 240 L 261 203 L 251 194 L 191 162 L 2 135 L -7 130 L -14 55 L -19 43 L -29 45 L -37 65 L -42 65 L -56 54 L -68 54 L -90 50 L -100 39 L -63 -5 L -46 -9 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(9)" 
+            },
+            'bra': {
+                viewBox: "-400 -300 1100 800",
+                path: "M 0 0 L -185 104 L -204 123 L -209 145 L -200 159 L -184 167 L -161 177 L -153 189 L -154 202 L -162 220 L -163 270 L -148 309 L -108 336 L -47 351 L -32 350 L 388 342 L 414 325 L 418 307 L 400 214 L 382 195 L 357 180 L 138 96 L 111 77 L 103 51 L 105 0 L 116 -14 L 165 -44 L 214 -60 L 234 -53 L 239 -39 L 226 -9 L 228 20 L 245 33 L 265 34 L 283 22 L 319 -43 L 377 -78 L 395 -73 L 402 -61 L 401 -53 L 357 18 L 355 49 L 365 89 L 388 107 L 528 150 L 538 145 L 545 127 L 552 47 L 515 -24 L 451 -91 L 415 -103 L 383 -110 L 196 -100 L 165 -93 L 141 -83 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(151)" 
+            },
+            'las': {
+                viewBox: "-900 -200 1100 700",
+                path: "M 0 0 L -36 -45 L -107 -100 L -118 -100 L -129 -92 L -132 -81 L -125 -65 L -92 -21 L -88 -1 L -101 35 L -128 45 L -471 45 L -482 39 L -487 28 L -487 -57 L -508 -89 L -555 -106 L -568 -106 L -572 -103 L -570 -91 L -576 -82 L -590 -78 L -614 -91 L -626 -93 L -637 -85 L -640 -71 L -642 74 L -660 102 L -677 117 L -762 154 L -791 190 L -799 242 L -793 255 L -784 256 L -774 251 L -763 258 L -558 365 L -451 385 L -8 392 L 4 385 L 7 372 L 0 365 L 4 356 L 23 341 L 30 325 L 25 45 L 27 28 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(231)" 
+            },
+            'qat': {
+                viewBox: "-450 -600 1000 700",
+                path: "M 0 0 L -244 -3 L -270 -19 L -276 -51 L -267 -63 L -174 -116 L -168 -146 L -175 -163 L -254 -210 L -265 -227 L -330 -413 L -326 -430 L -316 -442 L -260 -459 L -246 -454 L -230 -442 L -185 -319 L -169 -312 L -158 -320 L -138 -491 L -117 -512 L -83 -509 L -69 -492 L -48 -421 L -6 -379 L 2 -364 L 2 -342 L -20 -269 L -11 -252 L 16 -243 L 32 -249 L 40 -253 L 114 -297 L 141 -345 L 195 -468 L 215 -483 L 231 -486 L 298 -487 L 312 -479 L 315 -471 L 357 -392 L 357 -383 L 258 -259 L 254 -235 L 264 -213 L 380 -42 L 380 -27 L 359 -4 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(179)" 
+            },
+            'abu': {
+                viewBox: "-550 -200 1200 600",
+                path: "M 0 0 L -1 231 L 6 242 L 18 248 L 127 233 L 151 219 L 166 181 L 195 147 L 228 136 L 257 139 L 321 165 L 337 170 L 530 170 L 539 157 L 536 148 L -56 -142 L -62 -138 L -62 -110 L -67 -103 L -105 -104 L -158 -92 L -206 -66 L -361 87 L -452 217 L -450 239 L -427 262 L -395 265 L -367 250 L -357 237 L -340 121 L -330 104 L -293 60 L -277 53 L -209 51 L -204 61 L -206 110 L -200 121 L -146 131 L -129 119 L -121 93 L -123 -26 L -113 -42 L -92 -53 L -30 -74 L -7 -73 L 0 -67 L 0 0",
+                startLineTransform: "translate(0, 0) rotate(90)" 
+            }
+        };
+
+        const circuitsData = [
+            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 8, h: 2500000, f: 3500000, t: 700000 },
+            { id: 'chn', name: 'Shanghai Int. Circuit', country: 'China', month: 3, day: 22, h: 2000000, f: 600000, t: 800000 },
+            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 4, day: 5, h: 3000000, f: 4500000, t: 800000 },
+            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 12, h: 1500000, f: 500000, t: 600000 },
+            { id: 'bhr', name: 'Bahrain Int. Circuit', country: 'Bahrain', month: 4, day: 26, h: 2500000, f: 4000000, t: 600000 },
+            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 3, h: 5000000, f: 6000000, t: 1500000 },
+            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 17, h: 2000000, f: 3500000, t: 700000 },
+            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 24, h: 6000000, f: 3500000, t: 1200000 },
+            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 7, h: 2500000, f: 4500000, t: 600000 },
+            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 21, h: 2000000, f: 3500000, t: 600000 },
+            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 28, h: 2000000, f: 3500000, t: 700000 },
+            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 5, h: 3000000, f: 3500000, t: 900000 },
+            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 26, h: 2000000, f: 3500000, t: 600000 },
+            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 8, day: 2, h: 1500000, f: 3000000, t: 500000 },
+            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 30, h: 2500000, f: 3500000, t: 800000 },
+            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 6, h: 2200000, f: 3500000, t: 700000 },
+            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 20, h: 2000000, f: 4000000, t: 600000 },
+            { id: 'sin', name: 'Marina Bay Street Circuit', country: 'Singapore', month: 10, day: 4, h: 3500000, f: 1500000, t: 900000 },
+            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 18, h: 3000000, f: 5000000, t: 800000 },
+            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 25, h: 2000000, f: 4500000, t: 600000 },
+            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 8, h: 2000000, f: 5500000, t: 600000 },
+            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 22, h: 5000000, f: 5000000, t: 2000000 },
+            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 11, day: 29, h: 3000000, f: 4000000, t: 700000 },
+            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 6, h: 4000000, f: 4000000, t: 1000000 }
+        ];
+
         const teamsDB = {
-            redbull: { name: 'Red Bull Racing', drivers: ['VERSTAPPEN', 'LAWSON'] },
+            redbull: { name: 'Red Bull Racing', drivers: ['VERSTAPPEN', 'HADJAR'] },
             mercedes: { name: 'Mercedes-AMG', drivers: ['ANTONELLI', 'RUSSELL'] },
             ferrari: { name: 'Ferrari HP', drivers: ['LECLERC', 'HAMILTON'] },
             mclaren: { name: 'McLaren F1', drivers: ['NORRIS', 'PIASTRI'] },
             astonmartin: { name: 'Aston Martin', drivers: ['ALONSO', 'STROLL'] },
             alpine: { name: 'Alpine', drivers: ['GASLY', 'DOOHAN'] },
             williams: { name: 'Williams', drivers: ['ALBON', 'SAINZ'] },
-            rb: { name: 'Visa Cash App RB', drivers: ['TSUNODA', 'HADJAR'] },
+            rb: { name: 'Visa Cash App RB', drivers: ['LAWSON', 'LINDBLAD'] },
             sauber: { name: 'Sauber / Audi', drivers: ['HULKENBERG', 'BORTOLETO'] },
-            haas: { name: 'Haas F1', drivers: ['OCON', 'BEARMAN'] }
+            haas: { name: 'Haas F1', drivers: ['OCON', 'COLAPINTO'] }
         };
 
-        let state = { 
-            currentAmount: 0, 
-            team: 'redbull', 
-            driver: 'VERSTAPPEN', 
-            // 💡 2030 싱가포르 플랜 예산 설정 (단위: 원)
-            // Q1 (숙소 - 4박, 160만): 레이스의 기초
-            q1: 1600000, 
-            // Q2 (항공권 - 80만): 현장 도착
-            q2: 800000, 
-            // Q3 (티켓 + 식비/쇼핑/예비비 - 260만): 그랑프리 즐기기 (티켓 90 + 여유자금 170)
-            q3: 2600000, 
-            lastSession: 'Q1', 
-            savingsDay: 25, 
-            // 월 납입금 (500만 / 60개월 = 약 84,000원)
-            depositUnit: 84000, 
-            lastDepositDate: '', 
-            targetDate: '',
-            circuitId: 'sin' 
+        const driverGroups = {
+            top: ['VER', 'NOR', 'PIA', 'HAM', 'LEC', 'RUS'], 
+            mid: ['ANT', 'SAI', 'ALO', 'GAS', 'LAW', 'HUL', 'HAD', 'LIN'], 
+            btm: ['ALB', 'BEA', 'TSU', 'STR', 'OCO', 'COL', 'BOR', 'DOO'] 
         };
+
+        const driverColors = {
+            'VER': '#3671C6', 'HAD': '#3671C6', 
+            'ANT': '#00D2BE', 'RUS': '#00D2BE', 
+            'LEC': '#FF2800', 'HAM': '#FF2800', 
+            'NOR': '#FF8000', 'PIA': '#FF8000', 
+            'ALO': '#CEDC00', 'STR': '#CEDC00', 
+            'GAS': '#FD4BC7', 'DOO': '#FD4BC7', 
+            'ALB': '#00A0DE', 'SAI': '#00A0DE', 
+            'LAW': '#3671C6', 'LIN': '#3671C6', 
+            'HUL': '#00E042', 'BOR': '#00E042', 
+            'OCO': '#E6002B', 'COL': '#E6002B', 
+            'PER': '#3671C6', 'BEA': '#E6002B'  
+        };
+
+        const REF_WIDTH = 1200; 
+
+        let state = { 
+            currentAmount: 0, team: 'redbull', driver: 'VERSTAPPEN', 
+            q1: 2500000, q2: 3500000, q3: 700000, 
+            lastSession: 'Q1', savingsDay: 25, depositUnit: 100000, 
+            lastDepositDate: '', targetDate: '2026-03-08',
+            circuitId: 'aus', pathStartOffset: 0,
+            scaleFactor: 1,
+            speedFactor: 1 
+        };
+
         let visualProgress = 0, animId = null;
         let trackSpeedProfile = [];
         let raceStarted = false; 
-
         let bgmPlayer;
-let isMuted = false;
-
-        /* 💡 [추가] 오디오 토글 함수 */
-        function toggleAudio() {
-            isMuted = !isMuted;
-            const onIcon = document.getElementById('icon-sound-on');
-            const offIcon = document.getElementById('icon-sound-off');
-
-            if (isMuted) {
-                if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(0);
-                onIcon.style.display = 'none';
-                offIcon.style.display = 'block';
-            } else {
-                if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(70);
-                onIcon.style.display = 'block';
-                offIcon.style.display = 'none';
-            }
-        }
-
-        /* 💡 [수정] addMoney 함수 내 버튼 효과 강화 */
-        function addMoney() {
-            // 모바일 버튼 시각 효과 (터치 시점과 동기화)
-            const btn = document.querySelector('.box-btn');
-            
-            // 기존 active 클래스 제거 후 다시 추가하여 애니메이션 리셋 효과
-            btn.classList.remove('flash-active');
-            void btn.offsetWidth; // 리플로우 강제 (애니메이션 재시작 트리거)
-            btn.classList.add('flash-active');
-            
-            setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
-
-            // ... 기존 로직 그대로 유지 ...
-            const now = new Date();
-            // (아래 코드는 기존 addMoney 함수 내용과 동일하게 유지하세요)
-            const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, '0'); const d = String(now.getDate()).padStart(2, '0');
-            const todayStr = `${y}-${m}-${d}`;
-            const currentDay = now.getDate();
-            if (currentDay !== state.savingsDay) { const dayStr = getOrdinal(state.savingsDay); showTooltip(`NOT YET, BOX ON THE ${dayStr}`); return; }
-            if (state.lastDepositDate === todayStr) { showTooltip("ENOUGH NOW"); return; }
-            const totalGoal = state.q1 + state.q2 + state.q3;
-            state.currentAmount += state.depositUnit;
-            if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
-            state.lastDepositDate = todayStr;
-            showTooltip("COPY THAT, BOXING NOW!"); 
-            let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
-            if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
-            state.lastSession = checkS;
-            saveData(); updateDashboard(); 
-        }
-        function onYouTubeIframeAPIReady() {
-            bgmPlayer = new YT.Player('bgm-player', {
-                height: '0', width: '0', videoId: 'YhX_Woa3kVA', 
-                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' },
-                events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
-            });
-        }
-        function onPlayerReady(event) {}
-        function onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) bgmPlayer.playVideo(); }
+        let isMuted = false;
+        let aiDrivers = [];
+        let stableRanking = [];
+        let raceStatus = 'GREEN'; 
+        let stoppedCarId = null;  
+        let safetyCar = {
+            active: false,
+            progress: 0,
+            element: null,
+            speed: 0
+        };
+        let eventTimer = 0;        
 
         const driverList = [
-            { id: 'VER', speed: 1.25 }, { id: 'NOR', speed: 1.22 }, { id: 'PIA', speed: 1.19 }, { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
-            { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, { id: 'PER', speed: 1.05 },
-            { id: 'GAS', speed: 1.02 }, { id: 'OCO', speed: 1.00 }, { id: 'ALB', speed: 0.98 }, { id: 'BEA', speed: 0.97 },
-            { id: 'TSU', speed: 0.96 }, { id: 'STR', speed: 0.95 }, { id: 'HUL', speed: 0.96 }, 
-            { id: 'LAW', speed: 1.05 }, { id: 'DOO', speed: 0.95 }, { id: 'BOR', speed: 0.94 }, { id: 'HAD', speed: 0.93 }
+            { id: 'VER', speed: 1.25 }, { id: 'NOR', speed: 1.22 }, { id: 'PIA', speed: 1.19 }, 
+            { id: 'HAM', speed: 1.18 }, { id: 'LEC', speed: 1.15 }, { id: 'ANT', speed: 1.12 },
+            { id: 'RUS', speed: 1.12 }, { id: 'SAI', speed: 1.10 }, { id: 'ALO', speed: 1.08 }, 
+            { id: 'PER', speed: 1.05 }, { id: 'GAS', speed: 1.02 }, { id: 'OCO', speed: 1.00 }, 
+            { id: 'ALB', speed: 0.98 }, { id: 'BEA', speed: 0.97 }, { id: 'TSU', speed: 0.96 }, 
+            { id: 'STR', speed: 0.95 }, { id: 'HUL', speed: 0.96 }, { id: 'HAD', speed: 1.05 }, 
+            { id: 'LAW', speed: 1.08 }, { id: 'LIN', speed: 1.03 }, { id: 'COL', speed: 1.01 }, 
+            { id: 'BOR', speed: 0.94 }, { id: 'DOO', speed: 0.95 }
         ];
 
-        let aiDrivers = [];
+        function calculateScaleFactor(viewBoxStr) {
+            const parts = viewBoxStr.split(' ').map(Number);
+            const width = parts[2]; 
+            const rawRatio = width / REF_WIDTH;
+            state.speedFactor = Math.max(rawRatio, 0.85);
+            state.scaleFactor = Math.max(rawRatio, 0.9);
+            const newStroke = 10 * state.scaleFactor;
+            document.documentElement.style.setProperty('--dynamic-stroke', `${newStroke}px`);
+        }
 
         function init() {
-            document.getElementById('bg-track').setAttribute('d', singaporeCircuitPath);
-            document.getElementById('active-track').setAttribute('d', singaporeCircuitPath);
             const container = document.getElementById('wave-container');
             container.innerHTML = '';
-            
-            const totalBars = 30;
-
-            for(let i = 0; i < totalBars; i++) {
+            for(let i = 0; i < 30; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'bar';
-                
-                // 1. 사인파(Sine Wave)를 이용해 0 -> 1 -> 0 형태의 '산 모양' 계수 생성
-                // Math.PI * (i / totalBars) : 0에서 파이(180도)까지 진행 -> sin값은 0에서 1찍고 0으로
-                const curve = Math.sin((i / (totalBars - 1)) * Math.PI); 
-
-                // 2. 가운데일수록 더 높이 뛸 수 있는 '최대 한계치' 설정
-                // 양 끝은 최소 5px, 가운데는 최대 18px까지 허용
+                const curve = Math.sin((i / 29) * Math.PI); 
                 const maxEnvelope = (14 * curve) + 4; 
-                
-                // 3. 랜덤성을 부여하되, 위에서 만든 Envelope(한계치)를 넘지 않도록 함
-                // 0.6 ~ 1.0 사이의 랜덤 스케일을 곱해 '살아있는' 느낌 부여
                 const randomHeight = maxEnvelope * (0.6 + Math.random() * 0.4);
-
-                // CSS 변수에 계산된 높이 전달
                 bar.style.setProperty('--eq-height', `${randomHeight}px`);
-                
-                // 애니메이션 속도도 가운데가 약간 더 빠르게 반응하도록 설정
-                const speed = 0.2 + Math.random() * 0.3;
-                bar.style.animation = `equalizer ${speed}s infinite ease-in-out`;
-                // 시작 타이밍을 랜덤하게 섞어 자연스러움 연출
+                bar.style.animation = `equalizer ${0.2 + Math.random() * 0.3}s infinite ease-in-out`;
                 bar.style.animationDelay = `${Math.random() * -1}s`;
-
                 container.appendChild(bar);
             }
             loadData(); 
-            // 💡 2030년 싱가포르 GP 날짜 자동 설정 (2025+5년)
-            if (!state.targetDate) state.targetDate = get2030SingaporeDate();
-            
-            generateTrackSpeedProfile();
-            initAIDrivers();
+            initCircuitSelect(); 
+            updateCircuit(); 
             requestAnimationFrame(animateAIDrivers);
             updateDashboard();
             updateTeamSelectUI(); 
         }
 
+        function initCircuitSelect() {
+            const select = document.getElementById('circuit-select');
+            select.innerHTML = '';
+            circuitsData.forEach((c, index) => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.text = `[Rd.${index+1}] ${c.country} - ${c.name}`;
+                if(c.id === state.circuitId) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        function updateCircuit() {
+            const select = document.getElementById('circuit-select');
+            const circuitId = select.value || state.circuitId;
+            const data = circuitsData.find(c => c.id === circuitId);
+            if(!data) return;
+
+            state.circuitId = circuitId;
+            const asset = circuitAssets[circuitId] || circuitAssets['aus'];
+
+            const svgElement = document.querySelector('.track-svg');
+            svgElement.setAttribute('viewBox', asset.viewBox);
+            calculateScaleFactor(asset.viewBox);
+            document.getElementById('bg-track').setAttribute('d', asset.path);
+            document.getElementById('active-track').setAttribute('d', asset.path);
+
+            const checker = document.getElementById('start-finish-line');
+            checker.setAttribute('transform', asset.startLineTransform);
+            checker.innerHTML = `
+                <rect x="-8" y="-3" width="4" height="3" class="checker-black"/><rect x="-4" y="-3" width="4" height="3" class="checker-white"/><rect x="0" y="-3" width="4" height="3" class="checker-black"/><rect x="4" y="-3" width="4" height="3" class="checker-white"/>
+                <rect x="-8" y="0" width="4" height="3" class="checker-white"/><rect x="-4" y="0" width="4" height="3" class="checker-black"/><rect x="0" y="0" width="4" height="3" class="checker-white"/><rect x="4" y="0" width="4" height="3" class="checker-black"/>
+            `;
+
+            setTimeout(() => {
+                const track = document.getElementById('bg-track');
+                state.pathStartOffset = findPathOffset(track, asset.startLineTransform);
+                generateTrackSpeedProfile();
+                initAIDrivers();
+                updateDashboard();
+            }, 50);
+        }
+
+        function findPathOffset(pathElement, transformStr) {
+            const match = transformStr.match(/translate\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)/);
+            if (!match) return 0;
+            const targetX = parseFloat(match[1]), targetY = parseFloat(match[2]);
+            const totalLen = pathElement.getTotalLength();
+            let minDist = Infinity, bestRatio = 0;
+            for(let i=0; i <= 1000; i++) {
+                const len = (i / 1000) * totalLen;
+                const pt = pathElement.getPointAtLength(len);
+                const dist = Math.sqrt(Math.pow(pt.x - targetX, 2) + Math.pow(pt.y - targetY, 2));
+                if (dist < minDist) { minDist = dist; bestRatio = i / 1000; }
+            }
+            return bestRatio;
+        }
+
         function initAIDrivers() {
             const layer = document.getElementById('ai-cars-layer');
+            if (!layer) return;
+            
             layer.innerHTML = ''; 
             aiDrivers = [];
             
-            const midPoint = Math.ceil(driverList.length / 2);
-            const topTier = driverList.slice(0, midPoint); 
-            const bottomTier = driverList.slice(midPoint); 
-            const shuffledTop = shuffleArray([...topTier]);
-            const shuffledBottom = shuffleArray([...bottomTier]);
-            const finalGrid = [...shuffledTop, ...shuffledBottom];
+            const shuffle = (a) => a.sort(() => Math.random() - 0.5);
+            const topShuffled = shuffle([...driverGroups.top]);
+            const midShuffled = shuffle([...driverGroups.mid]);
+            const btmShuffled = shuffle([...driverGroups.btm]);
+            const combinedIds = [...topShuffled, ...midShuffled, ...btmShuffled];
+            
+            let gridStartPos = state.pathStartOffset - 0.02;
+            
+            if (gridStartPos < 0) gridStartPos += 1; 
 
-            finalGrid.forEach((d, index) => {
+            combinedIds.forEach((id, index) => {
+                const dInfo = driverList.find(d => d.id === id) || { speed: 1.0 };
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
-                g.setAttribute("data-id", d.id); 
-                
-                const dim = getMarkerDimensions(false);
-                const isMobile = window.innerWidth < 600;
-
-                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                rect.setAttribute("x", -dim.rectW/2); rect.setAttribute("y", -dim.rectH - 10);
-                rect.setAttribute("width", dim.rectW); rect.setAttribute("height", dim.rectH);
-                
-                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute("x", 0); text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
-                text.textContent = d.id;
-                text.style.fontSize = `${dim.fontSize}px`;
-
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("r", dim.circleR);
-
-                g.appendChild(rect); g.appendChild(text); g.appendChild(circle);
+                g.innerHTML = `<rect x="-20" y="-30" width="40" height="20"/><text x="0" y="-16" style="font-size:14px;">${id}</text><circle r="4"/>`;
                 layer.appendChild(g);
 
-                const startPos = 0.999;
-                const gridGap = 0.015;
-                const initialProgress = startPos - (index * gridGap);
+                const row = Math.floor(index / 2);
+                const stagger = (index % 2 === 1) ? 0.004 : 0; 
+                
+                let initialProgress = gridStartPos - (row * 0.015) - stagger;
+                if (initialProgress < 0) initialProgress += 1;
 
-                aiDrivers.push({
-                    id: d.id, 
-                    element: g,
-                    baseSpeed: d.speed, 
-                    progress: initialProgress,
-                    actualSpeed: 0,
-                    randomOffset: Math.random() * 1000,
-                    fluctuation: 0
+                aiDrivers.push({ 
+                    id: id, 
+                    element: g, 
+                    baseSpeed: dInfo.speed, 
+                    progress: initialProgress, 
+                    actualSpeed: 0, 
+                    totalLaps: 0,
+                    condition: 1.0, 
+                    randomFactor: Math.random() * 100,
+                    focus: 1.0,
+                    battleState: 'normal',
+                    battleTimer: 0,        
+                    cooldown: 0            
                 });
             });
-            
+
+            const scGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            scGroup.setAttribute("class", "ai-marker sc-marker");
+            scGroup.style.display = 'none'; 
+            scGroup.innerHTML = `<rect x="-20" y="-30" width="40" height="20"/><text x="0" y="-16" style="font-size:12px;">SC</text>`;
+            layer.appendChild(scGroup);
+
+            safetyCar.element = scGroup;
+
             updateRaceScenario();
+            if (typeof initLeaderboard === 'function') initLeaderboard();
         }
 
         function updateRaceScenario() {
             const heroId = getDriverShortId(state.driver);
-            const layer = document.getElementById('ai-cars-layer');
-            const isMobile = window.innerWidth < 600;
-
             aiDrivers.forEach(ai => {
-                const originalData = driverList.find(d => d.id === ai.id);
-                let speed = originalData ? originalData.speed : 1.0;
-
                 const isHero = (ai.id === heroId);
-                const g = ai.element;
-                const rect = g.querySelector('rect');
-                const text = g.querySelector('text');
-                const circle = g.querySelector('circle');
-
-                if (isHero) {
-                    g.classList.add('hero-marker');
-                    layer.appendChild(g);
-
-                    if (ai.id === 'VER') {
-                        speed = 1.25; 
-                    } else {
-                        speed = speed * 1.1; 
-                        if (speed > 1.24) speed = 1.24; 
-                    }
-                } else {
-                    g.classList.remove('hero-marker');
-                }
-
-                ai.baseSpeed = speed;
-
-                const dim = getMarkerDimensions(isHero);
-                rect.setAttribute("x", -dim.rectW/2); rect.setAttribute("y", -dim.rectH - 10);
-                rect.setAttribute("width", dim.rectW); rect.setAttribute("height", dim.rectH);
-                text.setAttribute("y", -dim.rectH/2 - (isMobile ? 8 : 9));
-                text.style.fontSize = `${dim.fontSize}px`;
-                circle.setAttribute("r", dim.circleR);
+                ai.element.classList.toggle('hero-marker', isHero);
+                if(isHero) document.getElementById('ai-cars-layer').appendChild(ai.element);
             });
         }
 
-        function updateDriverStyles() {
-            updateRaceScenario();
+        function getDriverShortId(n) { 
+            if (n === 'LINDBLAD') return 'LIN';
+            if (n === 'HADJAR') return 'HAD';
+            if (n === 'COLAPINTO') return 'COL';
+            return n.substring(0,3).toUpperCase(); 
+        }
+
+        function generateTrackSpeedProfile() {
+            const track = document.getElementById('bg-track');
+            const len = track.getTotalLength();
+            trackSpeedProfile = []; 
+            for(let i=0; i<1000; i++) {
+                const pt1 = track.getPointAtLength(((i-5+1000)%1000)/1000*len);
+                const pt2 = track.getPointAtLength((i/1000)*len);
+                const pt3 = track.getPointAtLength(((i+5)%1000)/1000*len);
+                
+                const angle1 = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
+                const angle2 = Math.atan2(pt3.y - pt2.y, pt3.x - pt2.x);
+                let diff = Math.abs(angle1 - angle2);
+                if (diff > Math.PI) diff = 2 * Math.PI - diff; 
+
+                let trackFactor;
+                if (diff < 0.12) trackFactor = 2.0;      
+                else if (diff < 0.25) trackFactor = 1.4; 
+                else if (diff < 0.45) trackFactor = 0.7; 
+                else trackFactor = 0.35;                 
+                
+                trackSpeedProfile.push(trackFactor);
+            }
+        }
+
+        let leaderboardRows = {}; 
+
+        function initLeaderboard() {
+            const container = document.getElementById('leaderboard-items');
+            if (!container) return; 
+
+            container.innerHTML = ''; 
+            leaderboardRows = {}; 
+
+            aiDrivers.forEach((ai, index) => {
+                const row = document.createElement('div');
+                row.className = 'lb-row';
+                
+                row.style.transform = `translateY(${index * 21}px)`;
+
+                const color = driverColors[ai.id] || '#888';
+                const isMyDriver = (ai.id === getDriverShortId(state.driver));
+                const textStyle = isMyDriver ? 'color: #FFEC00;' : 'color: #ffffff;';
+                
+                row.innerHTML = `
+                    <div class="lb-pos" style="${textStyle}">${index + 1}</div>
+                    <div class="lb-color-strip" style="background-color: ${color}; box-shadow: 0 0 4px ${color};"></div>
+                    <div class="lb-name" style="${textStyle}">${ai.id}</div>
+                `;
+
+                container.appendChild(row);
+
+                leaderboardRows[ai.id] = { 
+                    element: row, 
+                    posElement: row.querySelector('.lb-pos') 
+                };
+            });
+        }
+
+        function updateLeaderboard() {
+            const sortedDrivers = [...aiDrivers].sort((a, b) => {
+                const scoreA = (a.totalLaps * 10000) + a.progress;
+                const scoreB = (b.totalLaps * 10000) + b.progress;
+                return scoreB - scoreA; 
+            });
+
+            sortedDrivers.forEach((driver, index) => {
+                const rowObj = leaderboardRows[driver.id];
+                
+                if (rowObj && rowObj.element) {
+                    rowObj.element.style.transform = `translateY(${index * 21}px)`;
+                    
+                    if (rowObj.posElement) {
+                        const currentRank = String(index + 1);
+                        if (rowObj.posElement.innerText !== currentRank) {
+                            rowObj.posElement.innerText = currentRank;
+                            
+                            const isMyDriver = (driver.id === getDriverShortId(state.driver));
+                            rowObj.posElement.style.color = '#fff';
+                            setTimeout(() => {
+                                rowObj.posElement.style.color = isMyDriver ? '#FFEC00' : '#ffffff';
+                            }, 200);
+                        }
+                    }
+                    
+                    rowObj.element.style.zIndex = (index === 0) ? '100' : '10';
+                }
+            });
+            
+            stableRanking = sortedDrivers.map(d => d.id);
+        }
+
+        function triggerRaceIncident() {
+            const victimIndex = Math.floor(Math.random() * aiDrivers.length);
+            const victim = aiDrivers[victimIndex];
+            
+            if (stoppedCarId !== null) return;
+            stoppedCarId = victim.id;
+            
+            const isSC = Math.random() > 0.4; 
+
+            if (isSC) {
+                raceStatus = 'SC';
+                eventTimer = 3000; 
+                updateStatusUI('SAFETY CAR', 'status-sc');
+                spawnSafetyCar(); 
+            } else {
+                raceStatus = 'YELLOW';
+                eventTimer = 600; 
+                updateStatusUI('YELLOW FLAG', 'status-yellow');
+            }
+        }
+
+        function spawnSafetyCar() {
+            // 1. 현재 1등(Leader) 찾기
+            const leader = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress))[0];
+            
+            safetyCar.active = true;
+            safetyCar.speed = 0.8; // SC 초기 속도
+
+            // 2. [핵심] 1등 앞 공간 스캔 (Cluster Detection)
+            // 기본적으로 1등보다 4% 앞선 위치를 목표로 합니다.
+            let bestSpawnOffset = 0.04; 
+            
+            // 1등 전방 15% 구간(0.15) 내에 다른 차(백마커)가 있는지 확인합니다.
+            const scanRange = 0.15; 
+            
+            // 시각적으로 1등 앞에 있는 모든 장애물(차량)을 감지
+            let obstacleFarthestOffset = 0;
+            let hasObstacle = false;
+
+            aiDrivers.forEach(ai => {
+                if (ai.id === leader.id) return; // 1등 본인은 제외
+
+                // 1등과의 거리 계산 (트랙 한 바퀴 도는 것 고려)
+                let dist = ai.progress - leader.progress;
+                if (dist < 0) dist += 1; 
+
+                // 장애물이 스캔 범위 내에 있다면
+                if (dist > 0 && dist < scanRange) {
+                    hasObstacle = true;
+                    // 가장 멀리 있는 장애물 위치 기록
+                    if (dist > obstacleFarthestOffset) {
+                        obstacleFarthestOffset = dist;
+                    }
+                }
+            });
+
+            // 3. 위치 보정
+            if (hasObstacle) {
+                // 백마커가 있다면, 그 백마커들보다 조금 더(0.04) 앞에서 소환 -> "백마커는 뒤로 보내고 SC가 맨 앞"
+                bestSpawnOffset = obstacleFarthestOffset + 0.04;
+            }
+
+            // 4. 최종 위치 적용
+            safetyCar.progress = leader.progress + bestSpawnOffset;
+            
+            // 트랙 범위(0~1) 초과 시 보정
+            if (safetyCar.progress >= 1) safetyCar.progress -= 1;
+            
+            safetyCar.element.style.display = 'block';
+        }
+
+/* 💡 [전체 수정] animateAIDrivers: SC 초밀착 + Yellow 사고차량 추월 허용 */
+function animateAIDrivers() {
+    const track = document.getElementById('bg-track');
+    if(!track) { requestAnimationFrame(animateAIDrivers); return; }
+    
+    const len = track.getTotalLength();
+    const now = Date.now();
+
+    // 순위 산정
+    const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
+
+    // 1. 랜덤 사고 발생 (레이스 시작 후, 선두가 절반 이상 돌았을 때부터)
+    if (raceStarted && raceStatus === 'GREEN') {
+        const leader = battleRank[0];
+        if (leader && (leader.totalLaps > 0 || leader.progress > 0.5)) {
+            if (Math.random() < 0.00015) triggerRaceIncident();
+        }
+    }
+
+    // 2. 이벤트 타이머
+    if (raceStatus !== 'GREEN') {
+        eventTimer--;
+        if (raceStatus === 'SC' && eventTimer === 180) {
+            raceStatus = 'SC_ENDING';
+            updateStatusUI('SC ENDING', 'status-sc');
+        }
+        if ((raceStatus === 'SC_ENDING' || raceStatus === 'YELLOW') && eventTimer <= 0) {
+            resumeRace();
+        }
+    }
+
+    // 3. SC 로직
+    if (safetyCar.active) {
+        if (raceStatus === 'SC_ENDING') {
+            safetyCar.element.style.display = 'none';
+            safetyCar.active = false; 
+        } else {
+            safetyCar.progress += 0.8 * 0.00026 * state.speedFactor;
+            if (safetyCar.progress >= 1) safetyCar.progress -= 1;
+
+            const pt = track.getPointAtLength(len * safetyCar.progress);
+            safetyCar.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
+        }
+    }
+
+    // 4. AI 드라이버 루프
+    aiDrivers.forEach(ai => {
+        if (raceStarted) {
+            // 사고 차량
+            if (ai.id === stoppedCarId) {
+                ai.actualSpeed *= 0.9;
+                if (ai.actualSpeed < 0.01) ai.actualSpeed = 0;
+                ai.element.classList.add('stopped');
+                const pt = track.getPointAtLength(len * ai.progress);
+                ai.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
+                return; 
+            } else {
+                ai.element.classList.remove('stopped');
+            }
+
+            // 상태 타이머
+            if (!ai.battleState) { ai.battleState = 'normal'; ai.battleTimer = 0; ai.cooldown = 0; }
+            if (!ai.conditionState) { ai.conditionState = 'normal'; ai.conditionTimer = 0; }
+            if (ai.battleTimer > 0) ai.battleTimer--;
+            if (ai.cooldown > 0) ai.cooldown--;
+            if (ai.conditionTimer > 0) ai.conditionTimer--;
+            if (ai.battleState !== 'normal' && ai.battleTimer <= 0) { ai.battleState = 'normal'; ai.cooldown = 200; }
+            if (ai.conditionState !== 'normal' && ai.conditionTimer <= 0) ai.conditionState = 'normal';
+
+            // 트랙 형상 속도
+            const currentIndex = Math.floor(ai.progress * 1000) % 1000;
+            const lookAheadIndex = (currentIndex + 20) % 1000;
+            const normalTrackFactor = (trackSpeedProfile[currentIndex] * 0.6) + (trackSpeedProfile[lookAheadIndex] * 0.4);
+
+            let targetSpeed = ai.baseSpeed;
+            let currentLerpRate = 0.05;
+
+            // =========================
+            // 🚥 상황별 주행 알고리즘
+            // =========================
+
+            if (raceStatus === 'GREEN') {
+                // [GREEN] 일반 주행 (기존 유지)
+                let conditionBoost = 1.0;
+                if (ai.conditionState === 'super') conditionBoost = 1.35;
+                else if (ai.conditionState === 'slump') conditionBoost = 0.75;
+                else if (ai.conditionState === 'normal' && ai.battleState === 'normal') {
+                    const isPlayer = (ai.id === getDriverShortId(state.driver));
+                    const eventChance = isPlayer ? 0.0008 : 0.0005; 
+                    if (Math.random() < eventChance) {
+                        if (Math.random() < (isPlayer ? 0.9 : 0.5)) { ai.conditionState = 'super'; ai.conditionTimer = 300; }
+                        else { ai.conditionState = 'slump'; ai.conditionTimer = 240; }
+                    }
+                }
+
+                let battleBoost = 1.0;
+                if (ai.battleState === 'boost') battleBoost = 1.15;
+                else if (ai.battleState === 'lag') battleBoost = 0.90;
+                else if (ai.battleState === 'normal' && ai.cooldown <= 0) {
+                    const myIdx = battleRank.findIndex(r => r.id === ai.id);
+                    if (myIdx > 0) {
+                        const ahead = battleRank[myIdx - 1];
+                        const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
+                        if (dist > 0 && dist < 0.02) {
+                            const isPlayer = (ai.id === getDriverShortId(state.driver));
+                            if (Math.random() < (isPlayer ? 0.7 : 0.4)) { ai.battleState = 'boost'; ai.battleTimer = 150; }
+                            else { ai.battleState = 'lag'; ai.battleTimer = 100; }
+                        }
+                    }
+                }
+
+                let calculatedSpeed = ai.baseSpeed * normalTrackFactor * battleBoost * conditionBoost;
+                
+                const myIdx = battleRank.findIndex(r => r.id === ai.id);
+                if (myIdx > 0) {
+                    const ahead = battleRank[myIdx - 1];
+                    const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
+                    if (ai.battleState === 'boost') { targetSpeed = calculatedSpeed; } 
+                    else if (dist < 0.005 && ai.actualSpeed > ahead.actualSpeed) { targetSpeed = ahead.actualSpeed; currentLerpRate = 0.2; } 
+                    else { targetSpeed = calculatedSpeed; }
+                } else { targetSpeed = calculatedSpeed; }
+
+} else if (raceStatus === 'YELLOW') {
+                // 🟡 [YELLOW] 사고차 무시 + 추월 금지 + 적당한 감속
+                
+                // 1. 기본 속도 제한 (너무 느리지 않게 0.6 -> 0.75로 상향)
+                // 평소의 75% 수준으로 달립니다.
+                let limitSpeed = ai.baseSpeed * normalTrackFactor * 0.75;
+                targetSpeed = limitSpeed;
+
+                // 2. 앞차 감지 (물리적 거리 계산)
+                let minDistY = 100;
+                let carAhead = null;
+                
+                aiDrivers.forEach(other => {
+                    // 🚨 핵심: 사고난 차(stoppedCarId)는 감지 대상에서 제외
+                    // 이렇게 하면 사고 차량과의 거리를 계산하지 않으므로, 브레이크 없이 그냥 지나갑니다.
+                    if (other.id !== ai.id && other.id !== stoppedCarId) { 
+                        let d = other.progress - ai.progress;
+                        if (d < 0) d += 1; // 트랙 한 바퀴 차이 보정
+
+                        if (d < minDistY) {
+                            minDistY = d;
+                            carAhead = other;
+                        }
+                    }
+                });
+
+                // 3. 추월 금지 (앞차 꽁무니 잡기)
+                if (carAhead) {
+                    // 감지 범위를 0.05 -> 0.08로 늘려 미리 속도를 맞추게 함
+                    if (minDistY < 0.08) {
+                        // 앞차의 현재 속도를 가져옴
+                        let safeSpeed = carAhead.actualSpeed;
+                        
+                        // 내 목표 속도가 앞차보다 빠르다면? -> 앞차 속도에 맞춤 (추월 불가)
+                        if (targetSpeed > safeSpeed) {
+                            targetSpeed = safeSpeed; 
+                            
+                            // 너무 가까이 붙었다면(0.02 미만) 브레이크 밟아서 간격 유지
+                            if (minDistY < 0.02) targetSpeed *= 0.6; 
+                        }
+                        // 감속 반응 속도를 높임
+                        currentLerpRate = 0.2; 
+                    }
+                }
+
+            } else if (raceStatus === 'SC' || raceStatus === 'SC_ENDING') {
+                // 🚑 [SC 모드] 사고차 무시 + 백마커 비켜주기 로직 추가
+                
+                let minDist = 100; 
+                let objectAhead = null; 
+                
+                // 1. SC 감지
+                if (safetyCar.active) {
+                    let d = safetyCar.progress - ai.progress;
+                    if (d < 0) d += 1; 
+                    if (d < minDist) {
+                        minDist = d;
+                        objectAhead = { type: 'SC', speed: 0.8 }; 
+                    }
+                }
+
+                // 2. 앞차 감지 (사고차 제외)
+                aiDrivers.forEach(other => {
+                    if (other.id !== ai.id && other.id !== stoppedCarId) {
+                        let d = other.progress - ai.progress;
+                        if (d < 0) d += 1; 
+                        if (d < minDist) {
+                            minDist = d;
+                            objectAhead = { type: 'CAR', speed: other.actualSpeed };
+                        }
+                    }
+                });
+
+                // 3. 속도 결정 로직
+                if (objectAhead) {
+                    const isSC = (objectAhead.type === 'SC');
+                    
+                    // [신규] 내가 1등이 아닌데(백마커인데) 바로 앞이 SC라면?
+                    // -> 1등과 SC 사이에 끼어있는 상황이므로, 속도를 올려서 SC를 추월(Ghost Pass)해버리거나 간격을 좁힘
+                    // 여기서는 SC와 너무 가까우면 감속하되, 1등보다는 빨리 달리게 설정
+                    
+                    if (minDist < 0.002) { 
+                        targetSpeed = objectAhead.speed * 0.5; 
+                        currentLerpRate = 0.5; 
+                    } else if (minDist < 0.006) {
+                        targetSpeed = objectAhead.speed; 
+                        currentLerpRate = 0.3; 
+                    } else {
+                        // SC 상황에서의 기본 주행 속도
+                        targetSpeed = 1.8; 
+                        if (isSC && minDist < 0.15) {
+                            // SC 뒤에 붙었을 때 속도 맞춤
+                            targetSpeed = 0.9; 
+                        }
+                        currentLerpRate = 0.08;
+                    }
+                } else {
+                    // 앞에 아무것도 없으면 (SC 엔딩 시점 등)
+                    if (raceStatus === 'SC_ENDING') {
+                        targetSpeed = ai.baseSpeed * normalTrackFactor * 1.3;
+                        currentLerpRate = 0.05;
+                    } else {
+                        targetSpeed = 0.8;
+                        currentLerpRate = 0.1;
+                    }
+                }
+            }
+
+            // 주인공 보정
+            if (ai.id === getDriverShortId(state.driver)) targetSpeed *= 1.02;
+            
+            // 물리 적용
+            ai.actualSpeed += (targetSpeed - ai.actualSpeed) * currentLerpRate;
+            ai.progress += ai.actualSpeed * 0.00026 * state.speedFactor;
+            
+            if (ai.progress >= 1) {
+                ai.progress -= 1;
+                ai.totalLaps += 1;
+            }
+        } 
+        
+        // 렌더링
+        const pt = track.getPointAtLength(len * ai.progress);
+        const jitterPower = (raceStatus === 'GREEN') ? 2.0 : 0.0;
+        const jitterX = (Math.sin(now/200 + ai.randomFactor) * jitterPower); 
+        const jitterY = (Math.cos(now/200 + ai.randomFactor) * jitterPower);
+        ai.element.setAttribute('transform', `translate(${pt.x + jitterX}, ${pt.y + jitterY}) scale(${state.scaleFactor})`);
+    });
+
+    if(raceStarted) updateLeaderboard();
+    requestAnimationFrame(animateAIDrivers);
+}
+
+        function resumeRace() {
+            raceStatus = 'GREEN';
+            stoppedCarId = null;
+            safetyCar.active = false;
+            safetyCar.element.style.display = 'none'; 
+            
+            updateStatusUI('GREEN FLAG', 'status-green');
+            setTimeout(() => {
+                if(raceStatus === 'GREEN') document.getElementById('race-status-display').style.opacity = '0';
+            }, 2000);
+        }
+
+        /* 💡 [수정] 상단 표시기 + 모바일 패널 동시 제어 */
+        function updateStatusUI(text, cssClass) {
+            // 1. 기존 상단 표시기 (PC/모바일 공통)
+            const el = document.getElementById('race-status-display');
+            el.innerText = text;
+            el.className = ''; 
+            el.classList.add(cssClass);
+            el.style.opacity = '1';
+
+            // 2. [신규] 모바일 하단 패널 제어
+            const mobilePanel = document.getElementById('mobile-status-panel');
+            if (mobilePanel) {
+                // 기존 클래스 초기화
+                mobilePanel.className = 'status-panel';
+                
+                if (text.includes('GREEN')) {
+                    // 그린 플래그면 즉시 숨김
+                    mobilePanel.style.display = 'none';
+                } else {
+                    // 사고 상황이면 표시
+                    mobilePanel.innerText = text;
+                    mobilePanel.style.display = 'block';
+                    
+                    // 색상 클래스 적용
+                    if (cssClass.includes('sc')) mobilePanel.classList.add('sc');
+                    else if (cssClass.includes('yellow')) mobilePanel.classList.add('yellow');
+                }
+            }
+        }
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            const onIcon = document.getElementById('icon-sound-on'), offIcon = document.getElementById('icon-sound-off');
+            if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(isMuted ? 0 : 70);
+            onIcon.style.display = isMuted ? 'none' : 'block';
+            offIcon.style.display = isMuted ? 'block' : 'none';
         }
 
         function activateEngine() {
-            document.getElementById('start-engine-btn').style.display = 'none'; 
+            document.getElementById('start-engine-btn').style.display = 'none';
             if (bgmPlayer && bgmPlayer.playVideo) { bgmPlayer.setVolume(70); bgmPlayer.playVideo(); }
             startRaceSequence();
         }
 
         function startRaceSequence() {
             let lightCount = 1;
-            const loadingText = document.querySelector('.loading-text');
             function turnOnNextLight() {
                 if (lightCount <= 5) {
                     document.getElementById(`light-${lightCount}`).classList.add('on');
                     document.getElementById(`light-${lightCount}b`).classList.add('on');
-                    lightCount++;
-                    setTimeout(turnOnNextLight, 1000); 
+                    lightCount++; setTimeout(turnOnNextLight, 800);
                 } else {
-                    loadingText.innerText = "ENGINES READY...";
-                    const randomDelay = Math.random() * 1300 + 200;
                     setTimeout(() => {
                         document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
-                        raceStarted = true; 
-                        setTimeout(() => {
-                            const overlay = document.getElementById('loading-overlay');
-                            overlay.style.opacity = '0';
-                            setTimeout(() => { overlay.style.display = 'none'; }, 300);
-                        }, 200);
-                    }, randomDelay);
+                        raceStarted = true;
+                        document.getElementById('loading-overlay').style.opacity = '0';
+                        setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 300);
+                    }, 1000);
                 }
             }
-            setTimeout(turnOnNextLight, 500);
+            turnOnNextLight();
         }
-
-        function generateTrackSpeedProfile() {
-            const track = document.getElementById('bg-track');
-            const len = track.getTotalLength();
-            const samples = 1000;
-            trackSpeedProfile = []; 
-            for(let i=0; i<samples; i++) {
-                const p = i / samples;
-                const pNext = (i + 1) % samples / samples;
-                const pPrev = (i - 1 + samples) % samples / samples;
-                const pt1 = track.getPointAtLength(pPrev * len);
-                const pt2 = track.getPointAtLength(p * len);
-                const pt3 = track.getPointAtLength(pNext * len);
-                const angle1 = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
-                const angle2 = Math.atan2(pt3.y - pt2.y, pt3.x - pt2.x);
-                let diff = Math.abs(angle1 - angle2);
-                if (diff > Math.PI) diff = 2 * Math.PI - diff; 
-                let targetSpeedFactor = 1.0;
-                if (diff < 0.05) targetSpeedFactor = 2.2; 
-                else if (diff < 0.2) targetSpeedFactor = 1.0; 
-                else targetSpeedFactor = 0.3; 
-                trackSpeedProfile.push(targetSpeedFactor);
-            }
-        }
-
-        function animateAIDrivers() {
-            const track = document.getElementById('bg-track');
-            const len = track.getTotalLength();
-            const now = Date.now();
-
-            aiDrivers.forEach((ai, idx) => {
-                if (!raceStarted) {
-                    const point = track.getPointAtLength(len * ai.progress);
-                    const jitterX = (Math.random() - 0.5) * 1.5;
-                    const jitterY = (Math.random() - 0.5) * 1.5;
-                    ai.element.setAttribute('transform', `translate(${point.x + jitterX}, ${point.y + jitterY})`);
-                    return; 
-                }
-
-                const fluctuation = Math.sin(now * 0.001 + ai.randomOffset) * 0.03;
-                let dynamicSpeed = ai.baseSpeed * (1 + fluctuation);
-
-                const mapIndex = Math.floor(ai.progress * 1000) % 1000;
-                const targetFactor = trackSpeedProfile[mapIndex] * dynamicSpeed;
-
-                if (ai.actualSpeed > targetFactor) ai.actualSpeed -= (ai.actualSpeed - targetFactor) * 0.15;
-                else ai.actualSpeed += (targetFactor - ai.actualSpeed) * 0.01;
-                
-                const moveStep = ai.actualSpeed * 0.00025;
-                ai.progress += moveStep;
-                if (ai.progress >= 1) ai.progress -= 1;
-                
-                const point = track.getPointAtLength(len * ai.progress);
-                ai.element.setAttribute('transform', `translate(${point.x}, ${point.y})`);
-            });
-            requestAnimationFrame(animateAIDrivers);
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function getMarkerDimensions(isHero) {
-            const isMobile = window.innerWidth < 600;
-            let rectW, rectH, fontSize, circleR;
-            if (isMobile) {
-                 rectW = isHero ? 90 : 70; rectH = isHero ? 40 : 30; fontSize = isHero ? 24 : 20; circleR = 6;
-            } else {
-                 rectW = isHero ? 50 : 40; rectH = isHero ? 24 : 20; fontSize = isHero ? 16 : 14; circleR = 4;
-            }
-            return { rectW, rectH, fontSize, circleR };
-        }
-
-        function getDriverShortId(name) {
-            if(!name) return 'UNK';
-            if(name === 'VERSTAPPEN') return 'VER';
-            if(name === 'ANTONELLI') return 'ANT';
-            if(name === 'LECLERC') return 'LEC';
-            if(name === 'HAMILTON') return 'HAM';
-            if(name === 'NORRIS') return 'NOR';   // 💡 [추가]
-            if(name === 'PIASTRI') return 'PIA';  // 💡 [추가]
-            if(name === 'ALONSO') return 'ALO';
-            if(name === 'STROLL') return 'STR';
-            if(name === 'GASLY') return 'GAS';
-            if(name === 'DOOHAN') return 'DOO';
-            if(name === 'ALBON') return 'ALB';
-            if(name === 'SAINZ') return 'SAI';
-            if(name === 'TSUNODA') return 'TSU';
-            if(name === 'HADJAR') return 'HAD';
-            if(name === 'HULKENBERG') return 'HUL';
-            if(name === 'BORTOLETO') return 'BOR';
-            if(name === 'OCON') return 'OCO';
-            if(name === 'BEARMAN') return 'BEA';
-            if(name === 'RUSSELL') return 'RUS';
-            if(name === 'LAWSON') return 'LAW';
-            return name.substring(0,3).toUpperCase();
-        }
-
-        // 💡 2030년 싱가포르 GP 예상 날짜 (9월 마지막 주 일요일) 계산
-        function get2030SingaporeDate() {
-            // 2030년 9월 29일(일) 예상
-            return '2030-09-29';
-        }
-
-        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-        function loadData() { 
-            const stored = localStorage.getItem(STORAGE_KEY); 
-            if (stored) {
-                state = JSON.parse(stored);
-                if (!state.team || !teamsDB[state.team]) {
-                    state.team = 'redbull';
-                    state.driver = 'VERSTAPPEN';
-                }
-            } 
-        }
-        function showTooltip(msg) { const tip = document.getElementById('msg-tooltip'); tip.innerText = msg; tip.classList.add('show'); setTimeout(() => tip.classList.remove('show'), 2500); }
-        function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
         function addMoney() {
-            // 💡 모바일 버튼 시각 효과 (Active 강제 트리거)
             const btn = document.querySelector('.box-btn');
             btn.classList.add('flash-active');
-            setTimeout(() => { btn.classList.remove('flash-active'); }, 150);
-
-            const now = new Date();
-            const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, '0'); const d = String(now.getDate()).padStart(2, '0');
-            const todayStr = `${y}-${m}-${d}`;
-            const currentDay = now.getDate();
-            if (currentDay !== state.savingsDay) { const dayStr = getOrdinal(state.savingsDay); showTooltip(`NOT YET, BOX ON THE ${dayStr}`); return; }
-            if (state.lastDepositDate === todayStr) { showTooltip("ENOUGH NOW"); return; }
+            setTimeout(() => btn.classList.remove('flash-active'), 150);
+            
+            if (new Date().getDate() !== state.savingsDay) { showTooltip(`NOT YET, BOX ON THE ${state.savingsDay}th`); return; }
             const totalGoal = state.q1 + state.q2 + state.q3;
+            if (state.currentAmount >= totalGoal) { showTooltip("MAX POWER REACHED"); return; }
+
             state.currentAmount += state.depositUnit;
             if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
-            state.lastDepositDate = todayStr;
-            showTooltip("COPY THAT, BOXING NOW!"); 
+            
             let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
-            if (checkS !== state.lastSession && checkS !== 'Q1' && checkS !== 'FINISH') triggerCelebration(state.lastSession);
+            if (checkS !== state.lastSession && checkS !== 'Q1') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
-            saveData(); updateDashboard(); 
-        }
-
-        function triggerCelebration(sessionName) {
-            const overlay = document.getElementById('celebration-overlay');
-            overlay.style.display = 'flex'; 
-            document.getElementById('lap-session-title').innerText = `[${sessionName}] FASTEST LAP`;
-            document.getElementById('lap-driver-name').innerText = state.driver;
-            const teamPrimary = getComputedStyle(document.body).getPropertyValue('--team-primary').trim();
-            const teamAccent = getComputedStyle(document.body).getPropertyValue('--team-accent').trim();
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, zIndex: 10001, colors: [teamPrimary, teamAccent, '#ffffff'] });
-        }
-
-        function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
-        function syncTrackFill(target) {
-            if (animId) cancelAnimationFrame(animId);
-            const activeTrack = document.getElementById('active-track');
-            const totalLength = activeTrack.getTotalLength();
-            function frame() {
-                let diff = target - visualProgress; 
-                visualProgress += diff * 0.08;
-                activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
-                if (Math.abs(diff) > 0.0001) animId = requestAnimationFrame(frame);
-            }
-            frame();
+            saveData(); updateDashboard();
         }
 
         function updateDashboard() {
             document.body.className = state.team;
-            
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
-            
-            document.getElementById('disp-country').innerText = "SINGAPORE";
-            document.getElementById('disp-circuit').innerText = "Marina Bay Street Circuit";
+            const data = circuitsData.find(c => c.id === state.circuitId);
+            document.getElementById('disp-country').innerText = data.country;
+            document.getElementById('disp-circuit').innerText = data.name;
 
             const totalGoal = state.q1 + state.q2 + state.q3;
-            let targetP = 0;
-            let stepText = "[Q1]"; let nameText = "HOTEL";
-            
-            // Q1: 호텔 확보 구간 (160만)
-            if (state.currentAmount < state.q1) { 
-                targetP = state.currentAmount / state.q1; 
-                stepText = "[Q1]"; nameText = "HOTEL"; 
-            } 
-            // Q2: 항공권 확보 구간 (누적 240만)
-            else if (state.currentAmount < (state.q1 + state.q2)) { 
-                targetP = (state.currentAmount - state.q1) / state.q2; 
-                stepText = "[Q2]"; nameText = "FLIGHT"; 
-            } 
-            // Q3: 티켓 및 체류비 구간 (누적 500만)
-            else { 
-                targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; 
-                stepText = "[Q3]"; nameText = "TICKET"; 
-                if (state.currentAmount >= totalGoal) { targetP = 1; stepText = "POLE"; nameText = "POSITION"; } 
-            } 
-            
-            document.getElementById('session-step').innerText = stepText;
-            document.getElementById('session-name').innerText = nameText;
+            let targetP = 0, step = "[Q1]", name = "HOTEL";
+            if (state.currentAmount < state.q1) { targetP = state.currentAmount / state.q1; }
+            else if (state.currentAmount < (state.q1 + state.q2)) { targetP = (state.currentAmount - state.q1) / state.q2; step = "[Q2]"; name = "FLIGHT"; }
+            else { targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; step = "[Q3]"; name = "TICKET"; }
+            if (state.currentAmount >= totalGoal) { targetP = 1; step = "POLE"; name = "POSITION"; }
+
+            document.getElementById('session-step').innerText = step;
+            document.getElementById('session-name').innerText = name;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
             syncTrackFill(targetP);
+
             document.getElementById('savings-day').value = state.savingsDay;
             document.getElementById('deposit-unit').value = state.depositUnit;
             document.getElementById('manual-amount').value = state.currentAmount;
@@ -1168,42 +1415,59 @@ let isMuted = false;
             document.getElementById('target-date').value = state.targetDate;
         }
 
+        function syncTrackFill(target) {
+            if (animId) cancelAnimationFrame(animId);
+            const activeTrack = document.getElementById('active-track');
+            const totalLength = activeTrack.getTotalLength();
+            const baseOffset = totalLength * (1 - state.pathStartOffset);
+            function frame() {
+                visualProgress += (target - visualProgress) * 0.08;
+                activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
+                activeTrack.style.strokeDashoffset = baseOffset;
+                if (Math.abs(target - visualProgress) > 0.001) animId = requestAnimationFrame(frame);
+            }
+            frame();
+        }
+
+        function triggerCelebration(sessionName) {
+            document.getElementById('celebration-overlay').style.display = 'flex';
+            document.getElementById('lap-session-title').innerText = `[${sessionName}] FASTEST LAP`;
+            document.getElementById('lap-driver-name').innerText = state.driver;
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        }
+
+        function onYouTubeIframeAPIReady() {
+            bgmPlayer = new YT.Player('bgm-player', { height: '0', width: '0', videoId: 'YhX_Woa3kVA', playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' } });
+        }
+
+        function getDriverShortId(n) { return n.substring(0,3).toUpperCase(); }
+        function showTooltip(m) { const t = document.getElementById('msg-tooltip'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateTeamSelectUI(); calculateRecommendation(); }
+        function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        function loadData() { const s = localStorage.getItem(STORAGE_KEY); if (s) state = { ...state, ...JSON.parse(s) }; }
+        function shuffleArray(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
         function calculateRecommendation() {
             const savingsDay = parseInt(document.getElementById('savings-day').value) || 1;
             const targetDateStr = document.getElementById('target-date').value;
             const curAmt = parseInt(document.getElementById('manual-amount').value) || 0;
-            const q1 = parseInt(document.getElementById('q1-goal').value) || 0;
-            const q2 = parseInt(document.getElementById('q2-goal').value) || 0;
-            const q3 = parseInt(document.getElementById('q3-goal').value) || 0;
-            const recBox = document.getElementById('rec-box');
-            const recMsg = document.getElementById('rec-msg');
-            if (!targetDateStr) { recBox.style.display = 'none'; return; }
-            recBox.style.display = 'block';
-            const totalGoal = q1 + q2 + q3;
+            const totalGoal = (parseInt(document.getElementById('q1-goal').value) || 0) + (parseInt(document.getElementById('q2-goal').value) || 0) + (parseInt(document.getElementById('q3-goal').value) || 0);
             const remaining = totalGoal - curAmt;
-            if (remaining <= 0) { recMsg.innerText = "GOAL REACHED! PUSH HARD!"; return; }
-            const today = new Date();
             const targetDate = new Date(targetDateStr);
-            if (targetDate <= today) { recMsg.innerText = "RACE DAY PASSED / INVALID DATE"; return; }
-            let depositCount = 0;
-            let tempDate = new Date(today);
-            if (tempDate.getDate() > savingsDay) tempDate.setMonth(tempDate.getMonth() + 1);
-            tempDate.setDate(savingsDay);
-            while (tempDate <= targetDate) { depositCount++; tempDate.setMonth(tempDate.getMonth() + 1); }
-            if (depositCount === 0) { recMsg.innerText = "IMMEDIATE FULL DEPOSIT REQUIRED"; } 
-            else { const monthlyRec = Math.ceil(remaining / depositCount); recMsg.innerText = `REC: ₩${monthlyRec.toLocaleString()} / month (${depositCount} stops)`; }
-        }
-
-        function openSettings() { 
-            document.getElementById('settings-modal').style.display = 'flex'; 
-            updateTeamSelectUI(); 
-            calculateRecommendation(); 
+            const today = new Date();
+            let count = 0, temp = new Date(today);
+            if (temp.getDate() > savingsDay) temp.setMonth(temp.getMonth() + 1);
+            temp.setDate(savingsDay);
+            while (temp <= targetDate) { count++; temp.setMonth(temp.getMonth() + 1); }
+            document.getElementById('rec-box').style.display = 'block';
+            document.getElementById('rec-msg').innerText = count > 0 ? `REC: ₩${Math.ceil(remaining/count).toLocaleString()} / month (${count} stops)` : "FULL DEPOSIT NEEDED";
         }
 
         function saveAndCloseSettings() {
             state.team = document.getElementById('team-select').value;
             state.driver = document.getElementById('driver-select').value;
-            
+            state.circuitId = document.getElementById('circuit-select').value;
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
             state.currentAmount = Number(document.getElementById('manual-amount').value);
@@ -1211,48 +1475,32 @@ let isMuted = false;
             state.q2 = Number(document.getElementById('q2-goal').value);
             state.q3 = Number(document.getElementById('q3-goal').value);
             state.targetDate = document.getElementById('target-date').value;
-            
-            saveData(); 
-            updateDashboard(); 
-            updateRaceScenario(); 
+            saveData(); updateCircuit(); updateRaceScenario();
             document.getElementById('settings-modal').style.display = 'none';
         }
-        
-        function setDriver(d) { /* UI 변경용, 실제 저장은 버튼 클릭 시 */ }
 
         function updateDriverList(teamKey) {
             const driverSelect = document.getElementById('driver-select');
-            driverSelect.innerHTML = ''; 
-            
-            const teamInfo = teamsDB[teamKey];
-            if (teamInfo) {
-                teamInfo.drivers.forEach(dName => {
-                    const option = document.createElement('option');
-                    option.value = dName;
-                    option.text = dName;
-                    driverSelect.appendChild(option);
-                });
-                
-                if (teamInfo.drivers.includes(state.driver) && state.team === teamKey) {
-                    driverSelect.value = state.driver;
-                } else {
-                    driverSelect.selectedIndex = 0;
-                }
-            }
-            document.body.className = teamKey; 
+            driverSelect.innerHTML = '';
+            teamsDB[teamKey].drivers.forEach(d => {
+                const opt = document.createElement('option'); opt.value = d; opt.text = d;
+                driverSelect.appendChild(opt);
+            });
+            document.body.className = teamKey;
         }
 
         function updateTeamSelectUI() {
-            const selectBox = document.getElementById('team-select');
-            if(selectBox) {
-                selectBox.value = state.team;
-                updateDriverList(state.team); 
-                const driverBox = document.getElementById('driver-select');
-                if(driverBox) driverBox.value = state.driver;
-            }
+            document.getElementById('team-select').value = state.team;
+            updateDriverList(state.team);
+            document.getElementById('driver-select').value = state.driver;
         }
 
         init();
+
+        function setDriver(val) { 
+            state.driver = val; 
+            updateRaceScenario(); 
+        }
     </script>
 </body>
 </html>
