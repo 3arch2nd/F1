@@ -613,30 +613,30 @@
         };
 
         const circuitsData = [
-            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 8, h: 2500000, f: 3500000, t: 700000 },
-            { id: 'chn', name: 'Shanghai Int. Circuit', country: 'China', month: 3, day: 22, h: 2000000, f: 600000, t: 800000 },
-            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 4, day: 5, h: 3000000, f: 4500000, t: 800000 },
-            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 12, h: 1500000, f: 500000, t: 600000 },
-            { id: 'bhr', name: 'Bahrain Int. Circuit', country: 'Bahrain', month: 4, day: 26, h: 2500000, f: 4000000, t: 600000 },
-            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 3, h: 5000000, f: 6000000, t: 1500000 },
-            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 17, h: 2000000, f: 3500000, t: 700000 },
-            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 24, h: 6000000, f: 3500000, t: 1200000 },
-            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 7, h: 2500000, f: 4500000, t: 600000 },
-            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 21, h: 2000000, f: 3500000, t: 600000 },
-            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 28, h: 2000000, f: 3500000, t: 700000 },
-            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 5, h: 3000000, f: 3500000, t: 900000 },
-            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 26, h: 2000000, f: 3500000, t: 600000 },
-            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 8, day: 2, h: 1500000, f: 3000000, t: 500000 },
-            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 30, h: 2500000, f: 3500000, t: 800000 },
-            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 6, h: 2200000, f: 3500000, t: 700000 },
-            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 20, h: 2000000, f: 4000000, t: 600000 },
+            // 2030 시즌 예상 캘린더 (일요일 결승 기준)
+            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 10, h: 2800000, f: 1900000, t: 850000 },
+            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 3, day: 24, h: 3200000, f: 2100000, t: 900000 },
+            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 7, h: 1800000, f: 700000, t: 750000 },
+            { id: 'chn', name: 'Shanghai Int. Circuit', country: 'China', month: 4, day: 21, h: 2200000, f: 600000, t: 850000 },
+            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 5, h: 6500000, f: 2800000, t: 2500000 },
+            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 19, h: 2500000, f: 2100000, t: 900000 },
+            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 26, h: 8000000, f: 2200000, t: 1500000 },
+            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 9, h: 3000000, f: 2600000, t: 950000 },
+            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 23, h: 2400000, f: 2000000, t: 800000 },
+            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 30, h: 2200000, f: 2100000, t: 850000 },
+            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 7, h: 3500000, f: 2300000, t: 1200000 },
+            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 7, day: 21, h: 1800000, f: 1900000, t: 650000 },
+            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 28, h: 2300000, f: 2000000, t: 800000 },
+            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 25, h: 2800000, f: 2100000, t: 900000 },
+            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 1, h: 2600000, f: 2000000, t: 950000 },
+            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 15, h: 2100000, f: 1800000, t: 700000 },
             { id: 'sin', name: 'Marina Bay Street Circuit', country: 'Singapore', month: 10, day: 4, h: 3500000, f: 1500000, t: 900000 },
-            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 18, h: 3000000, f: 5000000, t: 800000 },
-            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 25, h: 2000000, f: 4500000, t: 600000 },
-            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 8, h: 2000000, f: 5500000, t: 600000 },
-            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 22, h: 5000000, f: 5000000, t: 2000000 },
-            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 11, day: 29, h: 3000000, f: 4000000, t: 700000 },
-            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 6, h: 4000000, f: 4000000, t: 1000000 }
+            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 20, h: 3800000, f: 2500000, t: 1100000 },
+            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 27, h: 2200000, f: 2400000, t: 750000 },
+            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 3, h: 2300000, f: 2900000, t: 700000 },
+            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 23, h: 7000000, f: 2400000, t: 3000000 },
+            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 12, day: 1, h: 3500000, f: 2000000, t: 900000 },
+            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 8, h: 5000000, f: 2100000, t: 1500000 }
         ];
 
         const teamsDB = {
@@ -762,9 +762,28 @@
             const data = circuitsData.find(c => c.id === circuitId);
             if(!data) return;
 
+            // 1. 서킷 정보 업데이트
             state.circuitId = circuitId;
-            const asset = circuitAssets[circuitId] || circuitAssets['aus'];
+            
+            // 2. 💡 [핵심 수정] 서킷 변경 시 예산(Q1, Q2, Q3) 자동 동기화
+            state.q1 = data.h; // Hotel
+            state.q2 = data.f; // Flight
+            state.q3 = data.t; // Ticket
+            
+            // 3. 입력 필드 값에도 반영
+            document.getElementById('q1-goal').value = state.q1;
+            document.getElementById('q2-goal').value = state.q2;
+            document.getElementById('q3-goal').value = state.q3;
 
+            // 4. 날짜 자동 설정 (2030년 해당 월/일)
+            const year = 2030;
+            const month = String(data.month).padStart(2, '0');
+            const day = String(data.day).padStart(2, '0');
+            state.targetDate = `${year}-${month}-${day}`;
+            document.getElementById('target-date').value = state.targetDate;
+
+            // 5. 트랙 에셋 로딩
+            const asset = circuitAssets[circuitId] || circuitAssets['aus'];
             const svgElement = document.querySelector('.track-svg');
             svgElement.setAttribute('viewBox', asset.viewBox);
             calculateScaleFactor(asset.viewBox);
@@ -783,7 +802,7 @@
                 state.pathStartOffset = findPathOffset(track, asset.startLineTransform);
                 generateTrackSpeedProfile();
                 initAIDrivers();
-                updateDashboard();
+                updateDashboard(); // 여기서 TAR 예산 표시 업데이트됨
             }, 50);
         }
 
@@ -793,11 +812,16 @@
             const targetX = parseFloat(match[1]), targetY = parseFloat(match[2]);
             const totalLen = pathElement.getTotalLength();
             let minDist = Infinity, bestRatio = 0;
-            for(let i=0; i <= 1000; i++) {
-                const len = (i / 1000) * totalLen;
+            
+            // 💡 [수정] 정밀도 향상: 1000 -> 5000 단계로 쪼개서 가장 가까운 점을 찾음
+            // 이렇게 하면 시작점 오차가 픽셀 단위 이하로 줄어듭니다.
+            const steps = 5000; 
+            
+            for(let i=0; i <= steps; i++) {
+                const len = (i / steps) * totalLen;
                 const pt = pathElement.getPointAtLength(len);
                 const dist = Math.sqrt(Math.pow(pt.x - targetX, 2) + Math.pow(pt.y - targetY, 2));
-                if (dist < minDist) { minDist = dist; bestRatio = i / 1000; }
+                if (dist < minDist) { minDist = dist; bestRatio = i / steps; }
             }
             return bestRatio;
         }
@@ -1373,39 +1397,116 @@ function animateAIDrivers() {
             btn.classList.add('flash-active');
             setTimeout(() => btn.classList.remove('flash-active'), 150);
             
-            if (new Date().getDate() !== state.savingsDay) { showTooltip(`NOT YET, BOX ON THE ${state.savingsDay}th`); return; }
-            const totalGoal = state.q1 + state.q2 + state.q3;
-            if (state.currentAmount >= totalGoal) { showTooltip("MAX POWER REACHED"); return; }
+            const today = new Date();
+            const todayStr = today.toDateString(); 
 
+            // 1. 입금 지정일(DD) 체크 (서수 표기 로직 추가)
+            if (today.getDate() !== state.savingsDay) { 
+                const d = state.savingsDay;
+                
+                // 💡 날짜 뒤에 붙는 접미사(Suffix) 계산
+                // 1, 21, 31 -> st
+                // 2, 22 -> nd
+                // 3, 23 -> rd
+                // 나머지(11, 12, 13 포함) -> th
+                const j = d % 10, k = d % 100;
+                let suffix = "th";
+                if (j === 1 && k !== 11) suffix = "st";
+                else if (j === 2 && k !== 12) suffix = "nd";
+                else if (j === 3 && k !== 13) suffix = "rd";
+
+                showTooltip(`NOT YET, BOX ON THE ${d}${suffix}`); 
+                return; 
+            }
+
+            // 2. 중복 입금 방지
+            if (state.lastDepositDate === todayStr) {
+                showTooltip("ALREADY BOXED! SAVE TIRES.");
+                return;
+            }
+
+            // 3. 목표 금액 초과 방지
+            const totalGoal = state.q1 + state.q2 + state.q3;
+            if (state.currentAmount >= totalGoal) { 
+                showTooltip("MAX POWER REACHED"); 
+                return; 
+            }
+
+            // 4. 입금 실행
             state.currentAmount += state.depositUnit;
             if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
             
+            // 5. 오늘 날짜를 '마지막 입금일'로 기록
+            state.lastDepositDate = todayStr;
+            
+            // 6. 세션 변경 및 저장 로직
             let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
             if (checkS !== state.lastSession && checkS !== 'Q1') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
-            saveData(); updateDashboard();
+            
+            saveData(); 
+            updateDashboard();
         }
 
         function updateDashboard() {
+            // 1. 화면 표시 정보 업데이트 (팀, 드라이버, 서킷)
             document.body.className = state.team;
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
+            
             const data = circuitsData.find(c => c.id === state.circuitId);
-            document.getElementById('disp-country').innerText = data.country;
-            document.getElementById('disp-circuit').innerText = data.name;
+            if(data) {
+                document.getElementById('disp-country').innerText = data.country;
+                document.getElementById('disp-circuit').innerText = data.name;
+            }
 
+            // 2. 🚨 핵심: 3-Lap 시스템 계산 로직
             const totalGoal = state.q1 + state.q2 + state.q3;
-            let targetP = 0, step = "[Q1]", name = "HOTEL";
-            if (state.currentAmount < state.q1) { targetP = state.currentAmount / state.q1; }
-            else if (state.currentAmount < (state.q1 + state.q2)) { targetP = (state.currentAmount - state.q1) / state.q2; step = "[Q2]"; name = "FLIGHT"; }
-            else { targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3; step = "[Q3]"; name = "TICKET"; }
-            if (state.currentAmount >= totalGoal) { targetP = 1; step = "POLE"; name = "POSITION"; }
+            let targetP = 0;
+            let step = "[Q1]";
+            let name = "HOTEL";
 
+            // [Lap 1] Q1 구간: 0원 ~ Q1 목표액
+            if (state.currentAmount < state.q1) { 
+                // Q1 목표액 대비 현재 달성률 (0% ~ 100%)
+                targetP = state.currentAmount / state.q1;
+                step = "[Q1]";
+                name = "HOTEL";
+            
+            // [Lap 2] Q2 구간: Q1 달성 후 ~ Q2 목표액
+            } else if (state.currentAmount < (state.q1 + state.q2)) { 
+                // Q1은 이미 다 채웠고, Q2 목표액 대비 현재 진행률 계산
+                // (현재금액 - Q1완료금액) / Q2목표액
+                targetP = (state.currentAmount - state.q1) / state.q2;
+                step = "[Q2]";
+                name = "FLIGHT";
+            
+            // [Lap 3] Q3 구간: Q2 달성 후 ~ 최종 목표액
+            } else if (state.currentAmount < totalGoal) { 
+                // Q2까지 다 채웠고, Q3 목표액 대비 현재 진행률 계산
+                targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3;
+                step = "[Q3]";
+                name = "TICKET";
+            
+            // [FINISH] 목표 달성!
+            } else { 
+                targetP = 1; // 꽉 채움
+                step = "POLE";
+                name = "POSITION";
+            }
+
+            // 3. 계산된 진행률(0.0 ~ 1.0)을 트랙에 반영
+            // (세션이 바뀔 때마다 트랙이 비워졌다가 다시 차오르는 효과가 납니다)
+            syncTrackFill(Math.max(0, Math.min(1, targetP)));
+
+            // 4. 텍스트 정보 업데이트
             document.getElementById('session-step').innerText = step;
             document.getElementById('session-name').innerText = name;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
+            
+            // 라디오 TAR(Target)는 '전체 총액'을 보여주어 큰 목표를 상기시킵니다.
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
-            syncTrackFill(targetP);
 
+            // 5. 설정 모달의 입력 필드 값 동기화
             document.getElementById('savings-day').value = state.savingsDay;
             document.getElementById('deposit-unit').value = state.depositUnit;
             document.getElementById('manual-amount').value = state.currentAmount;
@@ -1419,11 +1520,21 @@ function animateAIDrivers() {
             if (animId) cancelAnimationFrame(animId);
             const activeTrack = document.getElementById('active-track');
             const totalLength = activeTrack.getTotalLength();
-            const baseOffset = totalLength * (1 - state.pathStartOffset);
+            
+            // 💡 [수정] 오프셋 계산 방식 변경
+            // (1 - offset) 방식 대신, 음수 오프셋(-offset)을 사용하여 
+            // SVG 패턴의 시작점을 스타팅 라인에 정확히 고정합니다.
+            const baseOffset = -1 * (totalLength * state.pathStartOffset);
+
             function frame() {
                 visualProgress += (target - visualProgress) * 0.08;
-                activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength}`;
+                
+                // 💡 [수정] 빈 공간(Gap) 여유분 확보
+                // 뒷부분인 '빈 공간'을 트랙 전체 길이보다 10% 더 길게 잡아서(1.1),
+                // 진행 바가 0%일 때나 100%일 때 잔상이 겹쳐 보이는 현상을 방지합니다.
+                activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength * 1.1}`;
                 activeTrack.style.strokeDashoffset = baseOffset;
+                
                 if (Math.abs(target - visualProgress) > 0.001) animId = requestAnimationFrame(frame);
             }
             frame();
@@ -1465,17 +1576,32 @@ function animateAIDrivers() {
         }
 
         function saveAndCloseSettings() {
+            // 1. 현재 입력된 값들을 state에 저장
             state.team = document.getElementById('team-select').value;
             state.driver = document.getElementById('driver-select').value;
-            state.circuitId = document.getElementById('circuit-select').value;
+            
+            // 주의: state.circuitId는 드롭다운 변경 시 updateCircuit()에 의해 이미 업데이트되었습니다.
+            // 여기서 다시 updateCircuit()을 호출하면 레이스가 리셋되므로 호출하지 않습니다.
+
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
             state.currentAmount = Number(document.getElementById('manual-amount').value);
+            
             state.q1 = Number(document.getElementById('q1-goal').value);
             state.q2 = Number(document.getElementById('q2-goal').value);
             state.q3 = Number(document.getElementById('q3-goal').value);
             state.targetDate = document.getElementById('target-date').value;
-            saveData(); updateCircuit(); updateRaceScenario();
+
+            // 2. 데이터 영구 저장
+            saveData();
+
+            // 3. 🚨 핵심: 트랙 초기화 없이 화면/시나리오만 갱신
+            // 이렇게 하면 서킷을 바꾸지 않고 선수만 바꿨을 때, 
+            // 레이스 진행 상황(위치, 랩 수)은 그대로 유지된 채 내 차량(색상/이름)만 바뀝니다.
+            updateDashboard();      // 상단 정보/예산 갱신
+            updateRaceScenario();   // 내 차량 마커(Hero)만 새로 지정
+
+            // 4. 모달 닫기
             document.getElementById('settings-modal').style.display = 'none';
         }
 
