@@ -1073,10 +1073,13 @@ function animateAIDrivers() {
     // 순위 산정
     const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
 
-    // 1. 랜덤 사고 발생 (레이스 시작 후, 선두가 절반 이상 돌았을 때부터)
+    // 1. 랜덤 사고 발생 (레이스 시작 후, 안정화될 때까지 대기)
     if (raceStarted && raceStatus === 'GREEN') {
         const leader = battleRank[0];
-        if (leader && (leader.totalLaps > 0 || leader.progress > 0.5)) {
+        
+        // 💡 [수정] 초반 광클릭 사고 방지 로직
+        if (leader && leader.totalLaps >= 1) {
+            // 확률은 그대로 유지 (0.00015)
             if (Math.random() < 0.00015) triggerRaceIncident();
         }
     }
