@@ -949,6 +949,68 @@ let g_rowHeight = 21;
             { id: 'BEA', speed: 1.01 }  
         ];
 
+/* ==========================================================================
+           🏁 CIRCUIT SPECIALIST DATA (Based on R01-R24 Results)
+           * 서킷별로 유독 성적이 좋은 드라이버에게 추가 속도(Multiplier)를 부여합니다.
+           ========================================================================== */
+        const circuitSpecialists = {
+            // R01 호주: 맥라렌 듀오 압도, 르클레르 강세
+            'aus': { 'NOR': 1.04, 'PIA': 1.04, 'LEC': 1.03 },
+            // R02 중국: 피아스트리 우승
+            'chn': { 'PIA': 1.04, 'NOR': 1.03, 'VER': 1.02 },
+            // R03 일본: 베르스타펜의 독주
+            'jpn': { 'VER': 1.05, 'NOR': 1.03, 'PIA': 1.02 },
+            // R04 바레인: 피아스트리 우승, 페레즈 3위
+            'bhr': { 'PIA': 1.04, 'VER': 1.03, 'PER': 1.04 },
+            // R05 사우디: 피아스트리/노리스, 페레즈 강세
+            'ksa': { 'PIA': 1.04, 'NOR': 1.03, 'PER': 1.03 },
+            // R06 마이애미: 맥라렌, 르클레르, 페레즈 상위권
+            'mia': { 'PIA': 1.04, 'NOR': 1.03, 'LEC': 1.03, 'PER': 1.03 },
+            // R07 모나코: 노리스 우승, 페레즈 3위(변수)
+            'mon': { 'NOR': 1.05, 'LEC': 1.04, 'PER': 1.05 },
+            // R08 스페인: 피아스트리 우승
+            'esp': { 'PIA': 1.04, 'NOR': 1.03, 'VER': 1.03 },
+            
+            // 🚨 R09 캐나다: 러셀 우승! (벤츠 강세)
+            'can': { 'RUS': 1.06, 'VER': 1.03, 'PER': 1.04 },
+            
+            // R10 오스트리아: 노리스 우승, 페레즈 3위
+            'aut': { 'NOR': 1.04, 'PIA': 1.03, 'PER': 1.04 },
+            
+            // 🚨 R11 영국: 헐켄버그(Audi) 3위 대이변! (초강력 보정 필요)
+            'gbr': { 'NOR': 1.04, 'PIA': 1.03, 'HUL': 1.12 }, 
+            
+            // R12 벨기에: 피아스트리 우승, 페레즈 3위
+            'bel': { 'PIA': 1.04, 'NOR': 1.03, 'PER': 1.04 },
+            // R13 헝가리: 노리스 우승, 러셀 3위
+            'hun': { 'NOR': 1.04, 'PIA': 1.03, 'RUS': 1.04 },
+            // R14 네덜란드: 피아스트리 우승, 하자르(RB) 3위 대이변!
+            'ned': { 'PIA': 1.04, 'VER': 1.03, 'HAD': 1.10 },
+            // R15 이탈리아: 베르스타펜 우승
+            'ita': { 'VER': 1.05, 'NOR': 1.03, 'PIA': 1.02 },
+            // R16 마드리드: 피아스트리 우승, 페레즈 3위
+            'esp': { 'PIA': 1.04, 'NOR': 1.03, 'PER': 1.04 }, // (esp 코드 공유 주의)
+            
+            // 🚨 R17 아제르바이잔: 페레즈(Cadillac) 우승! (King of Baku)
+            'aze': { 'PER': 1.08, 'VER': 1.03, 'RUS': 1.04, 'SAI': 1.05 },
+            
+            // 🚨 R18 싱가포르: 러셀 우승, 페레즈 4위, 사인츠 5위
+            'sin': { 'RUS': 1.06, 'VER': 1.03, 'NOR': 1.02, 'PER': 1.04 },
+            
+            // R19 미국: 베르스타펜 우승, 페레즈 3위
+            'usa': { 'VER': 1.05, 'NOR': 1.03, 'PER': 1.04 },
+            // R20 멕시코: 노리스 우승, 페레즈(홈) 2위
+            'mex': { 'NOR': 1.04, 'PER': 1.06, 'LEC': 1.03 },
+            // R21 브라질: 노리스 우승, 안토넬리(Mercedes) 2위!
+            'bra': { 'NOR': 1.04, 'ANT': 1.07, 'VER': 1.03 },
+            // R22 라스베이거스: 베르스타펜 우승, 러셀/안토넬리 포디움
+            'las': { 'VER': 1.05, 'RUS': 1.04, 'ANT': 1.04 },
+            // R23 카타르: 베르스타펜 우승, 사인츠 3위
+            'qat': { 'VER': 1.05, 'PIA': 1.03, 'SAI': 1.05 },
+            // R24 아부다비: 베르스타펜 우승, 페레즈 3위
+            'abu': { 'VER': 1.05, 'PIA': 1.03, 'NOR': 1.03, 'PER': 1.04 }
+        };
+
         function calculateScaleFactor(viewBoxStr) {
             const parts = viewBoxStr.split(' ').map(Number);
             const width = parts[2]; 
@@ -1200,20 +1262,44 @@ function toggleLeaderboard() {
             layer.innerHTML = ''; 
             aiDrivers = [];
             
+            // 🎲 [신규] 퀄리파잉 변수 로직 (Start Grid Shuffle)
+            // 원본 그룹을 복사해서 사용
+            let topGroup = [...driverGroups.top];
+            let midGroup = [...driverGroups.mid];
+            let btmGroup = [...driverGroups.btm];
+
+            // 1. 상위 티어 선수가 퀄리파잉 망칠 확률 (5%) -> 하위권(btm)으로 강등
+            for (let i = topGroup.length - 1; i >= 0; i--) {
+                if (Math.random() < 0.05) { 
+                    const driver = topGroup.splice(i, 1)[0];
+                    btmGroup.push(driver); // 꼴찌 그룹으로 이동
+                    console.log(`[Q Variable] ${driver} starts form BACK!`);
+                }
+            }
+
+            // 2. 하위 티어 선수가 인생 경기 펼칠 확률 (5%) -> 중위권(mid)으로 승격
+            for (let i = btmGroup.length - 1; i >= 0; i--) {
+                if (Math.random() < 0.05) { 
+                    const driver = btmGroup.splice(i, 1)[0];
+                    midGroup.push(driver); // 중위권 그룹으로 이동
+                    console.log(`[Q Variable] ${driver} qualified HIGH!`);
+                }
+            }
+
+            // 그룹 내부 셔플
             const shuffle = (a) => a.sort(() => Math.random() - 0.5);
-            const topShuffled = shuffle([...driverGroups.top]);
-            const midShuffled = shuffle([...driverGroups.mid]);
-            const btmShuffled = shuffle([...driverGroups.btm]);
-            const combinedIds = [...topShuffled, ...midShuffled, ...btmShuffled];
+            
+            // 최종 그리드 확정 (Top -> Mid -> Btm 순서)
+            const combinedIds = [...shuffle(topGroup), ...shuffle(midGroup), ...shuffle(btmGroup)];
             
             let gridStartPos = state.pathStartOffset - 0.02;
-            
             if (gridStartPos < 0) gridStartPos += 1; 
 
             combinedIds.forEach((id, index) => {
                 const dInfo = driverList.find(d => d.id === id) || { speed: 1.0 };
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
+                // id 표시
                 g.innerHTML = `<rect x="-20" y="-30" width="40" height="20"/><text x="0" y="-16" style="font-size:14px;">${id}</text><circle r="4"/>`;
                 layer.appendChild(g);
 
@@ -1249,10 +1335,8 @@ function toggleLeaderboard() {
 
             updateRaceScenario();
             
-            // 🚨 [수정] 리더보드 생성 후, 즉시 높이 조절 함수 호출
             if (typeof initLeaderboard === 'function') {
                 initLeaderboard();
-                // 이 부분이 추가되어야 서킷 변경 시에도 작아진 화면 높이를 반영합니다.
                 if (typeof adjustLeaderboardLayout === 'function') {
                     adjustLeaderboardLayout();
                 }
@@ -1415,7 +1499,7 @@ function toggleLeaderboard() {
     safetyCar.element.style.display = 'block';
 }
 
-/* 💡 [수정] animateAIDrivers: Yellow Flag 시 선두/후발 그룹 속도 차등 적용 */
+/* 💡 [수정] 전체 속도 0.85배 하향 & 하위권 반란(Underdog Burst) 로직 추가 */
 function animateAIDrivers() {
     const track = document.getElementById('bg-track');
     if(!track) { requestAnimationFrame(animateAIDrivers); return; }
@@ -1423,19 +1507,46 @@ function animateAIDrivers() {
     const len = track.getTotalLength();
     const now = Date.now();
 
-    // 순위 산정 (현재 1등을 찾기 위함)
+    /* 📊 서킷 스페셜리스트 데이터 (유지) */
+    const circuitSpecialists = {
+        'aus': { 'NOR': 1.03, 'PIA': 1.03, 'LEC': 1.02, 'PER': 1.02 },
+        'chn': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.01 },
+        'jpn': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
+        'bhr': { 'PIA': 1.03, 'VER': 1.02, 'PER': 1.03 },
+        'ksa': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.02 },
+        'mia': { 'PIA': 1.03, 'NOR': 1.02, 'LEC': 1.02, 'PER': 1.02 },
+        'mon': { 'NOR': 1.04, 'LEC': 1.03, 'PER': 1.04 },
+        'esp': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.02, 'PER': 1.02 },
+        'can': { 'RUS': 1.05, 'VER': 1.02, 'PER': 1.03 },
+        'aut': { 'NOR': 1.03, 'PIA': 1.02, 'PER': 1.03 },
+        'gbr': { 'NOR': 1.03, 'PIA': 1.02, 'HUL': 1.05, 'PER': 1.02 }, 
+        'bel': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
+        'hun': { 'NOR': 1.03, 'PIA': 1.02, 'RUS': 1.03, 'PER': 1.02 },
+        'ned': { 'PIA': 1.03, 'VER': 1.02, 'HAD': 1.05, 'PER': 1.02 },
+        'ita': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
+        'mad': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
+        'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
+        'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
+        'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
+        'mex': { 'NOR': 1.03, 'PER': 1.05, 'LEC': 1.02 },
+        'bra': { 'NOR': 1.03, 'ANT': 1.05, 'VER': 1.02, 'PER': 1.02 },
+        'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.03, 'PER': 1.02 },
+        'qat': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 },
+        'abu': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 }
+    };
+
+    // 실시간 순위 계산
     const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
 
-    // 1. 랜덤 사고 발생 (레이스 시작 후, 안정화될 때까지 대기)
+    // 1. 랜덤 사고
     if (raceStarted && raceStatus === 'GREEN') {
         const leader = battleRank[0];
-        // 초반 광클릭 사고 방지 로직
         if (leader && leader.totalLaps >= 1) {
             if (Math.random() < 0.00025) triggerRaceIncident();
         }
     }
 
-    // 2. 이벤트 타이머
+    // 2. 타이머
     if (raceStatus !== 'GREEN') {
         eventTimer--;
         if (raceStatus === 'SC' && eventTimer === 180) {
@@ -1453,7 +1564,8 @@ function animateAIDrivers() {
             safetyCar.element.style.display = 'none';
             safetyCar.active = false; 
         } else {
-            safetyCar.progress += 0.8 * 0.00026 * state.speedFactor;
+            // SC 속도도 0.85배 조정 (0.00045 -> 0.00038)
+            safetyCar.progress += 0.8 * 0.00038 * state.speedFactor;
             if (safetyCar.progress >= 1) safetyCar.progress -= 1;
 
             const pt = track.getPointAtLength(len * safetyCar.progress);
@@ -1476,16 +1588,25 @@ function animateAIDrivers() {
                 ai.element.classList.remove('stopped');
             }
 
-            // 상태 타이머 관리
+            // 상태 관리
             if (!ai.battleState) { ai.battleState = 'normal'; ai.battleTimer = 0; ai.cooldown = 0; }
             if (!ai.conditionState) { ai.conditionState = 'normal'; ai.conditionTimer = 0; }
             if (ai.battleTimer > 0) ai.battleTimer--;
             if (ai.cooldown > 0) ai.cooldown--;
             if (ai.conditionTimer > 0) ai.conditionTimer--;
-            if (ai.battleState !== 'normal' && ai.battleTimer <= 0) { ai.battleState = 'normal'; ai.cooldown = 200; }
+            
+            if (ai.battleState !== 'normal' && ai.battleState !== 'underdog_push' && ai.battleTimer <= 0) { 
+                ai.battleState = 'normal'; ai.cooldown = 200; 
+            }
+            // underdog_push는 끝나면 쿨다운 없이 바로 normal
+            if (ai.battleState === 'underdog_push' && ai.battleTimer <= 0) {
+                ai.battleState = 'normal';
+                ai.cooldown = 100;
+            }
+
             if (ai.conditionState !== 'normal' && ai.conditionTimer <= 0) ai.conditionState = 'normal';
 
-            // 트랙 형상 속도 (코너 감속 등)
+            // 트랙 형상
             const currentIndex = Math.floor(ai.progress * 1000) % 1000;
             const lookAheadIndex = (currentIndex + 20) % 1000;
             const normalTrackFactor = (trackSpeedProfile[currentIndex] * 0.6) + (trackSpeedProfile[lookAheadIndex] * 0.4);
@@ -1494,11 +1615,16 @@ function animateAIDrivers() {
             let currentLerpRate = 0.05;
 
             // =========================
-            // 🚥 상황별 주행 알고리즘
+            // 🚥 주행 알고리즘
             // =========================
 
+            let circuitBoost = 1.0;
+            if (circuitSpecialists[state.circuitId] && circuitSpecialists[state.circuitId][ai.id]) {
+                circuitBoost = circuitSpecialists[state.circuitId][ai.id];
+            }
+
             if (raceStatus === 'GREEN') {
-                // [GREEN] 일반 주행
+                // (1) 컨디션
                 let conditionBoost = 1.0;
                 if (ai.conditionState === 'super') conditionBoost = 1.35;
                 else if (ai.conditionState === 'slump') conditionBoost = 0.75;
@@ -1511,102 +1637,99 @@ function animateAIDrivers() {
                     }
                 }
 
+                // (2) 배틀 모드 & 🔥 하위권 반란(Underdog Push)
                 let battleBoost = 1.0;
+                
+                // 현재 순위 확인
+                const myCurrentRank = battleRank.findIndex(r => r.id === ai.id);
+                
+                // 💡 [신규] 하위권(15위 이하)일 경우, 가끔 '발악(Underdog Push)' 모드 발동
+                if (ai.battleState === 'normal' && myCurrentRank >= 14) { // 15등~22등
+                    if (Math.random() < 0.0015) { // 약 0.15% 확률로 발동 (매 프레임)
+                        ai.battleState = 'underdog_push';
+                        ai.battleTimer = 120; // 약 2~3초간 질주
+                    }
+                }
+
                 if (ai.battleState === 'boost') battleBoost = 1.15;
                 else if (ai.battleState === 'lag') battleBoost = 0.90;
+                else if (ai.battleState === 'underdog_push') battleBoost = 1.30; // 🔥 순간적으로 1.3배 가속 (매우 빠름)
+                
                 else if (ai.battleState === 'normal' && ai.cooldown <= 0) {
-                    const myIdx = battleRank.findIndex(r => r.id === ai.id);
-                    if (myIdx > 0) {
-                        const ahead = battleRank[myIdx - 1];
+                    if (myCurrentRank > 0) {
+                        const ahead = battleRank[myCurrentRank - 1];
                         const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
                         if (dist > 0 && dist < 0.02) {
                             const isPlayer = (ai.id === getDriverShortId(state.driver));
-                            if (Math.random() < (isPlayer ? 0.7 : 0.4)) { ai.battleState = 'boost'; ai.battleTimer = 150; }
+                            const aggression = (circuitBoost > 1.0) ? 0.6 : 0.4;
+                            if (Math.random() < (isPlayer ? 0.7 : aggression)) { ai.battleState = 'boost'; ai.battleTimer = 150; }
                             else { ai.battleState = 'lag'; ai.battleTimer = 100; }
                         }
                     }
                 }
 
-                let calculatedSpeed = ai.baseSpeed * normalTrackFactor * battleBoost * conditionBoost;
+                // 🚨 [최종 속도]
+                let calculatedSpeed = ai.baseSpeed * normalTrackFactor * battleBoost * conditionBoost * circuitBoost;
                 
-                const myIdx = battleRank.findIndex(r => r.id === ai.id);
-                if (myIdx > 0) {
-                    const ahead = battleRank[myIdx - 1];
+                // 앞차 막힘 처리
+                if (myCurrentRank > 0) {
+                    const ahead = battleRank[myCurrentRank - 1];
                     const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
-                    if (ai.battleState === 'boost') { targetSpeed = calculatedSpeed; } 
-                    else if (dist < 0.005 && ai.actualSpeed > ahead.actualSpeed) { targetSpeed = ahead.actualSpeed; currentLerpRate = 0.2; } 
+                    
+                    // underdog_push 상태면 앞차 무시하고 달림 (추월 시도)
+                    if (ai.battleState === 'boost' || ai.battleState === 'underdog_push') { 
+                        targetSpeed = calculatedSpeed; 
+                    } 
+                    else if (dist < 0.005 && ai.actualSpeed > ahead.actualSpeed) { 
+                        targetSpeed = ahead.actualSpeed; currentLerpRate = 0.2; 
+                    } 
                     else { targetSpeed = calculatedSpeed; }
                 } else { targetSpeed = calculatedSpeed; }
 
             } else if (raceStatus === 'YELLOW') {
-                // 🟡 [YELLOW] 선두는 느리게, 후발대는 적당히 따라붙기
-                
-                // 1. 현재 내가 선두(1등)인지 확인
+                // Yellow Flag (기존 유지)
                 const isLeader = (battleRank[0] && ai.id === battleRank[0].id);
-
-                // 2. 속도 계수 분리 (Leader 0.6 vs Pack 0.75)
-                // 선두는 60% 출력으로 억제하여 도망가지 못하게 함
-                // 나머지는 75% 출력으로 선두보다는 빠르지만 안전 속도 유지
                 let yellowPaceFactor = isLeader ? 0.60 : 0.75;
-
                 let limitSpeed = ai.baseSpeed * normalTrackFactor * yellowPaceFactor;
                 targetSpeed = limitSpeed;
 
-                // 3. 앞차 감지 (추월 금지 로직)
                 let minDistY = 100;
                 let carAhead = null;
-                
                 aiDrivers.forEach(other => {
                     if (other.id !== ai.id && other.id !== stoppedCarId) { 
                         let d = other.progress - ai.progress;
                         if (d < 0) d += 1; 
-                        if (d < minDistY) {
-                            minDistY = d;
-                            carAhead = other;
-                        }
+                        if (d < minDistY) { minDistY = d; carAhead = other; }
                     }
                 });
 
-                // 4. 간격 조절
                 if (carAhead) {
-                    const safeDistance = 0.02; // 안전 거리
-
+                    const safeDistance = 0.02;
                     if (minDistY <= safeDistance) {
-                        // 앞차와 너무 가까우면 속도 동기화 (추월 금지)
                         if (targetSpeed > carAhead.actualSpeed) {
                             targetSpeed = carAhead.actualSpeed;
-                            // 아주 가까우면 브레이크
                             if (minDistY < 0.01) targetSpeed *= 0.9; 
                         }
                         currentLerpRate = 0.3; 
-                    } else {
-                        // 안전 거리 밖이면 설정된 yellowPaceFactor 속도로 주행 (선두보다 빠르므로 자연스럽게 따라잡음)
-                        currentLerpRate = 0.1;
-                    }
+                    } else { currentLerpRate = 0.1; }
                 }
 
             } else if (raceStatus === 'SC' || raceStatus === 'SC_ENDING') {
-                // 🚑 [SC 모드] 기존 로직 유지
+                // SC (기존 유지)
                 let minDist = 100; 
                 let objectAhead = null; 
                 
                 if (safetyCar.active) {
                     let d = safetyCar.progress - ai.progress;
                     if (d < 0) d += 1; 
-                    if (d < minDist) {
-                        minDist = d;
-                        objectAhead = { type: 'SC', speed: 0.8 }; 
-                    }
+                    if (d < minDist) { minDist = d; objectAhead = { type: 'SC', speed: 0.8 }; }
                 }
 
                 aiDrivers.forEach(other => {
                     if (other.id !== ai.id && other.id !== stoppedCarId) {
                         let d = other.progress - ai.progress;
                         if (d < 0) d += 1; 
-                        if (d < minDist) {
-                            minDist = d;
-                            objectAhead = { type: 'CAR', speed: other.actualSpeed };
-                        }
+                        if (d < minDist) { minDist = d; objectAhead = { type: 'CAR', speed: other.actualSpeed }; }
                     }
                 });
 
@@ -1623,21 +1746,20 @@ function animateAIDrivers() {
                     if (raceStatus === 'SC_ENDING') {
                         targetSpeed = ai.baseSpeed * normalTrackFactor * 1.3;
                         currentLerpRate = 0.05;
-                    } else {
-                        targetSpeed = 0.8;
-                        currentLerpRate = 0.1;
-                    }
+                    } else { targetSpeed = 0.8; currentLerpRate = 0.1; }
                 }
             }
 
-            // 주인공 보정 (미세 하향 조정)
+            // 주인공 보정
             if (ai.id === getDriverShortId(state.driver)) {
                 targetSpeed *= 1.0035; 
             }
             
             // 물리 적용
             ai.actualSpeed += (targetSpeed - ai.actualSpeed) * currentLerpRate;
-            ai.progress += ai.actualSpeed * 0.00026 * state.speedFactor;
+            
+            // 🚀 [속도 재조정] 0.00045 -> 0.00038 (약 85% 수준으로 감속, 너무 정신없지 않게)
+            ai.progress += ai.actualSpeed * 0.00038 * state.speedFactor;
             
             if (ai.progress >= 1) {
                 ai.progress -= 1;
@@ -1656,6 +1778,7 @@ function animateAIDrivers() {
     if(raceStarted) updateLeaderboard();
     requestAnimationFrame(animateAIDrivers);
 }
+
         function resumeRace() {
             raceStatus = 'GREEN';
             stoppedCarId = null;
