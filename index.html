@@ -31,34 +31,37 @@
             --dynamic-stroke: 10px;
         }
 
-/* 1. 📊 리더보드 컨테이너 (높이 자동 조절) */
+/* 1. 📊 리더보드 컨테이너 (너비 조정) */
         #leaderboard {
             position: absolute;
-            top: 240px;  /* 상단 헤더 아래 */
+            top: 240px;  
             left: 20px;
-            width: 160px;
+            
+            /* 💡 [수정] 너비 축소: 160px -> 105px */
+            /* 글자와 적당한 여백만 남기고 불필요한 공백 제거 */
+            width: 105px; 
+            
             z-index: 900;
             display: flex;
             flex-direction: column;
             gap: 3px;
-            pointer-events: none; /* 클릭 통과 */
+            pointer-events: none; 
             
-            /* 💡 핵심: 리더보드 높이가 버튼을 침범하지 않도록 계산 */
-            /* 전체 높이 - (상단여백 240px + 하단버튼영역 90px) */
+            /* 높이 계산 유지 */
             max-height: calc(100vh - 330px);
-            overflow: hidden; /* 넘치면 잘림 */
+            overflow: hidden; 
             
-            /* 슬라이딩 애니메이션 */
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
             transform-origin: left center;
         }
 
-        /* 숨김 상태: 화면 왼쪽 밖으로 이동 */
+        /* 💡 [수정] 숨김 상태 이동 거리 조정 */
+        /* 너비가 줄었으므로, 왼쪽으로 숨길 때 너무 멀리 보내지 않아도 됩니다. */
+        /* 기존 -180px -> -125px로 변경 (너비 + 약간의 여유) */
         #leaderboard.hidden {
-            transform: translateX(-180px) !important;
+            transform: translateX(-125px) !important;
             opacity: 0;
         }
-
         /* 🚨 중요: 기존에 있던 @media display: none 코드를 여기서 삭제하거나 덮어씁니다. */
         /* 이제 모바일에서도 display: none이 되지 않고, 단지 .hidden 클래스로 위치만 이동합니다. */
         @media (max-width: 767px) {
@@ -485,6 +488,29 @@
         @media (min-width: 1025px) {
             .status-panel { display: none !important; }
         }
+
+/* 📱 [신규] 모바일 전용: 드라이버 이름표 1.5배 확대 */
+        @media (max-width: 768px) {
+            
+            /* 1. 검정 배경 박스 (rect) 확대 */
+            .ai-marker rect {
+                transform: scale(1.5); /* 1.5배 커짐 */
+                /* 박스의 중심점(0, -20)을 기준으로 커지게 설정하여 위치 이탈 방지 */
+                transform-origin: 0px -20px; 
+            }
+
+            /* 2. 텍스트 (text) 확대 및 위치 보정 */
+            .ai-marker text {
+                /* JS 인라인 스타일(14px)을 무시하고 21px로 적용 (!important) */
+                font-size: 21px !important; 
+                /* 글자가 커지면서 살짝 내려가는 현상을 위로 올려서 보정 */
+                transform: translateY(-5px); 
+            }
+            
+            /* (선택) SC 마커도 같이 키우고 싶다면 아래 코드 포함 (이미 위 클래스로 적용되지만 명시적 조정 필요시 사용) */
+            /* .sc-marker text { font-size: 18px !important; } */
+        }
+
     </style>
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
@@ -1214,7 +1240,15 @@ function toggleLeaderboard() {
             safetyCar.element = scGroup;
 
             updateRaceScenario();
-            if (typeof initLeaderboard === 'function') initLeaderboard();
+            
+            // 🚨 [수정] 리더보드 생성 후, 즉시 높이 조절 함수 호출
+            if (typeof initLeaderboard === 'function') {
+                initLeaderboard();
+                // 이 부분이 추가되어야 서킷 변경 시에도 작아진 화면 높이를 반영합니다.
+                if (typeof adjustLeaderboardLayout === 'function') {
+                    adjustLeaderboardLayout();
+                }
+            }
         }
 
         function updateRaceScenario() {
@@ -1354,56 +1388,26 @@ function toggleLeaderboard() {
         }
 
         function spawnSafetyCar() {
-            // 1. 현재 1등(Leader) 찾기
-            const leader = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress))[0];
-            
-            safetyCar.active = true;
-            safetyCar.speed = 0.8; // SC 초기 속도
+    // 1. 현재 1등(Leader) 찾기
+    const leader = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress))[0];
+    
+    safetyCar.active = true;
+    safetyCar.speed = 0.8; // SC 초기 속도
 
-            // 2. [핵심] 1등 앞 공간 스캔 (Cluster Detection)
-            // 기본적으로 1등보다 4% 앞선 위치를 목표로 합니다.
-            let bestSpawnOffset = 0.04; 
-            
-            // 1등 전방 15% 구간(0.15) 내에 다른 차(백마커)가 있는지 확인합니다.
-            const scanRange = 0.15; 
-            
-            // 시각적으로 1등 앞에 있는 모든 장애물(차량)을 감지
-            let obstacleFarthestOffset = 0;
-            let hasObstacle = false;
+    // 💡 고정 오프셋 설정
+    const fixedOffset = 0.003;
 
-            aiDrivers.forEach(ai => {
-                if (ai.id === leader.id) return; // 1등 본인은 제외
+    // 4. 최종 위치 적용
+    // 🚨 [수정] bestSpawnOffset -> fixedOffset 으로 변경
+    safetyCar.progress = leader.progress + fixedOffset; 
+    
+    // 트랙 범위(0~1) 초과 시 보정
+    if (safetyCar.progress >= 1) safetyCar.progress -= 1;
+    
+    safetyCar.element.style.display = 'block';
+}
 
-                // 1등과의 거리 계산 (트랙 한 바퀴 도는 것 고려)
-                let dist = ai.progress - leader.progress;
-                if (dist < 0) dist += 1; 
-
-                // 장애물이 스캔 범위 내에 있다면
-                if (dist > 0 && dist < scanRange) {
-                    hasObstacle = true;
-                    // 가장 멀리 있는 장애물 위치 기록
-                    if (dist > obstacleFarthestOffset) {
-                        obstacleFarthestOffset = dist;
-                    }
-                }
-            });
-
-            // 3. 위치 보정
-            if (hasObstacle) {
-                // 백마커가 있다면, 그 백마커들보다 조금 더(0.04) 앞에서 소환 -> "백마커는 뒤로 보내고 SC가 맨 앞"
-                bestSpawnOffset = obstacleFarthestOffset + 0.04;
-            }
-
-            // 4. 최종 위치 적용
-            safetyCar.progress = leader.progress + bestSpawnOffset;
-            
-            // 트랙 범위(0~1) 초과 시 보정
-            if (safetyCar.progress >= 1) safetyCar.progress -= 1;
-            
-            safetyCar.element.style.display = 'block';
-        }
-
-/* 💡 [전체 수정] animateAIDrivers: SC 초밀착 + Yellow 사고차량 추월 허용 */
+/* 💡 [수정] animateAIDrivers: Yellow Flag 시 선두/후발 그룹 속도 차등 적용 */
 function animateAIDrivers() {
     const track = document.getElementById('bg-track');
     if(!track) { requestAnimationFrame(animateAIDrivers); return; }
@@ -1411,14 +1415,13 @@ function animateAIDrivers() {
     const len = track.getTotalLength();
     const now = Date.now();
 
-    // 순위 산정
+    // 순위 산정 (현재 1등을 찾기 위함)
     const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
 
     // 1. 랜덤 사고 발생 (레이스 시작 후, 안정화될 때까지 대기)
     if (raceStarted && raceStatus === 'GREEN') {
         const leader = battleRank[0];
-        
-        // 💡 [수정] 초반 광클릭 사고 방지 로직
+        // 초반 광클릭 사고 방지 로직
         if (leader && leader.totalLaps >= 1) {
             if (Math.random() < 0.00025) triggerRaceIncident();
         }
@@ -1465,7 +1468,7 @@ function animateAIDrivers() {
                 ai.element.classList.remove('stopped');
             }
 
-            // 상태 타이머
+            // 상태 타이머 관리
             if (!ai.battleState) { ai.battleState = 'normal'; ai.battleTimer = 0; ai.cooldown = 0; }
             if (!ai.conditionState) { ai.conditionState = 'normal'; ai.conditionTimer = 0; }
             if (ai.battleTimer > 0) ai.battleTimer--;
@@ -1474,7 +1477,7 @@ function animateAIDrivers() {
             if (ai.battleState !== 'normal' && ai.battleTimer <= 0) { ai.battleState = 'normal'; ai.cooldown = 200; }
             if (ai.conditionState !== 'normal' && ai.conditionTimer <= 0) ai.conditionState = 'normal';
 
-            // 트랙 형상 속도
+            // 트랙 형상 속도 (코너 감속 등)
             const currentIndex = Math.floor(ai.progress * 1000) % 1000;
             const lookAheadIndex = (currentIndex + 20) % 1000;
             const normalTrackFactor = (trackSpeedProfile[currentIndex] * 0.6) + (trackSpeedProfile[lookAheadIndex] * 0.4);
@@ -1487,7 +1490,7 @@ function animateAIDrivers() {
             // =========================
 
             if (raceStatus === 'GREEN') {
-                // [GREEN] 일반 주행 (기존 유지)
+                // [GREEN] 일반 주행
                 let conditionBoost = 1.0;
                 if (ai.conditionState === 'super') conditionBoost = 1.35;
                 else if (ai.conditionState === 'slump') conditionBoost = 0.75;
@@ -1527,16 +1530,21 @@ function animateAIDrivers() {
                     else { targetSpeed = calculatedSpeed; }
                 } else { targetSpeed = calculatedSpeed; }
 
-} else if (raceStatus === 'YELLOW') {
-                // 🟡 [YELLOW] 제한 속도 내 주행 + 앞차 추격 허용 + 추월 절대 금지
+            } else if (raceStatus === 'YELLOW') {
+                // 🟡 [YELLOW] 선두는 느리게, 후발대는 적당히 따라붙기
                 
-                // 1. 기본 속도 제한 상향 (0.75 -> 0.9)
-                // 코너에서 너무 느리지 않게, 평소의 90% 수준으로 달립니다.
-                // 다만 직선주로에서는 풀악셀을 못 밟는 느낌이 됩니다.
-                let limitSpeed = ai.baseSpeed * normalTrackFactor * 0.9;
+                // 1. 현재 내가 선두(1등)인지 확인
+                const isLeader = (battleRank[0] && ai.id === battleRank[0].id);
+
+                // 2. 속도 계수 분리 (Leader 0.6 vs Pack 0.75)
+                // 선두는 60% 출력으로 억제하여 도망가지 못하게 함
+                // 나머지는 75% 출력으로 선두보다는 빠르지만 안전 속도 유지
+                let yellowPaceFactor = isLeader ? 0.60 : 0.75;
+
+                let limitSpeed = ai.baseSpeed * normalTrackFactor * yellowPaceFactor;
                 targetSpeed = limitSpeed;
 
-                // 2. 앞차 감지 (사고차 제외)
+                // 3. 앞차 감지 (추월 금지 로직)
                 let minDistY = 100;
                 let carAhead = null;
                 
@@ -1544,7 +1552,6 @@ function animateAIDrivers() {
                     if (other.id !== ai.id && other.id !== stoppedCarId) { 
                         let d = other.progress - ai.progress;
                         if (d < 0) d += 1; 
-
                         if (d < minDistY) {
                             minDistY = d;
                             carAhead = other;
@@ -1552,35 +1559,29 @@ function animateAIDrivers() {
                     }
                 });
 
-                // 3. 간격 좁히기 및 추월 방지 로직
+                // 4. 간격 조절
                 if (carAhead) {
-                    // 🧲 [핵심 변경] : 무조건 속도를 맞추는 게 아니라,
-                    // '안전 거리(0.02)' 밖이라면 제한 속도(limitSpeed)로 계속 달려서 앞차를 따라잡습니다.
-                    const safeDistance = 0.02; // 앞차와의 최소 유지 거리
+                    const safeDistance = 0.02; // 안전 거리
 
                     if (minDistY <= safeDistance) {
-                        // 🚫 안전 거리 진입 시: 앞차 속도에 동기화 (추월 금지)
+                        // 앞차와 너무 가까우면 속도 동기화 (추월 금지)
                         if (targetSpeed > carAhead.actualSpeed) {
                             targetSpeed = carAhead.actualSpeed;
-                            
-                            // 너무 딱 붙으면(0.01 미만) 살짝 브레이크
+                            // 아주 가까우면 브레이크
                             if (minDistY < 0.01) targetSpeed *= 0.9; 
                         }
-                        currentLerpRate = 0.3; // 반응 속도 빠름
+                        currentLerpRate = 0.3; 
                     } else {
-                        // 🚀 안전 거리 밖임: 그냥 내 속도(limitSpeed)대로 달려서 간격을 좁힘
-                        // 별도 감속 로직 없음
+                        // 안전 거리 밖이면 설정된 yellowPaceFactor 속도로 주행 (선두보다 빠르므로 자연스럽게 따라잡음)
                         currentLerpRate = 0.1;
                     }
                 }
 
             } else if (raceStatus === 'SC' || raceStatus === 'SC_ENDING') {
-                // 🚑 [SC 모드] 사고차 무시 + 백마커 비켜주기 로직 추가
-                
+                // 🚑 [SC 모드] 기존 로직 유지
                 let minDist = 100; 
                 let objectAhead = null; 
                 
-                // 1. SC 감지
                 if (safetyCar.active) {
                     let d = safetyCar.progress - ai.progress;
                     if (d < 0) d += 1; 
@@ -1590,7 +1591,6 @@ function animateAIDrivers() {
                     }
                 }
 
-                // 2. 앞차 감지 (사고차 제외)
                 aiDrivers.forEach(other => {
                     if (other.id !== ai.id && other.id !== stoppedCarId) {
                         let d = other.progress - ai.progress;
@@ -1602,31 +1602,16 @@ function animateAIDrivers() {
                     }
                 });
 
-                // 3. 속도 결정 로직
                 if (objectAhead) {
                     const isSC = (objectAhead.type === 'SC');
-                    
-                    // [신규] 내가 1등이 아닌데(백마커인데) 바로 앞이 SC라면?
-                    // -> 1등과 SC 사이에 끼어있는 상황이므로, 속도를 올려서 SC를 추월(Ghost Pass)해버리거나 간격을 좁힘
-                    // 여기서는 SC와 너무 가까우면 감속하되, 1등보다는 빨리 달리게 설정
-                    
-                    if (minDist < 0.002) { 
-                        targetSpeed = objectAhead.speed * 0.5; 
-                        currentLerpRate = 0.5; 
-                    } else if (minDist < 0.006) {
-                        targetSpeed = objectAhead.speed; 
-                        currentLerpRate = 0.3; 
-                    } else {
-                        // SC 상황에서의 기본 주행 속도
+                    if (minDist < 0.002) { targetSpeed = objectAhead.speed * 0.5; currentLerpRate = 0.5; } 
+                    else if (minDist < 0.006) { targetSpeed = objectAhead.speed; currentLerpRate = 0.3; } 
+                    else {
                         targetSpeed = 1.8; 
-                        if (isSC && minDist < 0.15) {
-                            // SC 뒤에 붙었을 때 속도 맞춤
-                            targetSpeed = 0.9; 
-                        }
+                        if (isSC && minDist < 0.15) { targetSpeed = 0.9; }
                         currentLerpRate = 0.08;
                     }
                 } else {
-                    // 앞에 아무것도 없으면 (SC 엔딩 시점 등)
                     if (raceStatus === 'SC_ENDING') {
                         targetSpeed = ai.baseSpeed * normalTrackFactor * 1.3;
                         currentLerpRate = 0.05;
@@ -1637,9 +1622,7 @@ function animateAIDrivers() {
                 }
             }
 
-            // 🌟 [수정] 주인공 보정치 조정
-            // 기존 1.02(2%) -> 1.0035(0.35%)로 하향
-            // 이제 똥차로 우승하려면 '운(바이오리듬)'과 '전략'이 완벽해야 합니다.
+            // 주인공 보정 (미세 하향 조정)
             if (ai.id === getDriverShortId(state.driver)) {
                 targetSpeed *= 1.0035; 
             }
@@ -1665,7 +1648,6 @@ function animateAIDrivers() {
     if(raceStarted) updateLeaderboard();
     requestAnimationFrame(animateAIDrivers);
 }
-
         function resumeRace() {
             raceStatus = 'GREEN';
             stoppedCarId = null;
