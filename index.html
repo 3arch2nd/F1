@@ -236,6 +236,13 @@
         body.rb { --team-bg: #040814; --team-primary: #3671C6; --team-accent: #00D632; }
         body.sauber { --team-bg: #1C1C1C; --team-primary: #C0C0C0; --team-accent: #FF0000; }
         body.haas { --team-bg: #000000; --team-primary: #E6002B; --team-accent: #FFFFFF; }
+body.cadillac { 
+            --team-bg: #0A0A0A; 
+            --team-primary: #F1B315; 
+            --team-accent: #FFFFFF; 
+            --marker-bg: #F1B315; /* 마커 배경: 골드 */
+            --marker-text: #000000; /* 마커 글자: 검정 */
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--team-bg); color: var(--text-color); font-family: var(--font-display); height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; transition: background 0.5s ease; }
@@ -628,6 +635,7 @@
                         <option value="rb">VISA CASH APP RB</option>
                         <option value="sauber">SAUBER / AUDI</option>
                         <option value="haas">MONEYGRAM HAAS F1</option>
+                        <option value="cadillac">CADILLAC F1 TEAM</option>
                     </select>
                 </div>
                 <div class="input-group">
