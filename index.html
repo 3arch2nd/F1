@@ -864,7 +864,7 @@ body.cadillac {
                         
                         // 2. 💡 [핵심 수정] 이미 재생 중인 엔진 소리의 '볼륨'만 키움
                         if (enginePlayer && enginePlayer.setVolume) { 
-                            if (!isSfxMuted) enginePlayer.setVolume(20); // 소리 ON
+                            if (!isSfxMuted) enginePlayer.setVolume(40); // 소리 ON
                             // SFX가 Mute 상태라면 볼륨 0 유지
                         }
 
@@ -1567,25 +1567,40 @@ body.cadillac {
             stableRanking = sortedDrivers.map(d => d.id);
         }
 
+        // ==========================================
+        // 💥 사고 발생 로직 (수정됨: 주인공 절대 보호)
+        // ==========================================
         function triggerRaceIncident() {
-            const victimIndex = Math.floor(Math.random() * aiDrivers.length);
-            const victim = aiDrivers[victimIndex];
+            // 1. 🛡️ [핵심] 사고 후보군 선정 (나를 제외한 AI만 골라냄)
+            const myDriverId = getDriverShortId(state.driver);
+            const potentialVictims = aiDrivers.filter(ai => ai.id !== myDriverId);
+
+            // (혹시 모를 오류 방지: 남은 차가 없으면 취소)
+            if (potentialVictims.length === 0) return;
+
+            // 2. 나를 제외한 나머지 중에서 희생양 랜덤 선택
+            const victimIndex = Math.floor(Math.random() * potentialVictims.length);
+            const victim = potentialVictims[victimIndex];
             
             if (stoppedCarId !== null) return;
             stoppedCarId = victim.id;
             
+            // 3. SC(세이프티카) 또는 옐로우 플래그 결정
             const isSC = Math.random() > 0.4; 
 
             if (isSC) {
                 raceStatus = 'SC';
                 eventTimer = 3000; 
                 updateStatusUI('SAFETY CAR', 'status-sc');
-                spawnSafetyCar(); 
+                spawnSafetyCar();
             } else {
                 raceStatus = 'YELLOW';
                 eventTimer = 600; 
                 updateStatusUI('YELLOW FLAG', 'status-yellow');
             }
+            
+            // (디버깅용 로그: 누가 고장났는지 확인)
+            console.log(`[Incident] Crash: ${victim.id} (Player Safe)`);
         }
 
         function spawnSafetyCar() {
