@@ -377,16 +377,38 @@ body.cadillac {
         @media (hover: hover) and (pointer: fine) { .box-btn:hover { background-color: var(--team-primary); color: #000; transform: scale(1.02); box-shadow: 0 0 15px var(--team-primary); } }
         .box-btn:active, .box-btn.flash-active { transform: scale(0.96); background-color: var(--team-primary) !important; color: #000 !important; box-shadow: 0 0 15px var(--team-primary) !important; transition: none; }
 
-        /* 💡 [수정] 스피커 아이콘: 왼쪽 -> 오른쪽 끝으로 이동 */
+        /* 💡 [수정] 오디오 컨테이너: 버튼 두 개를 가로로 정렬 */
         .audio-container { 
             position: absolute; 
             bottom: 40px; 
-            right: 30px; /* left: 30px 에서 right로 변경 */
+            right: 30px; 
             z-index: 50; 
+            display: flex;       /* 가로 배치 */
+            gap: 15px;           /* 버튼 사이 간격 */
+            align-items: center;
         }
-        .audio-btn { background: transparent; border: none; padding: 5px; cursor: pointer; opacity: 0.6; transition: opacity 0.3s; display: flex; align-items: center; justify-content: center; }
-        .audio-btn:hover { opacity: 1; }
+
+        .audio-btn { 
+            background: transparent; 
+            border: none; 
+            padding: 5px; 
+            cursor: pointer; 
+            opacity: 0.6; 
+            transition: all 0.3s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .audio-btn:hover { opacity: 1; transform: scale(1.1); }
         .audio-icon { width: 24px; height: 24px; fill: #888; }
+        
+        /* 활성화 상태일 때 아이콘 색상 변경 (선택사항) */
+        .audio-btn.active .audio-icon { fill: #fff; }
+        
+        /* 꺼진 상태(Off) 표시 */
+        .audio-icon.off { opacity: 0.5; }
+
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -599,13 +621,22 @@ body.cadillac {
             <button id="lb-toggle-btn" onclick="toggleLeaderboard()">
                 <span id="lb-icon-open" style="display: none;">+</span> <span id="lb-icon-close">-</span> </button>
         </div>
-        <div class="audio-container">
-            <button class="audio-btn" onclick="toggleAudio()" aria-label="Toggle Audio">
-                <svg id="icon-sound-on" class="audio-icon" viewBox="0 0 24 24">
+<div class="audio-container">
+            <button id="btn-sfx" class="audio-btn active" onclick="toggleSFX()" aria-label="Toggle SFX">
+                <svg id="icon-sfx-on" class="audio-icon" viewBox="0 0 24 24">
                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                 </svg>
-                <svg id="icon-sound-off" class="audio-icon" viewBox="0 0 24 24" style="display: none;">
-                    <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                <svg id="icon-sfx-off" class="audio-icon off" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M7 9v6h4l5 5V4l-5 5H7z"/>
+                </svg>
+            </button>
+
+            <button id="btn-bgm" class="audio-btn active" onclick="toggleBGM()" aria-label="Toggle BGM">
+                <svg id="icon-bgm-on" class="audio-icon" viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+                <svg id="icon-bgm-off" class="audio-icon off" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M4.27 3L3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"/>
                 </svg>
             </button>
         </div>
@@ -675,6 +706,186 @@ body.cadillac {
     <script>
         const STORAGE_KEY = 'f1_world_tour_plan_v3_aus'; 
 
+        // ==========================================
+        // 🎵 오디오 전역 변수 (중복 선언 제거됨)
+        // ==========================================
+        let isSfxMuted = false; // 효과음 (기본 켜짐)
+        let isBgmMuted = false; // 배경음 (기본 켜짐)
+        
+        let audioCtx;     // Web Audio API 컨텍스트
+        let bgmPlayer;    // 유튜브 BGM 플레이어
+        let enginePlayer; // 유튜브 엔진 사운드 플레이어
+
+        // ==========================================
+        // 🔊 SFX (효과음) 제어 함수
+        // ==========================================
+        function toggleSFX() {
+            isSfxMuted = !isSfxMuted;
+            
+            // UI 업데이트
+            const onIcon = document.getElementById('icon-sfx-on');
+            const offIcon = document.getElementById('icon-sfx-off');
+            const btn = document.getElementById('btn-sfx');
+
+            if(onIcon) onIcon.style.display = isSfxMuted ? 'none' : 'block';
+            if(offIcon) offIcon.style.display = isSfxMuted ? 'block' : 'none';
+            if(btn) btn.classList.toggle('active', !isSfxMuted);
+
+            // 엔진 소리 즉시 반영 (재생 중이라면)
+            if (enginePlayer && enginePlayer.setVolume) {
+                enginePlayer.setVolume(isSfxMuted ? 0 : 50);
+            }
+        }
+
+        // ==========================================
+        // 🎵 BGM (배경음악) 제어 함수
+        // ==========================================
+        function toggleBGM() {
+            isBgmMuted = !isBgmMuted;
+
+            // UI 업데이트
+            const onIcon = document.getElementById('icon-bgm-on');
+            const offIcon = document.getElementById('icon-bgm-off');
+            const btn = document.getElementById('btn-bgm');
+
+            if(onIcon) onIcon.style.display = isBgmMuted ? 'none' : 'block';
+            if(offIcon) offIcon.style.display = isBgmMuted ? 'block' : 'none';
+            if(btn) btn.classList.toggle('active', !isBgmMuted);
+
+            // 배경음 즉시 반영
+            if (bgmPlayer && bgmPlayer.setVolume) {
+                bgmPlayer.setVolume(isBgmMuted ? 0 : 70);
+            }
+        }
+
+        // ==========================================
+        // 🎹 비프음 재생 (Web Audio API) - 필터 적용 버전
+        // ==========================================
+        function playBeep() {
+            // SFX가 꺼져있으면 소리 안 냄
+            if (isSfxMuted) return;
+
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const filterNode = audioCtx.createBiquadFilter();
+
+            // 파형 및 주파수 설정 (무게감 있는 400Hz 사각파)
+            oscillator.type = 'square'; 
+            oscillator.frequency.setValueAtTime(500, audioCtx.currentTime); 
+
+            // 필터 설정 (부드러운 타격감)
+            filterNode.type = 'lowpass';
+            filterNode.frequency.setValueAtTime(600, audioCtx.currentTime);
+
+            const now = audioCtx.currentTime;
+            
+            // 볼륨 엔벨로프 (부드럽게 시작해서 뚝 끊기지 않게)
+            gainNode.gain.setValueAtTime(0, now); 
+            gainNode.gain.linearRampToValueAtTime(0.15, now + 0.02); 
+            gainNode.gain.setValueAtTime(0.15, now + 0.12);          
+            gainNode.gain.linearRampToValueAtTime(0, now + 0.15);   
+
+            // 연결 및 재생
+            oscillator.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start(now);
+            oscillator.stop(now + 0.15);
+        }
+
+        // ==========================================
+        // 🚀 엔진 스타트 버튼 로직 (가장 중요한 부분)
+        // ==========================================
+        function activateEngine() {
+            // 오디오 컨텍스트 깨우기 (브라우저 정책 대응)
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            document.getElementById('start-engine-btn').style.display = 'none';
+            
+            // BGM 재생 시작 (음소거 여부 확인 후)
+            if (bgmPlayer && bgmPlayer.playVideo) { 
+                bgmPlayer.setVolume(isBgmMuted ? 0 : 70); 
+                bgmPlayer.playVideo(); 
+            }
+            
+            // 레이스 시퀀스 시작
+            startRaceSequence();
+        }
+
+        // ==========================================
+        // 🚦 레이스 출발 시퀀스 (불 켜짐 -> 꺼짐)
+        // ==========================================
+        function startRaceSequence() {
+            let lightCount = 1;
+
+            function turnOnNextLight() {
+                if (lightCount <= 5) {
+                    playBeep(); // 비프음 재생
+
+                    const light = document.getElementById(`light-${lightCount}b`);
+                    if(light) light.classList.add('on');
+
+                    lightCount++;
+                    setTimeout(turnOnNextLight, 1000); // 1초 간격
+                } else {
+                    // 5개 다 켜짐 -> 랜덤 딜레이 후 출발
+                    const randomDelay = Math.floor(Math.random() * 1500) + 200;
+
+                    setTimeout(() => {
+                        // 1. 불 끄기
+                        document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
+                        
+                        // 2. 엔진 소리 재생 (SFX 체크)
+                        if (enginePlayer && enginePlayer.playVideo) { 
+                            if (!isSfxMuted) enginePlayer.setVolume(30);
+                            else enginePlayer.setVolume(0);
+                            enginePlayer.playVideo(); 
+                        }
+
+                        // 3. 레이스 시작 플래그
+                        raceStarted = true;
+
+                        // 4. 로딩 화면 제거
+                        const overlay = document.getElementById('loading-overlay');
+                        overlay.style.opacity = '0';
+                        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+
+                    }, randomDelay);
+                }
+            }
+            turnOnNextLight();
+        }
+
+        // ==========================================
+        // 📺 유튜브 API 필수 함수
+        // ==========================================
+        function onYouTubeIframeAPIReady() {
+            // BGM 플레이어
+            bgmPlayer = new YT.Player('bgm-player', { 
+                height: '0', width: '0', 
+                videoId: 'YhX_Woa3kVA', 
+                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' } 
+            });
+
+            // 엔진 사운드 플레이어
+            enginePlayer = new YT.Player('engine-player', { 
+                height: '0', width: '0', 
+                videoId: '2O_n4EQsMrM', 
+                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': '2O_n4EQsMrM' } 
+            });
+        }
+
+        // ==========================================
+        // 🏁 여기서부터는 기존 로직 (데이터, 맵, 자동차 등)
+        // ==========================================
+        
+        // (아래 코드는 그대로 두시면 됩니다. 중복 선언만 주의하세요.)
+        
         const circuitAssets = {
             'aus': {
                 viewBox: "-200 -100 1100 600",
@@ -707,23 +918,13 @@ body.cadillac {
                 startLineTransform: "translate(0, 0) rotate(31)" 
             },
             'can': {
-                /* 💡 이몰라: 가로로 긴 형태에 맞춰 뷰박스 설정 */
                 viewBox: "-800 -200 1000 500",
-                
-                /* 💡 경로 데이터: 제공해주신 데이터 적용 (Start: 0,0) */
                 path: "M 0 0 L 36 3 L 106 20 L 123 17 L 136 2 L 147 0 L 160 7 L 160 18 L 134 76 L 63 127 L 53 128 L 37 118 L 32 118 L -23 143 L -41 162 L -59 169 L -136 151 L -151 154 L -159 163 L -157 181 L -163 196 L -174 202 L -303 186 L -441 131 L -446 127 L -445 100 L -449 93 L -617 27 L -638 25 L -699 31 L -708 24 L -709 7 L -699 4 L -653 9 L -616 6 L -493 -16 L -185 -14 L -178 -9 L -172 0 L -166 2 L 0 0",
-                
-                /* 💡 체커기 위치: 시작점(0,0) 배치 & 첫 진행 방향(미세한 우상향)에 맞춰 5도 회전 */
                 startLineTransform: "translate(0, 0) rotate(5)" 
             },
             'imo': {
-                /* 💡 모나코: 위아래로 좁고 복잡한 형태를 고려한 뷰박스 설정 */
                 viewBox: "-600 -200 900 650",
-                
-                /* 💡 경로 데이터: 제공해주신 데이터 적용 (Start: 0,0) */
                 path: "M 0 0 L -26 0 L -128 -22 L -153 -25 L -282 -17 L -334 -4 L -342 0 L -351 25 L -358 32 L -401 53 L -411 63 L -489 249 L -490 260 L -480 287 L -481 297 L -572 375 L -578 386 L -579 401 L -569 410 L -557 410 L -397 391 L -373 393 L -292 404 L -283 401 L -272 392 L -249 328 L -249 308 L -272 222 L -269 208 L -246 174 L -236 168 L -225 168 L -208 176 L -192 177 L -6 177 L 8 179 L 16 191 L 23 193 L 139 142 L 226 47 L 244 36 L 303 11 L 314 -1 L 314 -9 L 290 -51 L 280 -55 L 265 -54 L 135 2 L 0 0",
-                
-                /* 💡 체커기 위치: 시작점(0,0) 배치 & 좌측(-X축)으로 출발하므로 180도 회전 */
                 startLineTransform: "translate(0, 0) rotate(180)" 
             },
             'mon': {
@@ -809,7 +1010,6 @@ body.cadillac {
         };
 
         const circuitsData = [
-            // 2030 시즌 예상 캘린더 (일요일 결승 기준)
             { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 10, h: 2800000, f: 1900000, t: 850000 },
             { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 3, day: 24, h: 3200000, f: 2100000, t: 900000 },
             { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 7, h: 1800000, f: 700000, t: 750000 },
@@ -841,51 +1041,37 @@ body.cadillac {
             ferrari: { name: 'Ferrari HP', drivers: ['LECLERC', 'HAMILTON'] },
             mclaren: { name: 'McLaren F1', drivers: ['NORRIS', 'PIASTRI'] },
             astonmartin: { name: 'Aston Martin', drivers: ['ALONSO', 'STROLL'] },
-            alpine: { name: 'BWT Alpine F1 Team', drivers: ['GASLY', 'COLAPINTO'] }, // 🚨 알핀: 가슬리/콜라핀토
+            alpine: { name: 'BWT Alpine F1 Team', drivers: ['GASLY', 'COLAPINTO'] },
             williams: { name: 'Williams Racing', drivers: ['ALBON', 'SAINZ'] },
             rb: { name: 'Visa Cash App RB', drivers: ['LAWSON', 'LINDBLAD'] },
-            sauber: { name: 'Audi F1 Team', drivers: ['HULKENBERG', 'BORTOLETO'] }, // 🚨 아우디로 변경
-            haas: { name: 'TGR HAAS F1 TEAM', drivers: ['OCON', 'BEARMAN'] }, // 🚨 하스: 오콘/베어만
-            cadillac: { name: 'Cadillac F1 Team', drivers: ['BOTTAS', 'PEREZ'] } // 🚨 캐딜락 추가
+            sauber: { name: 'Audi F1 Team', drivers: ['HULKENBERG', 'BORTOLETO'] },
+            haas: { name: 'TGR HAAS F1 TEAM', drivers: ['OCON', 'BEARMAN'] },
+            cadillac: { name: 'Cadillac F1 Team', drivers: ['BOTTAS', 'PEREZ'] }
         };
 
-const driverGroups = {
-            // 👑 신계: 베르스타펜, 노리스 (우승 후보)
+        const driverGroups = {
             top: ['VER', 'NOR', 'PIA', 'RUS', 'LEC', 'HAM'], 
-            // ⚔️ 중상위권: 포디움 경쟁 (윌리엄스, 아우디 떡상 반영)
             mid: ['SAI', 'ALB', 'ANT', 'HUL', 'ALO', 'BOT', 'PER', 'GAS'], 
-            // 🛡️ 루키 및 하위권
             btm: ['STR', 'OCO', 'LAW', 'HAD', 'LIN', 'BOR', 'COL', 'BEA'] 
         };
 
-const driverColors = {
-            // 1. Red Bull (Deep Blue)
+        const driverColors = {
             'VER': '#3671C6', 'HAD': '#3671C6', 
-            // 2. Mercedes (Teal)
             'ANT': '#00D2BE', 'RUS': '#00D2BE', 
-            // 3. Ferrari (Red)
             'LEC': '#FF2800', 'HAM': '#FF2800', 
-            // 4. McLaren (Papaya Orange)
             'NOR': '#FF8000', 'PIA': '#FF8000', 
-            // 5. Aston Martin (Lime)
             'ALO': '#CEDC00', 'STR': '#CEDC00', 
-            // 6. Alpine (Pink - 가슬리 & 콜라핀토)
             'GAS': '#FD4BC7', 'COL': '#FD4BC7', 
-            // 7. Williams (Light Blue - 알본 & 사인츠)
             'ALB': '#00A0DE', 'SAI': '#00A0DE', 
-            // 8. RB (Blue/White - 로손 & 린드블라드)
             'LAW': '#3671C6', 'LIN': '#3671C6', 
-            // 9. Audi/Sauber (Neon Green - 훌켄버그 & 보르톨레토)
             'HUL': '#00E042', 'BOR': '#00E042', 
-            // 10. Haas (Red/White - 오콘 & 베어만)
             'OCO': '#E6002B', 'BEA': '#E6002B',
-            // 11. Cadillac (Gold/Yellow - 보타스 & 페레즈) 🚨 신규!
             'BOT': '#F1B315', 'PER': '#F1B315' 
         };
 
         const REF_WIDTH = 1200; 
 
-let g_rowHeight = 21;
+        let g_rowHeight = 21;
 
         let state = { 
             currentAmount: 0, team: 'redbull', driver: 'VERSTAPPEN', 
@@ -900,8 +1086,9 @@ let g_rowHeight = 21;
         let visualProgress = 0, animId = null;
         let trackSpeedProfile = [];
         let raceStarted = false; 
-        let bgmPlayer;
-let enginePlayer;
+
+        // let bgmPlayer;   <-- 중복 선언 삭제됨
+        // let enginePlayer; <-- 중복 선언 삭제됨
         let isMuted = false;
         let aiDrivers = [];
         let stableRanking = [];
@@ -916,102 +1103,29 @@ let enginePlayer;
         let eventTimer = 0;        
 
         const driverList = [
-            // [God Tier] 베르스타펜 vs 노리스 (동급 최강: 1.29)
             { id: 'VER', speed: 1.29 }, 
             { id: 'NOR', speed: 1.29 }, 
-
-            // [Top Tier] 우승 경쟁권 (1.23 ~ 1.26)
             { id: 'PIA', speed: 1.26 }, 
             { id: 'RUS', speed: 1.25 }, 
             { id: 'LEC', speed: 1.24 }, 
             { id: 'HAM', speed: 1.23 }, 
-
-            // [High Mid] 상위권 도약 (1.18 ~ 1.21)
             { id: 'SAI', speed: 1.21 }, 
             { id: 'ALB', speed: 1.20 }, 
             { id: 'HUL', speed: 1.18 }, 
             { id: 'ANT', speed: 1.18 }, 
-
-            // [Mid] 허리 라인 (1.14 ~ 1.16)
             { id: 'ALO', speed: 1.16 }, 
             { id: 'BOT', speed: 1.14 }, 
             { id: 'PER', speed: 1.14 }, 
-
-            // [Low Mid] 중하위권 (1.08 ~ 1.10)
             { id: 'GAS', speed: 1.10 }, 
             { id: 'STR', speed: 1.09 }, 
             { id: 'OCO', speed: 1.08 }, 
             { id: 'LAW', speed: 1.08 }, 
-
-            // [Rookies] 하위권 (최소 1.01 이상 보장)
-            { id: 'HAD', speed: 1.05 }, // 레드불 차빨
+            { id: 'HAD', speed: 1.05 },
             { id: 'LIN', speed: 1.03 }, 
             { id: 'COL', speed: 1.02 }, 
             { id: 'BOR', speed: 1.01 }, 
             { id: 'BEA', speed: 1.01 }  
         ];
-
-/* ==========================================================================
-           🏁 CIRCUIT SPECIALIST DATA (Based on R01-R24 Results)
-           * 서킷별로 유독 성적이 좋은 드라이버에게 추가 속도(Multiplier)를 부여합니다.
-           ========================================================================== */
-        const circuitSpecialists = {
-            // R01 호주: 맥라렌 듀오 압도, 르클레르 강세
-            'aus': { 'NOR': 1.04, 'PIA': 1.04, 'LEC': 1.03 },
-            // R02 중국: 피아스트리 우승
-            'chn': { 'PIA': 1.04, 'NOR': 1.03, 'VER': 1.02 },
-            // R03 일본: 베르스타펜의 독주
-            'jpn': { 'VER': 1.05, 'NOR': 1.03, 'PIA': 1.02 },
-            // R04 바레인: 피아스트리 우승, 페레즈 3위
-            'bhr': { 'PIA': 1.04, 'VER': 1.03, 'PER': 1.04 },
-            // R05 사우디: 피아스트리/노리스, 페레즈 강세
-            'ksa': { 'PIA': 1.04, 'NOR': 1.03, 'PER': 1.03 },
-            // R06 마이애미: 맥라렌, 르클레르, 페레즈 상위권
-            'mia': { 'PIA': 1.04, 'NOR': 1.03, 'LEC': 1.03, 'PER': 1.03 },
-            // R07 모나코: 노리스 우승, 페레즈 3위(변수)
-            'mon': { 'NOR': 1.05, 'LEC': 1.04, 'PER': 1.05 },
-            // R08 스페인: 피아스트리 우승
-            'esp': { 'PIA': 1.04, 'NOR': 1.03, 'VER': 1.03 },
-            
-            // 🚨 R09 캐나다: 러셀 우승! (벤츠 강세)
-            'can': { 'RUS': 1.06, 'VER': 1.03, 'PER': 1.04 },
-            
-            // R10 오스트리아: 노리스 우승, 페레즈 3위
-            'aut': { 'NOR': 1.04, 'PIA': 1.03, 'PER': 1.04 },
-            
-            // 🚨 R11 영국: 헐켄버그(Audi) 3위 대이변! (초강력 보정 필요)
-            'gbr': { 'NOR': 1.04, 'PIA': 1.03, 'HUL': 1.12 }, 
-            
-            // R12 벨기에: 피아스트리 우승, 페레즈 3위
-            'bel': { 'PIA': 1.04, 'NOR': 1.03, 'PER': 1.04 },
-            // R13 헝가리: 노리스 우승, 러셀 3위
-            'hun': { 'NOR': 1.04, 'PIA': 1.03, 'RUS': 1.04 },
-            // R14 네덜란드: 피아스트리 우승, 하자르(RB) 3위 대이변!
-            'ned': { 'PIA': 1.04, 'VER': 1.03, 'HAD': 1.10 },
-            // R15 이탈리아: 베르스타펜 우승
-            'ita': { 'VER': 1.05, 'NOR': 1.03, 'PIA': 1.02 },
-            // R16 마드리드: 피아스트리 우승, 페레즈 3위
-            'esp': { 'PIA': 1.04, 'NOR': 1.03, 'PER': 1.04 }, // (esp 코드 공유 주의)
-            
-            // 🚨 R17 아제르바이잔: 페레즈(Cadillac) 우승! (King of Baku)
-            'aze': { 'PER': 1.08, 'VER': 1.03, 'RUS': 1.04, 'SAI': 1.05 },
-            
-            // 🚨 R18 싱가포르: 러셀 우승, 페레즈 4위, 사인츠 5위
-            'sin': { 'RUS': 1.06, 'VER': 1.03, 'NOR': 1.02, 'PER': 1.04 },
-            
-            // R19 미국: 베르스타펜 우승, 페레즈 3위
-            'usa': { 'VER': 1.05, 'NOR': 1.03, 'PER': 1.04 },
-            // R20 멕시코: 노리스 우승, 페레즈(홈) 2위
-            'mex': { 'NOR': 1.04, 'PER': 1.06, 'LEC': 1.03 },
-            // R21 브라질: 노리스 우승, 안토넬리(Mercedes) 2위!
-            'bra': { 'NOR': 1.04, 'ANT': 1.07, 'VER': 1.03 },
-            // R22 라스베이거스: 베르스타펜 우승, 러셀/안토넬리 포디움
-            'las': { 'VER': 1.05, 'RUS': 1.04, 'ANT': 1.04 },
-            // R23 카타르: 베르스타펜 우승, 사인츠 3위
-            'qat': { 'VER': 1.05, 'PIA': 1.03, 'SAI': 1.05 },
-            // R24 아부다비: 베르스타펜 우승, 페레즈 3위
-            'abu': { 'VER': 1.05, 'PIA': 1.03, 'NOR': 1.03, 'PER': 1.04 }
-        };
 
         function calculateScaleFactor(viewBoxStr) {
             const parts = viewBoxStr.split(' ').map(Number);
@@ -1023,42 +1137,31 @@ let enginePlayer;
             document.documentElement.style.setProperty('--dynamic-stroke', `${newStroke}px`);
         }
 
-// 📏 [신규] 화면 높이에 따라 리더보드 높이와 폰트를 자동 조절하는 함수
         function adjustLeaderboardLayout() {
             const container = document.getElementById('leaderboard-items');
             if (!container) return;
 
             const totalDrivers = aiDrivers.length || 20;
-            
-            // 1. 가용 높이 계산 (전체 화면 - 상단 여백 240px - 하단 버튼 여백 120px)
             const availableHeight = window.innerHeight - 360; 
-            
-            // 2. 이상적인 높이 (드라이버 수 * 기본 21px)
             const idealHeight = totalDrivers * 21;
 
-            // 3. 압축 비율 계산
             let scaleRatio = 1;
             if (availableHeight < idealHeight) {
                 scaleRatio = availableHeight / idealHeight;
             }
 
-            // 4. 새로운 행 높이 결정 (최소 12px까지만 줄어들게 제한)
             g_rowHeight = Math.max(12, 21 * scaleRatio);
             
-            // 5. 폰트 크기도 비율에 맞춰 줄임 (기본 13px -> 비율 적용)
             const newFontSize = Math.max(8, 10 * scaleRatio); 
             const newPosSize = Math.max(7, 9 * scaleRatio);
 
-            // 6. 컨테이너 전체 높이 적용
             container.style.height = (totalDrivers * g_rowHeight) + 'px';
 
-            // 7. 스타일 일괄 적용 (기존 Row들에 즉시 반영)
             const rows = document.querySelectorAll('.lb-row');
             rows.forEach((row, index) => {
-                row.style.height = (g_rowHeight - 1) + 'px'; // 1px 간격
+                row.style.height = (g_rowHeight - 1) + 'px'; 
                 row.style.transform = `translateY(${index * g_rowHeight}px)`;
                 
-                // 폰트 크기 변경
                 const pos = row.querySelector('.lb-pos');
                 const name = row.querySelector('.lb-name');
                 if(pos) { pos.style.fontSize = newPosSize + 'px'; pos.style.lineHeight = g_rowHeight + 'px'; }
@@ -1066,9 +1169,7 @@ let enginePlayer;
             });
         }
 
-function init() {
-            // 1. 📱 모바일/작은 화면 초기화 로직
-            // 화면이 좁으면 리더보드를 가리고, 버튼 아이콘 상태를 동기화합니다.
+        function init() {
             if (window.innerWidth <= 1024) {
                 const lb = document.getElementById('leaderboard');
                 const btn = document.getElementById('lb-toggle-btn');
@@ -1081,18 +1182,11 @@ function init() {
                 if(closeIcon) closeIcon.style.display = 'none';
             }
 
-            // 2. 📏 [신규] 창 크기 변경 감지 리스너 추가
-            // 브라우저 크기를 조절할 때마다 리더보드 높이를 다시 계산합니다.
             window.addEventListener('resize', () => {
-                if (typeof adjustLeaderboardLayout === 'function') {
-                    adjustLeaderboardLayout();
-                }
-                if (typeof updateLeaderboard === 'function') {
-                    updateLeaderboard(); // 위치 재정렬
-                }
+                if (typeof adjustLeaderboardLayout === 'function') adjustLeaderboardLayout();
+                if (typeof updateLeaderboard === 'function') updateLeaderboard(); 
             });
 
-            // 3. 🎵 오디오 비주얼라이저(EQ) 바 생성
             const container = document.getElementById('wave-container');
             if (container) {
                 container.innerHTML = '';
@@ -1109,14 +1203,12 @@ function init() {
                 }
             }
 
-            // 4. 💾 데이터 로드 및 기본 설정
             loadData(); 
             initCircuitSelect(); 
             updateCircuit(); 
             updateTeamSelectUI(); 
-            requestAnimationFrame(animateAIDrivers); // 애니메이션 루프 시작
+            requestAnimationFrame(animateAIDrivers); 
 
-            // 5. 🏁 트랙 및 리더보드 지연 초기화 (데이터 로딩 대기)
             setTimeout(() => {
                 const track = document.getElementById('bg-track');
                 if(track) {
@@ -1125,19 +1217,11 @@ function init() {
                    generateTrackSpeedProfile();
                 }
                 
-                // (1) AI 드라이버 데이터 생성
                 initAIDrivers(); 
-                
-                // (2) 리더보드 생성 및 크기 조절
                 if (typeof initLeaderboard === 'function') {
-                    initLeaderboard(); // 내용물 채우기
-                    
-                    // 🚨 [핵심] 생성 직후 화면 크기에 맞춰 한 번 압축해줍니다.
-                    if (typeof adjustLeaderboardLayout === 'function') {
-                        adjustLeaderboardLayout(); 
-                    }
+                    initLeaderboard(); 
+                    if (typeof adjustLeaderboardLayout === 'function') adjustLeaderboardLayout(); 
                 }
-
                 updateDashboard(); 
             }, 50);
         }
@@ -1160,7 +1244,6 @@ function init() {
             const data = circuitsData.find(c => c.id === circuitId);
             if(!data) return;
 
-            // 1. 서킷 정보 및 예산/날짜 동기화
             state.circuitId = circuitId;
             state.q1 = data.h; 
             state.q2 = data.f; 
@@ -1176,28 +1259,20 @@ function init() {
             state.targetDate = `${year}-${month}-${day}`;
             document.getElementById('target-date').value = state.targetDate;
 
-            // 💡 [수정 핵심] 데이터가 변경되었으므로, 추천 전략(월별 금액)도 즉시 재계산하여 반영합니다.
             calculateRecommendation();
 
-            // ============================================================
-            // 🚨 [추가] 레이스 상태 강제 초기화 (Green Flag 리셋)
-            // ============================================================
-            raceStatus = 'GREEN';       // 상태 녹색으로
-            stoppedCarId = null;        // 사고 차량 기록 삭제
-            safetyCar.active = false;   // SC 비활성화
-            eventTimer = 0;             // 이벤트 타이머 리셋
+            raceStatus = 'GREEN';       
+            stoppedCarId = null;        
+            safetyCar.active = false;   
+            eventTimer = 0;             
 
-            // 플래그 UI 즉시 숨김
             const statusDisplay = document.getElementById('race-status-display');
             statusDisplay.style.opacity = '0'; 
             statusDisplay.className = ''; 
 
-            // 모바일 패널도 숨김
             const mobilePanel = document.getElementById('mobile-status-panel');
             if (mobilePanel) mobilePanel.style.display = 'none';
-            // ============================================================
 
-            // 2. 트랙 에셋 로딩 (기존 로직)
             const asset = circuitAssets[circuitId] || circuitAssets['aus'];
             const svgElement = document.querySelector('.track-svg');
             svgElement.setAttribute('viewBox', asset.viewBox);
@@ -1216,8 +1291,6 @@ function init() {
                 const track = document.getElementById('bg-track');
                 state.pathStartOffset = findPathOffset(track, asset.startLineTransform);
                 generateTrackSpeedProfile();
-                
-                // 여기서 AI를 다시 그릴 때 SC 요소도 초기화된 상태로 그려집니다.
                 initAIDrivers(); 
                 updateDashboard(); 
             }, 50);
@@ -1229,11 +1302,7 @@ function init() {
             const targetX = parseFloat(match[1]), targetY = parseFloat(match[2]);
             const totalLen = pathElement.getTotalLength();
             let minDist = Infinity, bestRatio = 0;
-            
-            // 💡 [수정] 정밀도 향상: 1000 -> 5000 단계로 쪼개서 가장 가까운 점을 찾음
-            // 이렇게 하면 시작점 오차가 픽셀 단위 이하로 줄어듭니다.
             const steps = 5000; 
-            
             for(let i=0; i <= steps; i++) {
                 const len = (i / steps) * totalLen;
                 const pt = pathElement.getPointAtLength(len);
@@ -1243,7 +1312,7 @@ function init() {
             return bestRatio;
         }
 
-function toggleLeaderboard() {
+        function toggleLeaderboard() {
             const lb = document.getElementById('leaderboard');
             const btn = document.getElementById('lb-toggle-btn');
             const openIcon = document.getElementById('lb-icon-open');
@@ -1255,7 +1324,6 @@ function toggleLeaderboard() {
             openIcon.style.display = isHidden ? 'block' : 'none';
             closeIcon.style.display = isHidden ? 'none' : 'block';
             
-            // 버튼 활성 상태 스타일 (열림=활성)
             if (!isHidden) btn.classList.add('active');
             else btn.classList.remove('active');
         }
@@ -1267,34 +1335,24 @@ function toggleLeaderboard() {
             layer.innerHTML = ''; 
             aiDrivers = [];
             
-            // 🎲 [신규] 퀄리파잉 변수 로직 (Start Grid Shuffle)
-            // 원본 그룹을 복사해서 사용
             let topGroup = [...driverGroups.top];
             let midGroup = [...driverGroups.mid];
             let btmGroup = [...driverGroups.btm];
 
-            // 1. 상위 티어 선수가 퀄리파잉 망칠 확률 (5%) -> 하위권(btm)으로 강등
             for (let i = topGroup.length - 1; i >= 0; i--) {
                 if (Math.random() < 0.05) { 
                     const driver = topGroup.splice(i, 1)[0];
-                    btmGroup.push(driver); // 꼴찌 그룹으로 이동
-                    console.log(`[Q Variable] ${driver} starts form BACK!`);
+                    btmGroup.push(driver); 
                 }
             }
-
-            // 2. 하위 티어 선수가 인생 경기 펼칠 확률 (5%) -> 중위권(mid)으로 승격
             for (let i = btmGroup.length - 1; i >= 0; i--) {
                 if (Math.random() < 0.05) { 
                     const driver = btmGroup.splice(i, 1)[0];
-                    midGroup.push(driver); // 중위권 그룹으로 이동
-                    console.log(`[Q Variable] ${driver} qualified HIGH!`);
+                    midGroup.push(driver); 
                 }
             }
 
-            // 그룹 내부 셔플
             const shuffle = (a) => a.sort(() => Math.random() - 0.5);
-            
-            // 최종 그리드 확정 (Top -> Mid -> Btm 순서)
             const combinedIds = [...shuffle(topGroup), ...shuffle(midGroup), ...shuffle(btmGroup)];
             
             let gridStartPos = state.pathStartOffset - 0.02;
@@ -1304,7 +1362,6 @@ function toggleLeaderboard() {
                 const dInfo = driverList.find(d => d.id === id) || { speed: 1.0 };
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "ai-marker");
-                // id 표시
                 g.innerHTML = `<rect x="-20" y="-30" width="40" height="20"/><text x="0" y="-16" style="font-size:14px;">${id}</text><circle r="4"/>`;
                 layer.appendChild(g);
 
@@ -1342,9 +1399,7 @@ function toggleLeaderboard() {
             
             if (typeof initLeaderboard === 'function') {
                 initLeaderboard();
-                if (typeof adjustLeaderboardLayout === 'function') {
-                    adjustLeaderboardLayout();
-                }
+                if (typeof adjustLeaderboardLayout === 'function') adjustLeaderboardLayout();
             }
         }
 
@@ -1397,17 +1452,13 @@ function toggleLeaderboard() {
             container.innerHTML = ''; 
             leaderboardRows = {}; 
 
-            // 🚨 [수정 핵심] 컨테이너 높이 강제 지정 (유령 상자 문제 해결)
-            // 드라이버 수(aiDrivers.length) * (행 높이 21px) 만큼 높이를 잡아줍니다.
             container.style.height = (aiDrivers.length * 21) + 'px';
-            container.style.position = 'relative'; // 자식요소(absolute)의 기준점 설정
-            container.style.width = '100%';        // 너비 꽉 채우기
+            container.style.position = 'relative'; 
+            container.style.width = '100%';        
 
             aiDrivers.forEach((ai, index) => {
                 const row = document.createElement('div');
                 row.className = 'lb-row';
-                
-                // 애니메이션을 위한 초기 위치 잡기
                 row.style.transform = `translateY(${index * 21}px)`;
 
                 const color = driverColors[ai.id] || '#888';
@@ -1430,7 +1481,6 @@ function toggleLeaderboard() {
         }
 
         function updateLeaderboard() {
-            // 1. 점수(랩+진행도) 기준 정렬
             const sortedDrivers = [...aiDrivers].sort((a, b) => {
                 const scoreA = (a.totalLaps * 10000) + a.progress;
                 const scoreB = (b.totalLaps * 10000) + b.progress;
@@ -1441,32 +1491,24 @@ function toggleLeaderboard() {
                 const rowObj = leaderboardRows[driver.id];
                 
                 if (rowObj && rowObj.element) {
-                    // 위치 이동 (반응형 높이 반영)
                     rowObj.element.style.transform = `translateY(${index * g_rowHeight}px)`;
                     
-                    // 💡 [핵심 수정] 현재 설정된 주인공인지 매 프레임 확인
                     const isMyDriver = (driver.id === getDriverShortId(state.driver));
-                    // 주인공이면 노란색(#FFEC00), 아니면 흰색(#ffffff)
                     const targetColor = isMyDriver ? '#FFEC00' : '#ffffff'; 
 
-                    // 1. 순위 번호 텍스트 및 색상 업데이트
                     if (rowObj.posElement) {
                         const currentRank = String(index + 1);
                         if (rowObj.posElement.innerText !== currentRank) {
                             rowObj.posElement.innerText = currentRank;
                         }
-                        // 🎨 색상 실시간 동기화
                         rowObj.posElement.style.color = targetColor;
                     }
                     
-                    // 2. 🐛 [수정] 드라이버 이름 색상도 실시간 동기화 (기존 누락된 부분)
-                    // rowObj에 nameElement를 따로 저장하지 않았으므로 쿼리로 찾아서 적용
                     const nameElement = rowObj.element.querySelector('.lb-name');
                     if (nameElement) {
                         nameElement.style.color = targetColor;
                     }
                     
-                    // 1등은 다른 요소 위로 올라오도록 처리
                     rowObj.element.style.zIndex = (index === 0) ? '100' : '10';
                 }
             });
@@ -1496,354 +1538,314 @@ function toggleLeaderboard() {
         }
 
         function spawnSafetyCar() {
-    // 1. 현재 1등(Leader) 찾기
-    const leader = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress))[0];
-    
-    safetyCar.active = true;
-    safetyCar.speed = 0.8; // SC 초기 속도
+            const leader = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress))[0];
+            
+            safetyCar.active = true;
+            safetyCar.speed = 0.8; 
 
-    // 💡 고정 오프셋 설정
-    const fixedOffset = 0.003;
-
-    // 4. 최종 위치 적용
-    // 🚨 [수정] bestSpawnOffset -> fixedOffset 으로 변경
-    safetyCar.progress = leader.progress + fixedOffset; 
-    
-    // 트랙 범위(0~1) 초과 시 보정
-    if (safetyCar.progress >= 1) safetyCar.progress -= 1;
-    
-    safetyCar.element.style.display = 'block';
-}
-
-/* 💡 [수정] 속도 격차 압축(Pack Racing) 및 주인공 티어별 차등 버프 적용 */
-function animateAIDrivers() {
-    const track = document.getElementById('bg-track');
-    if(!track) { requestAnimationFrame(animateAIDrivers); return; }
-    
-    const len = track.getTotalLength();
-    const now = Date.now();
-
-    /* 📊 서킷 스페셜리스트 데이터 (유지) */
-    const circuitSpecialists = {
-        'aus': { 'NOR': 1.03, 'PIA': 1.03, 'LEC': 1.02, 'PER': 1.02 },
-        'chn': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.01 },
-        'jpn': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
-        'bhr': { 'PIA': 1.03, 'VER': 1.02, 'PER': 1.03 },
-        'ksa': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.02 },
-        'mia': { 'PIA': 1.03, 'NOR': 1.02, 'LEC': 1.02, 'PER': 1.02 },
-        'mon': { 'NOR': 1.04, 'LEC': 1.03, 'PER': 1.04 },
-        'esp': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.02, 'PER': 1.02 },
-        'can': { 'RUS': 1.05, 'VER': 1.02, 'PER': 1.03 },
-        'aut': { 'NOR': 1.03, 'PIA': 1.02, 'PER': 1.03 },
-        'gbr': { 'NOR': 1.03, 'PIA': 1.02, 'HUL': 1.05, 'PER': 1.02 }, 
-        'bel': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
-        'hun': { 'NOR': 1.03, 'PIA': 1.02, 'RUS': 1.03, 'PER': 1.02 },
-        'ned': { 'PIA': 1.03, 'VER': 1.02, 'HAD': 1.05, 'PER': 1.02 },
-        'ita': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
-        'mad': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
-        'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
-        'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
-        'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
-        'mex': { 'NOR': 1.03, 'PER': 1.05, 'LEC': 1.02 },
-        'bra': { 'NOR': 1.03, 'ANT': 1.05, 'VER': 1.02, 'PER': 1.02 },
-        'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.03, 'PER': 1.02 },
-        'qat': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 },
-        'abu': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 }
-    };
-
-    const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
-    const leaderCar = battleRank[0];
-    const leaderDist = leaderCar ? (leaderCar.totalLaps + leaderCar.progress) : 0;
-
-    // 1. 랜덤 사고
-    if (raceStarted && raceStatus === 'GREEN') {
-        if (leaderCar && leaderCar.totalLaps >= 1) {
-            if (Math.random() < 0.00025) triggerRaceIncident();
-        }
-    }
-
-    // 2. 타이머 관리
-    if (raceStatus !== 'GREEN') {
-        eventTimer--;
-        if (raceStatus === 'SC' && eventTimer === 180) {
-            raceStatus = 'SC_ENDING';
-            updateStatusUI('SC ENDING', 'status-sc');
-        }
-        if ((raceStatus === 'SC_ENDING' || raceStatus === 'YELLOW') && eventTimer <= 0) {
-            resumeRace();
-        }
-    }
-
-    // 3. SC 로직 (조기 종료 포함)
-    if (safetyCar.active) {
-        if (raceStatus === 'SC_ENDING') {
-            safetyCar.element.style.display = 'none';
-            safetyCar.active = false; 
-        } else {
-            safetyCar.progress += 0.8 * 0.00038 * state.speedFactor;
+            const fixedOffset = 0.003;
+            safetyCar.progress = leader.progress + fixedOffset; 
+            
             if (safetyCar.progress >= 1) safetyCar.progress -= 1;
-
-            const pt = track.getPointAtLength(len * safetyCar.progress);
-            safetyCar.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
-
-            if (stoppedCarId && raceStatus === 'SC' && eventTimer > 200) {
-                const victim = aiDrivers.find(d => d.id === stoppedCarId);
-                if (victim) {
-                    let distToVictim = victim.progress - safetyCar.progress;
-                    if (distToVictim < 0) distToVictim += 1; 
-                    if (distToVictim < 0.4) {
-                        raceStatus = 'SC_ENDING';
-                        eventTimer = 180; 
-                        updateStatusUI('SC ENDING', 'status-sc');
-                    }
-                }
-            }
+            
+            safetyCar.element.style.display = 'block';
         }
-    }
 
-    // 4. AI 드라이버 루프
-    aiDrivers.forEach(ai => {
-        if (raceStarted) {
-            // 사고 차량
-            if (ai.id === stoppedCarId) {
-                ai.actualSpeed *= 0.9;
-                if (ai.actualSpeed < 0.01) ai.actualSpeed = 0;
-                ai.element.classList.add('stopped');
-                const pt = track.getPointAtLength(len * ai.progress);
-                ai.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
-                return; 
-            } else {
-                ai.element.classList.remove('stopped');
-            }
-
-            // 상태 관리
-            if (!ai.battleState) { ai.battleState = 'normal'; ai.battleTimer = 0; ai.cooldown = 0; }
-            if (!ai.conditionState) { ai.conditionState = 'normal'; ai.conditionTimer = 0; }
-            if (ai.battleTimer > 0) ai.battleTimer--;
-            if (ai.cooldown > 0) ai.cooldown--;
-            if (ai.conditionTimer > 0) ai.conditionTimer--;
+        function animateAIDrivers() {
+            const track = document.getElementById('bg-track');
+            if(!track) { requestAnimationFrame(animateAIDrivers); return; }
             
-            if (ai.battleState !== 'normal' && ai.battleState !== 'underdog_push' && ai.battleTimer <= 0) { 
-                ai.battleState = 'normal'; ai.cooldown = 200; 
+            const len = track.getTotalLength();
+            const now = Date.now();
+
+            const circuitSpecialists = {
+                'aus': { 'NOR': 1.03, 'PIA': 1.03, 'LEC': 1.02, 'PER': 1.02 },
+                'chn': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.01 },
+                'jpn': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
+                'bhr': { 'PIA': 1.03, 'VER': 1.02, 'PER': 1.03 },
+                'ksa': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.02 },
+                'mia': { 'PIA': 1.03, 'NOR': 1.02, 'LEC': 1.02, 'PER': 1.02 },
+                'mon': { 'NOR': 1.04, 'LEC': 1.03, 'PER': 1.04 },
+                'esp': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.02, 'PER': 1.02 },
+                'can': { 'RUS': 1.05, 'VER': 1.02, 'PER': 1.03 },
+                'aut': { 'NOR': 1.03, 'PIA': 1.02, 'PER': 1.03 },
+                'gbr': { 'NOR': 1.03, 'PIA': 1.02, 'HUL': 1.05, 'PER': 1.02 }, 
+                'bel': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
+                'hun': { 'NOR': 1.03, 'PIA': 1.02, 'RUS': 1.03, 'PER': 1.02 },
+                'ned': { 'PIA': 1.03, 'VER': 1.02, 'HAD': 1.05, 'PER': 1.02 },
+                'ita': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
+                'mad': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
+                'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
+                'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
+                'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
+                'mex': { 'NOR': 1.03, 'PER': 1.05, 'LEC': 1.02 },
+                'bra': { 'NOR': 1.03, 'ANT': 1.05, 'VER': 1.02, 'PER': 1.02 },
+                'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.03, 'PER': 1.02 },
+                'qat': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 },
+                'abu': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 }
+            };
+
+            const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
+            const leaderCar = battleRank[0];
+            const leaderDist = leaderCar ? (leaderCar.totalLaps + leaderCar.progress) : 0;
+
+            if (raceStarted && raceStatus === 'GREEN') {
+                if (leaderCar && leaderCar.totalLaps >= 1) {
+                    if (Math.random() < 0.00025) triggerRaceIncident();
+                }
             }
-            if (ai.battleState === 'underdog_push' && ai.battleTimer <= 0) {
-                ai.battleState = 'normal'; ai.cooldown = 100;
-            }
-            if (ai.conditionState !== 'normal' && ai.conditionTimer <= 0) ai.conditionState = 'normal';
 
-            // 트랙 형상
-            const currentIndex = Math.floor(ai.progress * 1000) % 1000;
-            const lookAheadIndex = (currentIndex + 20) % 1000;
-            const normalTrackFactor = (trackSpeedProfile[currentIndex] * 0.6) + (trackSpeedProfile[lookAheadIndex] * 0.4);
-
-            // 🚨 [핵심 1] 기본 속도 격차 압축 (Speed Compression)
-            // 원래 1.0 ~ 1.30 차이였던 것을 -> 1.0 ~ 1.195 정도로 줄여서 격차 발생 속도를 늦춤
-            // 식: 1.0 + (원래속도 - 1.0) * 0.65
-            const compressedBaseSpeed = 1.0 + (ai.baseSpeed - 1.0) * 0.65;
-
-            let targetSpeed = compressedBaseSpeed;
-            let currentLerpRate = 0.05;
-
-            // =========================
-            // 🚥 주행 알고리즘
-            // =========================
-
-            let circuitBoost = 1.0;
-            if (circuitSpecialists[state.circuitId] && circuitSpecialists[state.circuitId][ai.id]) {
-                circuitBoost = circuitSpecialists[state.circuitId][ai.id];
+            if (raceStatus !== 'GREEN') {
+                eventTimer--;
+                if (raceStatus === 'SC' && eventTimer === 180) {
+                    raceStatus = 'SC_ENDING';
+                    updateStatusUI('SC ENDING', 'status-sc');
+                }
+                if ((raceStatus === 'SC_ENDING' || raceStatus === 'YELLOW') && eventTimer <= 0) {
+                    resumeRace();
+                }
             }
 
-            if (raceStatus === 'GREEN') {
-                // (1) 컨디션
-                let conditionBoost = 1.0;
-                if (ai.conditionState === 'super') conditionBoost = 1.35;
-                else if (ai.conditionState === 'slump') conditionBoost = 0.75;
-                else if (ai.conditionState === 'normal' && ai.battleState === 'normal') {
-                    const isPlayer = (ai.id === getDriverShortId(state.driver));
-                    const eventChance = isPlayer ? 0.0008 : 0.0005; 
-                    if (Math.random() < eventChance) {
-                        if (Math.random() < (isPlayer ? 0.9 : 0.5)) { ai.conditionState = 'super'; ai.conditionTimer = 300; }
-                        else { ai.conditionState = 'slump'; ai.conditionTimer = 240; }
-                    }
-                }
-
-                // (2) 배틀 모드 & 하위권 반란
-                let battleBoost = 1.0;
-                const myCurrentRank = battleRank.findIndex(r => r.id === ai.id);
-                
-                if (ai.battleState === 'normal' && myCurrentRank >= 14) {
-                    if (Math.random() < 0.0015) { 
-                        ai.battleState = 'underdog_push'; ai.battleTimer = 120; 
-                    }
-                }
-
-                if (ai.battleState === 'boost') battleBoost = 1.15;
-                else if (ai.battleState === 'lag') battleBoost = 0.90;
-                else if (ai.battleState === 'underdog_push') battleBoost = 1.30; 
-                else if (ai.battleState === 'normal' && ai.cooldown <= 0 && myCurrentRank > 0) {
-                    const ahead = battleRank[myCurrentRank - 1];
-                    const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
-                    if (dist > 0 && dist < 0.02) {
-                        const isPlayer = (ai.id === getDriverShortId(state.driver));
-                        const aggression = (circuitBoost > 1.0) ? 0.6 : 0.4;
-                        if (Math.random() < (isPlayer ? 0.7 : aggression)) { ai.battleState = 'boost'; ai.battleTimer = 150; }
-                        else { ai.battleState = 'lag'; ai.battleTimer = 100; }
-                    }
-                }
-
-                // (3) 고무줄 시스템 강화 (간격 유지)
-                let rubberBandBoost = 1.0;
-                if (leaderCar) {
-                    const myDist = ai.totalLaps + ai.progress;
-                    const gap = leaderDist - myDist; 
-
-                    if (ai.id === leaderCar.id) {
-                        rubberBandBoost = 0.990; // 선두 페널티 강화 (0.992 -> 0.990)
-                    } else if (gap > 0) {
-                        // 후발대 가속 강화 (0.05 -> 0.08)
-                        rubberBandBoost = 1.0 + (gap * 0.08); 
-                        if (rubberBandBoost > 1.12) rubberBandBoost = 1.12;
-                    }
-                }
-
-                let calculatedSpeed = compressedBaseSpeed * normalTrackFactor * battleBoost * conditionBoost * circuitBoost * rubberBandBoost;
-                
-                if (myCurrentRank > 0) {
-                    const ahead = battleRank[myCurrentRank - 1];
-                    const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
-                    if (ai.battleState === 'boost' || ai.battleState === 'underdog_push') { 
-                        targetSpeed = calculatedSpeed; 
-                    } 
-                    else if (dist < 0.005 && ai.actualSpeed > ahead.actualSpeed) { 
-                        targetSpeed = ahead.actualSpeed; currentLerpRate = 0.2; 
-                    } 
-                    else { targetSpeed = calculatedSpeed; }
-                } else { targetSpeed = calculatedSpeed; }
-
-            } else if (raceStatus === 'YELLOW') {
-                const isLeader = (battleRank[0] && ai.id === battleRank[0].id);
-                let yellowPaceFactor = isLeader ? 0.55 : 0.75; 
-                let limitSpeed = compressedBaseSpeed * normalTrackFactor * yellowPaceFactor;
-                targetSpeed = limitSpeed;
-
-                let minDistY = 100;
-                let carAhead = null;
-                aiDrivers.forEach(other => {
-                    if (other.id !== ai.id && other.id !== stoppedCarId) { 
-                        let d = other.progress - ai.progress;
-                        if (d < 0) d += 1; 
-                        if (d < minDistY) { minDistY = d; carAhead = other; }
-                    }
-                });
-
-                if (carAhead) {
-                    const safeDistance = 0.02;
-                    if (minDistY <= safeDistance) {
-                        if (targetSpeed > carAhead.actualSpeed) {
-                            targetSpeed = carAhead.actualSpeed;
-                            if (minDistY < 0.01) targetSpeed *= 0.9; 
-                        }
-                        currentLerpRate = 0.3; 
-                    } else { currentLerpRate = 0.1; }
-                }
-
-            } else if (raceStatus === 'SC' || raceStatus === 'SC_ENDING') {
-                let minDist = 100; 
-                let objectAhead = null; 
-                
-                if (safetyCar.active) {
-                    let d = safetyCar.progress - ai.progress;
-                    if (d < 0) d += 1; 
-                    if (d < minDist) { minDist = d; objectAhead = { type: 'SC', speed: 0.8 }; }
-                }
-
-                aiDrivers.forEach(other => {
-                    if (other.id !== ai.id && other.id !== stoppedCarId) {
-                        let d = other.progress - ai.progress;
-                        if (d < 0) d += 1; 
-                        if (d < minDist) { minDist = d; objectAhead = { type: 'CAR', speed: other.actualSpeed }; }
-                    }
-                });
-
-                if (objectAhead) {
-                    const isSC = (objectAhead.type === 'SC');
-                    if (minDist < 0.002) { targetSpeed = objectAhead.speed * 0.5; currentLerpRate = 0.5; } 
-                    else if (minDist < 0.006) { targetSpeed = objectAhead.speed; currentLerpRate = 0.3; } 
-                    else {
-                        targetSpeed = 1.8; 
-                        if (isSC && minDist < 0.15) { targetSpeed = 0.9; }
-                        currentLerpRate = 0.08;
-                    }
+            if (safetyCar.active) {
+                if (raceStatus === 'SC_ENDING') {
+                    safetyCar.element.style.display = 'none';
+                    safetyCar.active = false; 
                 } else {
-                    if (raceStatus === 'SC_ENDING') {
-                        targetSpeed = compressedBaseSpeed * normalTrackFactor * 1.3;
-                        currentLerpRate = 0.05;
-                    } else { targetSpeed = 0.8; currentLerpRate = 0.1; }
+                    safetyCar.progress += 0.8 * 0.00038 * state.speedFactor;
+                    if (safetyCar.progress >= 1) safetyCar.progress -= 1;
+
+                    const pt = track.getPointAtLength(len * safetyCar.progress);
+                    safetyCar.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
+
+                    if (stoppedCarId && raceStatus === 'SC' && eventTimer > 200) {
+                        const victim = aiDrivers.find(d => d.id === stoppedCarId);
+                        if (victim) {
+                            let distToVictim = victim.progress - safetyCar.progress;
+                            if (distToVictim < 0) distToVictim += 1; 
+                            if (distToVictim < 0.4) {
+                                raceStatus = 'SC_ENDING';
+                                eventTimer = 180; 
+                                updateStatusUI('SC ENDING', 'status-sc');
+                            }
+                        }
+                    }
                 }
             }
 
-            // 🚨 [핵심 2] 주인공 다이내믹 버프 (티어별 차등 적용)
-            if (ai.id === getDriverShortId(state.driver)) {
-                let heroBonus = 1.002; // 기본 (상위권용 - 거의 영향 없음)
-                
-                // ai.baseSpeed는 원본 데이터 기준 (1.02 ~ 1.30)
-                if (ai.baseSpeed <= 1.10) { 
-                    heroBonus = 1.015; // 하위권: 1.5% 버프 (매우 큼)
-                } else if (ai.baseSpeed <= 1.20) { 
-                    heroBonus = 1.008; // 중위권: 0.8% 버프
-                }
-                
-                targetSpeed *= heroBonus;
-            }
-            
-            // 물리 적용
-            ai.actualSpeed += (targetSpeed - ai.actualSpeed) * currentLerpRate;
-            ai.progress += ai.actualSpeed * 0.00038 * state.speedFactor;
-            
-            if (ai.progress >= 1) {
-                ai.progress -= 1;
-                ai.totalLaps += 1;
-            }
-        } 
-        
-        const pt = track.getPointAtLength(len * ai.progress);
-        const jitterPower = (raceStatus === 'GREEN') ? 2.0 : 0.0;
-        const jitterX = (Math.sin(now/200 + ai.randomFactor) * jitterPower); 
-        const jitterY = (Math.cos(now/200 + ai.randomFactor) * jitterPower);
-        ai.element.setAttribute('transform', `translate(${pt.x + jitterX}, ${pt.y + jitterY}) scale(${state.scaleFactor})`);
-    });
+            aiDrivers.forEach(ai => {
+                if (raceStarted) {
+                    if (ai.id === stoppedCarId) {
+                        ai.actualSpeed *= 0.9;
+                        if (ai.actualSpeed < 0.01) ai.actualSpeed = 0;
+                        ai.element.classList.add('stopped');
+                        const pt = track.getPointAtLength(len * ai.progress);
+                        ai.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
+                        return; 
+                    } else {
+                        ai.element.classList.remove('stopped');
+                    }
 
-    if(raceStarted) updateLeaderboard();
-    requestAnimationFrame(animateAIDrivers);
-}
-        /* 💡 [수정] Leader 기준 시각적 위치 동기화 (Absolute Visual Sync) */
+                    if (!ai.battleState) { ai.battleState = 'normal'; ai.battleTimer = 0; ai.cooldown = 0; }
+                    if (!ai.conditionState) { ai.conditionState = 'normal'; ai.conditionTimer = 0; }
+                    if (ai.battleTimer > 0) ai.battleTimer--;
+                    if (ai.cooldown > 0) ai.cooldown--;
+                    if (ai.conditionTimer > 0) ai.conditionTimer--;
+                    
+                    if (ai.battleState !== 'normal' && ai.battleState !== 'underdog_push' && ai.battleTimer <= 0) { 
+                        ai.battleState = 'normal'; ai.cooldown = 200; 
+                    }
+                    if (ai.battleState === 'underdog_push' && ai.battleTimer <= 0) {
+                        ai.battleState = 'normal'; ai.cooldown = 100;
+                    }
+                    if (ai.conditionState !== 'normal' && ai.conditionTimer <= 0) ai.conditionState = 'normal';
+
+                    const currentIndex = Math.floor(ai.progress * 1000) % 1000;
+                    const lookAheadIndex = (currentIndex + 20) % 1000;
+                    const normalTrackFactor = (trackSpeedProfile[currentIndex] * 0.6) + (trackSpeedProfile[lookAheadIndex] * 0.4);
+
+                    const compressedBaseSpeed = 1.0 + (ai.baseSpeed - 1.0) * 0.65;
+
+                    let targetSpeed = compressedBaseSpeed;
+                    let currentLerpRate = 0.05;
+
+                    let circuitBoost = 1.0;
+                    if (circuitSpecialists[state.circuitId] && circuitSpecialists[state.circuitId][ai.id]) {
+                        circuitBoost = circuitSpecialists[state.circuitId][ai.id];
+                    }
+
+                    if (raceStatus === 'GREEN') {
+                        let conditionBoost = 1.0;
+                        if (ai.conditionState === 'super') conditionBoost = 1.35;
+                        else if (ai.conditionState === 'slump') conditionBoost = 0.75;
+                        else if (ai.conditionState === 'normal' && ai.battleState === 'normal') {
+                            const isPlayer = (ai.id === getDriverShortId(state.driver));
+                            const eventChance = isPlayer ? 0.0008 : 0.0005; 
+                            if (Math.random() < eventChance) {
+                                if (Math.random() < (isPlayer ? 0.9 : 0.5)) { ai.conditionState = 'super'; ai.conditionTimer = 300; }
+                                else { ai.conditionState = 'slump'; ai.conditionTimer = 240; }
+                            }
+                        }
+
+                        let battleBoost = 1.0;
+                        const myCurrentRank = battleRank.findIndex(r => r.id === ai.id);
+                        
+                        if (ai.battleState === 'normal' && myCurrentRank >= 14) {
+                            if (Math.random() < 0.0015) { 
+                                ai.battleState = 'underdog_push'; ai.battleTimer = 120; 
+                            }
+                        }
+
+                        if (ai.battleState === 'boost') battleBoost = 1.15;
+                        else if (ai.battleState === 'lag') battleBoost = 0.90;
+                        else if (ai.battleState === 'underdog_push') battleBoost = 1.30; 
+                        else if (ai.battleState === 'normal' && ai.cooldown <= 0 && myCurrentRank > 0) {
+                            const ahead = battleRank[myCurrentRank - 1];
+                            const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
+                            if (dist > 0 && dist < 0.02) {
+                                const isPlayer = (ai.id === getDriverShortId(state.driver));
+                                const aggression = (circuitBoost > 1.0) ? 0.6 : 0.4;
+                                if (Math.random() < (isPlayer ? 0.7 : aggression)) { ai.battleState = 'boost'; ai.battleTimer = 150; }
+                                else { ai.battleState = 'lag'; ai.battleTimer = 100; }
+                            }
+                        }
+
+                        let rubberBandBoost = 1.0;
+                        if (leaderCar) {
+                            const myDist = ai.totalLaps + ai.progress;
+                            const gap = leaderDist - myDist; 
+
+                            if (ai.id === leaderCar.id) {
+                                rubberBandBoost = 0.990; 
+                            } else if (gap > 0) {
+                                rubberBandBoost = 1.0 + (gap * 0.08); 
+                                if (rubberBandBoost > 1.12) rubberBandBoost = 1.12;
+                            }
+                        }
+
+                        let calculatedSpeed = compressedBaseSpeed * normalTrackFactor * battleBoost * conditionBoost * circuitBoost * rubberBandBoost;
+                        
+                        if (myCurrentRank > 0) {
+                            const ahead = battleRank[myCurrentRank - 1];
+                            const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
+                            if (ai.battleState === 'boost' || ai.battleState === 'underdog_push') { 
+                                targetSpeed = calculatedSpeed; 
+                            } 
+                            else if (dist < 0.005 && ai.actualSpeed > ahead.actualSpeed) { 
+                                targetSpeed = ahead.actualSpeed; currentLerpRate = 0.2; 
+                            } 
+                            else { targetSpeed = calculatedSpeed; }
+                        } else { targetSpeed = calculatedSpeed; }
+
+                    } else if (raceStatus === 'YELLOW') {
+                        const isLeader = (battleRank[0] && ai.id === battleRank[0].id);
+                        let yellowPaceFactor = isLeader ? 0.55 : 0.75; 
+                        let limitSpeed = compressedBaseSpeed * normalTrackFactor * yellowPaceFactor;
+                        targetSpeed = limitSpeed;
+
+                        let minDistY = 100;
+                        let carAhead = null;
+                        aiDrivers.forEach(other => {
+                            if (other.id !== ai.id && other.id !== stoppedCarId) { 
+                                let d = other.progress - ai.progress;
+                                if (d < 0) d += 1; 
+                                if (d < minDistY) { minDistY = d; carAhead = other; }
+                            }
+                        });
+
+                        if (carAhead) {
+                            const safeDistance = 0.02;
+                            if (minDistY <= safeDistance) {
+                                if (targetSpeed > carAhead.actualSpeed) {
+                                    targetSpeed = carAhead.actualSpeed;
+                                    if (minDistY < 0.01) targetSpeed *= 0.9; 
+                                }
+                                currentLerpRate = 0.3; 
+                            } else { currentLerpRate = 0.1; }
+                        }
+
+                    } else if (raceStatus === 'SC' || raceStatus === 'SC_ENDING') {
+                        let minDist = 100; 
+                        let objectAhead = null; 
+                        
+                        if (safetyCar.active) {
+                            let d = safetyCar.progress - ai.progress;
+                            if (d < 0) d += 1; 
+                            if (d < minDist) { minDist = d; objectAhead = { type: 'SC', speed: 0.8 }; }
+                        }
+
+                        aiDrivers.forEach(other => {
+                            if (other.id !== ai.id && other.id !== stoppedCarId) {
+                                let d = other.progress - ai.progress;
+                                if (d < 0) d += 1; 
+                                if (d < minDist) { minDist = d; objectAhead = { type: 'CAR', speed: other.actualSpeed }; }
+                            }
+                        });
+
+                        if (objectAhead) {
+                            const isSC = (objectAhead.type === 'SC');
+                            if (minDist < 0.002) { targetSpeed = objectAhead.speed * 0.5; currentLerpRate = 0.5; } 
+                            else if (minDist < 0.006) { targetSpeed = objectAhead.speed; currentLerpRate = 0.3; } 
+                            else {
+                                targetSpeed = 1.8; 
+                                if (isSC && minDist < 0.15) { targetSpeed = 0.9; }
+                                currentLerpRate = 0.08;
+                            }
+                        } else {
+                            if (raceStatus === 'SC_ENDING') {
+                                targetSpeed = compressedBaseSpeed * normalTrackFactor * 1.3;
+                                currentLerpRate = 0.05;
+                            } else { targetSpeed = 0.8; currentLerpRate = 0.1; }
+                        }
+                    }
+
+                    if (ai.id === getDriverShortId(state.driver)) {
+                        let heroBonus = 1.002; 
+                        
+                        if (ai.baseSpeed <= 1.10) { 
+                            heroBonus = 1.015; 
+                        } else if (ai.baseSpeed <= 1.20) { 
+                            heroBonus = 1.008; 
+                        }
+                        
+                        targetSpeed *= heroBonus;
+                    }
+                    
+                    ai.actualSpeed += (targetSpeed - ai.actualSpeed) * currentLerpRate;
+                    ai.progress += ai.actualSpeed * 0.00038 * state.speedFactor;
+                    
+                    if (ai.progress >= 1) {
+                        ai.progress -= 1;
+                        ai.totalLaps += 1;
+                    }
+                } 
+                
+                const pt = track.getPointAtLength(len * ai.progress);
+                const jitterPower = (raceStatus === 'GREEN') ? 2.0 : 0.0;
+                const jitterX = (Math.sin(now/200 + ai.randomFactor) * jitterPower); 
+                const jitterY = (Math.cos(now/200 + ai.randomFactor) * jitterPower);
+                ai.element.setAttribute('transform', `translate(${pt.x + jitterX}, ${pt.y + jitterY}) scale(${state.scaleFactor})`);
+            });
+
+            if(raceStarted) updateLeaderboard();
+            requestAnimationFrame(animateAIDrivers);
+        }
+
         function resumeRace() {
-            // 1. 현재 1등(Leader) 찾기
             const leader = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress))[0];
 
-            // 2. 사고 차량 복귀 로직
             if (stoppedCarId && leader) {
                 const victim = aiDrivers.find(d => d.id === stoppedCarId);
                 
                 if (victim) {
-                    // 🚨 핵심: 무조건 1등의 랩 수를 가져오되, 위치에 따라 보정합니다.
-                    // 이렇게 하면 SC가 몇 번을 지나갔든 상관없이 '현재 보이는 위치'가 등수가 됩니다.
                     victim.totalLaps = leader.totalLaps;
-
-                    // 📐 보정: 내 위치(0.9) > 리더 위치(0.1) 이면, 나는 아직 라인을 못 넘은 것이므로 -1 Lap
                     if (victim.progress > leader.progress) {
                         victim.totalLaps -= 1;
                     }
-                    // 반대로 내 위치(0.5) < 리더 위치(0.8) 이면, 같은 랩 유지 (리더 뒤에 잘 따라가는 중)
-
-                    // 속도 리셋
                     victim.actualSpeed = victim.baseSpeed * 0.8; 
-                    
                     console.log(`[Rank Reset] ${victim.id} synced relative to Leader.`);
                 }
             }
 
-            // 3. 상태 초기화
             raceStatus = 'GREEN';
             stoppedCarId = null;
             safetyCar.active = false;
@@ -1856,83 +1858,27 @@ function animateAIDrivers() {
             }, 2000);
         }
 
-        /* 💡 [수정] 상단 표시기 + 모바일 패널 동시 제어 */
         function updateStatusUI(text, cssClass) {
-            // 1. 기존 상단 표시기 (PC/모바일 공통)
             const el = document.getElementById('race-status-display');
             el.innerText = text;
             el.className = ''; 
             el.classList.add(cssClass);
             el.style.opacity = '1';
 
-            // 2. [신규] 모바일 하단 패널 제어
             const mobilePanel = document.getElementById('mobile-status-panel');
             if (mobilePanel) {
-                // 기존 클래스 초기화
                 mobilePanel.className = 'status-panel';
                 
                 if (text.includes('GREEN')) {
-                    // 그린 플래그면 즉시 숨김
                     mobilePanel.style.display = 'none';
                 } else {
-                    // 사고 상황이면 표시
                     mobilePanel.innerText = text;
                     mobilePanel.style.display = 'block';
                     
-                    // 색상 클래스 적용
                     if (cssClass.includes('sc')) mobilePanel.classList.add('sc');
                     else if (cssClass.includes('yellow')) mobilePanel.classList.add('yellow');
                 }
             }
-        }
-
-        function toggleAudio() {
-            isMuted = !isMuted;
-            const onIcon = document.getElementById('icon-sound-on'), offIcon = document.getElementById('icon-sound-off');
-            
-            // 1. BGM 볼륨 제어
-            if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(isMuted ? 0 : 70);
-            
-            // 2. 💡 엔진 사운드 볼륨 제어 추가
-            if (enginePlayer && enginePlayer.setVolume) enginePlayer.setVolume(isMuted ? 0 : 50);
-
-            onIcon.style.display = isMuted ? 'none' : 'block';
-            offIcon.style.display = isMuted ? 'block' : 'none';
-        }
-
-        function activateEngine() {
-            document.getElementById('start-engine-btn').style.display = 'none';
-            if (bgmPlayer && bgmPlayer.playVideo) { bgmPlayer.setVolume(70); bgmPlayer.playVideo(); }
-            startRaceSequence();
-        }
-
-function startRaceSequence() {
-            let lightCount = 1;
-            function turnOnNextLight() {
-                if (lightCount <= 5) {
-                    document.getElementById(`light-${lightCount}`).classList.add('on');
-                    document.getElementById(`light-${lightCount}b`).classList.add('on');
-                    lightCount++; setTimeout(turnOnNextLight, 800);
-                } else {
-                    // 💡 불이 다 켜지고 1초 뒤 (메인 화면 진입 시점)
-                    setTimeout(() => {
-                        document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
-                        raceStarted = true;
-                        
-                        document.getElementById('loading-overlay').style.opacity = '0';
-                        
-                        // 🚀 [핵심] 여기서 엔진 소리 재생
-                        if (enginePlayer && enginePlayer.playVideo) { 
-                            if (!isMuted) enginePlayer.setVolume(50); // 볼륨은 적절히 조절 (50 추천)
-                            else enginePlayer.setVolume(0);
-                            enginePlayer.playVideo(); 
-                        }
-
-                        setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 300);
-                    }, 1000); // 1초 텀
-                }
-            }
-            turnOnNextLight();
         }
 
         function addMoney() {
@@ -1943,15 +1889,9 @@ function startRaceSequence() {
             const today = new Date();
             const todayStr = today.toDateString(); 
 
-            // 1. 입금 지정일(DD) 체크 (서수 표기 로직 추가)
             if (today.getDate() !== state.savingsDay) { 
                 const d = state.savingsDay;
                 
-                // 💡 날짜 뒤에 붙는 접미사(Suffix) 계산
-                // 1, 21, 31 -> st
-                // 2, 22 -> nd
-                // 3, 23 -> rd
-                // 나머지(11, 12, 13 포함) -> th
                 const j = d % 10, k = d % 100;
                 let suffix = "th";
                 if (j === 1 && k !== 11) suffix = "st";
@@ -1962,27 +1902,22 @@ function startRaceSequence() {
                 return; 
             }
 
-            // 2. 중복 입금 방지
             if (state.lastDepositDate === todayStr) {
                 showTooltip("ALREADY BOXED! SAVE TIRES.");
                 return;
             }
 
-            // 3. 목표 금액 초과 방지
             const totalGoal = state.q1 + state.q2 + state.q3;
             if (state.currentAmount >= totalGoal) { 
                 showTooltip("MAX POWER REACHED"); 
                 return; 
             }
 
-            // 4. 입금 실행
             state.currentAmount += state.depositUnit;
             if(state.currentAmount > totalGoal) state.currentAmount = totalGoal;
             
-            // 5. 오늘 날짜를 '마지막 입금일'로 기록
             state.lastDepositDate = todayStr;
             
-            // 6. 세션 변경 및 저장 로직
             let checkS = state.currentAmount >= totalGoal ? 'FINISH' : state.currentAmount >= (state.q1 + state.q2) ? 'Q3' : state.currentAmount >= state.q1 ? 'Q2' : 'Q1';
             if (checkS !== state.lastSession && checkS !== 'Q1') triggerCelebration(state.lastSession);
             state.lastSession = checkS;
@@ -1992,7 +1927,6 @@ function startRaceSequence() {
         }
 
         function updateDashboard() {
-            // 1. 화면 표시 정보 업데이트 (팀, 드라이버, 서킷)
             document.body.className = state.team;
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
             
@@ -2002,54 +1936,40 @@ function startRaceSequence() {
                 document.getElementById('disp-circuit').innerText = data.name;
             }
 
-            // 2. 🚨 핵심: 3-Lap 시스템 계산 로직
             const totalGoal = state.q1 + state.q2 + state.q3;
             let targetP = 0;
             let step = "[Q1]";
             let name = "HOTEL";
 
-            // [Lap 1] Q1 구간: 0원 ~ Q1 목표액
             if (state.currentAmount < state.q1) { 
-                // Q1 목표액 대비 현재 달성률 (0% ~ 100%)
                 targetP = state.currentAmount / state.q1;
                 step = "[Q1]";
                 name = "HOTEL";
             
-            // [Lap 2] Q2 구간: Q1 달성 후 ~ Q2 목표액
             } else if (state.currentAmount < (state.q1 + state.q2)) { 
-                // Q1은 이미 다 채웠고, Q2 목표액 대비 현재 진행률 계산
-                // (현재금액 - Q1완료금액) / Q2목표액
                 targetP = (state.currentAmount - state.q1) / state.q2;
                 step = "[Q2]";
                 name = "FLIGHT";
             
-            // [Lap 3] Q3 구간: Q2 달성 후 ~ 최종 목표액
             } else if (state.currentAmount < totalGoal) { 
-                // Q2까지 다 채웠고, Q3 목표액 대비 현재 진행률 계산
                 targetP = (state.currentAmount - (state.q1 + state.q2)) / state.q3;
                 step = "[Q3]";
                 name = "TICKET";
             
-            // [FINISH] 목표 달성!
             } else { 
-                targetP = 1; // 꽉 채움
+                targetP = 1; 
                 step = "POLE";
                 name = "POSITION";
             }
 
-            // 3. 계산된 진행률(0.0 ~ 1.0)을 트랙에 반영
-            // (세션이 바뀔 때마다 트랙이 비워졌다가 다시 차오르는 효과가 납니다)
             syncTrackFill(Math.max(0, Math.min(1, targetP)));
 
-            // 4. 텍스트 정보 업데이트
             document.getElementById('session-step').innerText = step;
             document.getElementById('session-name').innerText = name;
             document.getElementById('txt-current').innerText = `CUR ₩${state.currentAmount.toLocaleString()}`;
             
-            // 라디오 TAR(Target)는 '전체 총액'을 보여주어 큰 목표를 상기시킵니다.
             document.getElementById('txt-goal').innerText = `TAR ₩${totalGoal.toLocaleString()}`;
 
-            // 5. 설정 모달의 입력 필드 값 동기화
             document.getElementById('savings-day').value = state.savingsDay;
             document.getElementById('deposit-unit').value = state.depositUnit;
             document.getElementById('manual-amount').value = state.currentAmount;
@@ -2064,17 +1984,11 @@ function startRaceSequence() {
             const activeTrack = document.getElementById('active-track');
             const totalLength = activeTrack.getTotalLength();
             
-            // 💡 [수정] 오프셋 계산 방식 변경
-            // (1 - offset) 방식 대신, 음수 오프셋(-offset)을 사용하여 
-            // SVG 패턴의 시작점을 스타팅 라인에 정확히 고정합니다.
             const baseOffset = -1 * (totalLength * state.pathStartOffset);
 
             function frame() {
                 visualProgress += (target - visualProgress) * 0.08;
                 
-                // 💡 [수정] 빈 공간(Gap) 여유분 확보
-                // 뒷부분인 '빈 공간'을 트랙 전체 길이보다 10% 더 길게 잡아서(1.1),
-                // 진행 바가 0%일 때나 100%일 때 잔상이 겹쳐 보이는 현상을 방지합니다.
                 activeTrack.style.strokeDasharray = `${totalLength * visualProgress} ${totalLength * 1.1}`;
                 activeTrack.style.strokeDashoffset = baseOffset;
                 
@@ -2090,24 +2004,6 @@ function startRaceSequence() {
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
 
-        function onYouTubeIframeAPIReady() {
-            bgmPlayer = new YT.Player('bgm-player', { height: '0', width: '0', videoId: 'YhX_Woa3kVA', playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' } });
-
-// 2. 💡 [신규] 엔진 사운드 플레이어 추가
-            // 요청하신 링크 ID: 2O_n4EQsMrM
-            enginePlayer = new YT.Player('engine-player', { 
-                height: '0', width: '0', 
-                videoId: '2O_n4EQsMrM', 
-                playerVars: { 
-                    'autoplay': 0, 
-                    'controls': 0, 
-                    'loop': 1,             // 반복 재생
-                    'playlist': '2O_n4EQsMrM' // 반복을 위해 필수
-                } 
-            });
-        }
-
-        function getDriverShortId(n) { return n.substring(0,3).toUpperCase(); }
         function showTooltip(m) { const t = document.getElementById('msg-tooltip'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
         function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateTeamSelectUI(); calculateRecommendation(); }
         function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
@@ -2132,13 +2028,9 @@ function startRaceSequence() {
         }
 
         function saveAndCloseSettings() {
-            // 1. 현재 입력된 값들을 state에 저장
             state.team = document.getElementById('team-select').value;
             state.driver = document.getElementById('driver-select').value;
             
-            // 주의: state.circuitId는 드롭다운 변경 시 updateCircuit()에 의해 이미 업데이트되었습니다.
-            // 여기서 다시 updateCircuit()을 호출하면 레이스가 리셋되므로 호출하지 않습니다.
-
             state.savingsDay = Number(document.getElementById('savings-day').value);
             state.depositUnit = Number(document.getElementById('deposit-unit').value);
             state.currentAmount = Number(document.getElementById('manual-amount').value);
@@ -2148,16 +2040,11 @@ function startRaceSequence() {
             state.q3 = Number(document.getElementById('q3-goal').value);
             state.targetDate = document.getElementById('target-date').value;
 
-            // 2. 데이터 영구 저장
             saveData();
 
-            // 3. 🚨 핵심: 트랙 초기화 없이 화면/시나리오만 갱신
-            // 이렇게 하면 서킷을 바꾸지 않고 선수만 바꿨을 때, 
-            // 레이스 진행 상황(위치, 랩 수)은 그대로 유지된 채 내 차량(색상/이름)만 바뀝니다.
-            updateDashboard();      // 상단 정보/예산 갱신
-            updateRaceScenario();   // 내 차량 마커(Hero)만 새로 지정
+            updateDashboard();      
+            updateRaceScenario();   
 
-            // 4. 모달 닫기
             document.getElementById('settings-modal').style.display = 'none';
         }
 
@@ -2177,28 +2064,19 @@ function startRaceSequence() {
             document.getElementById('driver-select').value = state.driver;
         }
 
-        init();
-
-        /* 💡 [수정] 드라이버 선택 로직 개선 */
-        /* 이제 차량의 ID를 변경하지 않고, 포커스(Hero Marker)만 이동시킵니다. */
         function setDriver(val) {
-            // 1. 상태 변경 (내가 누구를 보고 있는지만 변경)
             state.driver = val;
             
-            // 2. 마커(이름표) 재설정
-            // updateRaceScenario 함수가 aiDrivers를 순회하며 
-            // state.driver와 일치하는 차량에만 'hero-marker' 클래스를 붙입니다.
             updateRaceScenario(); 
             
-            // 3. 대시보드(라디오 이름) 업데이트
             document.getElementById('display-name').innerHTML = `<span>${state.driver}</span>`;
 
-            // 4. 리더보드 색상 즉시 업데이트 (노란색 글씨 이동)
             updateLeaderboard();
             
-            // 5. (선택 사항) 로그 확인
             console.log(`[Camera Switch] Now watching: ${state.driver}`);
         }
+
+        init(); 
     </script>
 </body>
 </html>
