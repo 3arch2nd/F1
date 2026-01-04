@@ -883,21 +883,35 @@ body.cadillac {
         }
 
         // ==========================================
-        // 📺 유튜브 API 필수 함수
+        // 📺 유튜브 API 필수 함수 (수정됨: 무한 반복 기능 추가)
         // ==========================================
         function onYouTubeIframeAPIReady() {
+            // 💡 [반복 재생 헬퍼 함수] 
+            // 영상이 끝나면(0) 다시 재생(playVideo) 명령을 내립니다.
+            const onPlayerStateChange = function(event) {
+                if (event.data === YT.PlayerState.ENDED) {
+                    event.target.playVideo();
+                }
+            };
+
             // BGM 플레이어
             bgmPlayer = new YT.Player('bgm-player', { 
                 height: '0', width: '0', 
                 videoId: 'YhX_Woa3kVA', 
-                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' } 
+                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 }, // loop 옵션 대신 이벤트 사용
+                events: {
+                    'onStateChange': onPlayerStateChange // 👈 상태 변화 감지 연결
+                }
             });
 
             // 엔진 사운드 플레이어
             enginePlayer = new YT.Player('engine-player', { 
                 height: '0', width: '0', 
                 videoId: 'Yfzh9PDPkes', 
-                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'Yfzh9PDPkes' } 
+                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
+                events: {
+                    'onStateChange': onPlayerStateChange // 👈 상태 변화 감지 연결
+                }
             });
         }
 
@@ -1030,7 +1044,7 @@ body.cadillac {
             }
         };
 
-        const circuitsData = [
+const circuitsData = [
             // 🏁 [3월: 시즌 개막]
             // 호주 (3/10)
             { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 10, h: 2000000, f: 1900000, t: 850000 },
