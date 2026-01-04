@@ -795,8 +795,8 @@ body.cadillac {
             
             // 볼륨 엔벨로프 (부드럽게 시작해서 뚝 끊기지 않게)
             gainNode.gain.setValueAtTime(0, now); 
-            gainNode.gain.linearRampToValueAtTime(0.15, now + 0.02); 
-            gainNode.gain.setValueAtTime(0.15, now + 0.12);          
+            gainNode.gain.linearRampToValueAtTime(0.3, now + 0.02); 
+            gainNode.gain.setValueAtTime(0.3, now + 0.12);          
             gainNode.gain.linearRampToValueAtTime(0, now + 0.15);   
 
             // 연결 및 재생
