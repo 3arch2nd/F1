@@ -800,17 +800,27 @@ body.cadillac {
         // ==========================================
         // 🚀 엔진 스타트 버튼 로직 (가장 중요한 부분)
         // ==========================================
+        // ==========================================
+        // 🚀 엔진 스타트 버튼 로직 (수정됨)
+        // ==========================================
         function activateEngine() {
-            // 오디오 컨텍스트 깨우기 (브라우저 정책 대응)
+            // 오디오 컨텍스트 깨우기
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
             document.getElementById('start-engine-btn').style.display = 'none';
             
-            // BGM 재생 시작 (음소거 여부 확인 후)
+            // 1. BGM 즉시 재생
             if (bgmPlayer && bgmPlayer.playVideo) { 
                 bgmPlayer.setVolume(isBgmMuted ? 0 : 70); 
                 bgmPlayer.playVideo(); 
+            }
+            
+            // 2. 💡 [핵심 수정] 엔진 소리도 '클릭 즉시' 재생 시작 (볼륨 0으로 숨김)
+            // 나중에 setTimeout 안에서 처음 play()를 호출하면 브라우저가 차단합니다.
+            if (enginePlayer && enginePlayer.playVideo) {
+                enginePlayer.setVolume(0); // 들리지 않게 설정
+                enginePlayer.playVideo();  // 재생 시작 (버퍼링 확보)
             }
             
             // 레이스 시퀀스 시작
@@ -818,7 +828,7 @@ body.cadillac {
         }
 
         // ==========================================
-        // 🚦 레이스 출발 시퀀스 (불 켜짐 -> 꺼짐)
+        // 🚦 레이스 출발 시퀀스 (수정됨)
         // ==========================================
         function startRaceSequence() {
             let lightCount = 1;
@@ -840,11 +850,10 @@ body.cadillac {
                         // 1. 불 끄기
                         document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
                         
-                        // 2. 엔진 소리 재생 (SFX 체크)
-                        if (enginePlayer && enginePlayer.playVideo) { 
-                            if (!isSfxMuted) enginePlayer.setVolume(30);
-                            else enginePlayer.setVolume(0);
-                            enginePlayer.playVideo(); 
+                        // 2. 💡 [핵심 수정] 이미 재생 중인 엔진 소리의 '볼륨'만 키움
+                        if (enginePlayer && enginePlayer.setVolume) { 
+                            if (!isSfxMuted) enginePlayer.setVolume(30); // 소리 ON
+                            // SFX가 Mute 상태라면 볼륨 0 유지
                         }
 
                         // 3. 레이스 시작 플래그
