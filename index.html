@@ -1010,29 +1010,59 @@ body.cadillac {
         };
 
         const circuitsData = [
-            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 10, h: 2800000, f: 1900000, t: 850000 },
-            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 3, day: 24, h: 3200000, f: 2100000, t: 900000 },
-            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 7, h: 1800000, f: 700000, t: 750000 },
-            { id: 'chn', name: 'Shanghai Int. Circuit', country: 'China', month: 4, day: 21, h: 2200000, f: 600000, t: 850000 },
-            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 5, h: 6500000, f: 2800000, t: 2500000 },
-            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 19, h: 2500000, f: 2100000, t: 900000 },
-            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 26, h: 8000000, f: 2200000, t: 1500000 },
-            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 9, h: 3000000, f: 2600000, t: 950000 },
-            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 23, h: 2400000, f: 2000000, t: 800000 },
-            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 30, h: 2200000, f: 2100000, t: 850000 },
-            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 7, h: 3500000, f: 2300000, t: 1200000 },
-            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 7, day: 21, h: 1800000, f: 1900000, t: 650000 },
-            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 28, h: 2300000, f: 2000000, t: 800000 },
-            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 25, h: 2800000, f: 2100000, t: 900000 },
-            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 1, h: 2600000, f: 2000000, t: 950000 },
-            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 15, h: 2100000, f: 1800000, t: 700000 },
-            { id: 'sin', name: 'Marina Bay Street Circuit', country: 'Singapore', month: 10, day: 4, h: 3500000, f: 1500000, t: 900000 },
-            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 20, h: 3800000, f: 2500000, t: 1100000 },
-            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 27, h: 2200000, f: 2400000, t: 750000 },
-            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 3, h: 2300000, f: 2900000, t: 700000 },
-            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 23, h: 7000000, f: 2400000, t: 3000000 },
-            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 12, day: 1, h: 3500000, f: 2000000, t: 900000 },
-            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 8, h: 5000000, f: 2100000, t: 1500000 }
+            // 🌏 [아시아/오세아니아]
+            // 호주: 직항/경유 왕복 (190만) + 멜버른 시내 숙박
+            { id: 'aus', name: 'Albert Park Circuit', country: 'Australia', month: 3, day: 10, h: 2000000, f: 1900000, t: 850000 },
+            // 일본: 벚꽃 시즌 왕복 (70만) + 나고야/오사카 이동 숙박
+            { id: 'jpn', name: 'Suzuka International', country: 'Japan', month: 4, day: 7, h: 1500000, f: 700000, t: 750000 },
+            // 중국: 상하이 왕복 (60만)
+            { id: 'chn', name: 'Shanghai Int. Circuit', country: 'China', month: 4, day: 21, h: 1200000, f: 600000, t: 850000 },
+            // 싱가포르: F1 기간 항공권 급등 (150만) + 캡슐/호스텔 활용
+            { id: 'sin', name: 'Marina Bay Street Circuit', country: 'Singapore', month: 10, day: 4, h: 2500000, f: 1500000, t: 900000 },
+
+            // 🐪 [중동]
+            // 사우디: 국적기 경유 왕복 (210만)
+            { id: 'ksa', name: 'Jeddah Corniche Circuit', country: 'Saudi Arabia', month: 3, day: 24, h: 2200000, f: 2100000, t: 900000 },
+            // 카타르: 직항/경유 왕복 (220만)
+            { id: 'qat', name: 'Lusail Int. Circuit', country: 'Qatar', month: 12, day: 1, h: 2200000, f: 2200000, t: 900000 },
+            // 아부다비: 직항/경유 왕복 (230만)
+            { id: 'abu', name: 'Yas Marina Circuit', country: 'Abu Dhabi', month: 12, day: 8, h: 2500000, f: 2300000, t: 1500000 },
+            // 아제르바이잔: 경유 왕복 (220만)
+            { id: 'aze', name: 'Baku City Circuit', country: 'Azerbaijan', month: 9, day: 15, h: 1600000, f: 2200000, t: 800000 },
+
+            // 🏰 [유럽 - 여름 성수기 왕복 반영]
+            // 이몰라: 밀라노/로마 IN 왕복 (260만)
+            { id: 'imo', name: 'Imola Circuit', country: 'Italy (Imola)', month: 5, day: 19, h: 1800000, f: 2600000, t: 1100000 },
+            // 모나코: 니스/파리 경유 왕복 (240만) + 니스 통근 숙박
+            { id: 'mon', name: 'Circuit de Monaco', country: 'Monaco', month: 5, day: 26, h: 3500000, f: 2400000, t: 1500000 },
+            // 스페인: 바르셀로나 왕복 (280만)
+            { id: 'esp', name: 'Circuit de Barcelona', country: 'Spain', month: 6, day: 23, h: 1800000, f: 2800000, t: 1000000 },
+            // 오스트리아: 비엔나/뮌헨 왕복 (290만)
+            { id: 'aut', name: 'Red Bull Ring', country: 'Austria', month: 6, day: 30, h: 1900000, f: 2900000, t: 1100000 },
+            // 영국: 런던 히드로 왕복 (350만 - 7월 극성수기)
+            { id: 'gbr', name: 'Silverstone Circuit', country: 'Great Britain', month: 7, day: 7, h: 2500000, f: 3500000, t: 1800000 },
+            // 헝가리: 부다페스트/비엔나 왕복 (270만)
+            { id: 'hun', name: 'Hungaroring', country: 'Hungary', month: 7, day: 21, h: 1500000, f: 2700000, t: 900000 },
+            // 벨기에: 브뤼셀/암스테르담/파리 왕복 (300만)
+            { id: 'bel', name: 'Spa-Francorchamps', country: 'Belgium', month: 7, day: 28, h: 1800000, f: 3000000, t: 1200000 },
+            // 네덜란드: 암스테르담 왕복 (310만)
+            { id: 'ned', name: 'Zandvoort Circuit', country: 'Netherlands', month: 8, day: 25, h: 2200000, f: 3100000, t: 1300000 },
+            // 이탈리아: 밀라노 왕복 (280만)
+            { id: 'ita', name: 'Monza Circuit', country: 'Italy (Monza)', month: 9, day: 1, h: 2000000, f: 2800000, t: 1400000 },
+
+            // 🗽 [미주]
+            // 마이애미: 미국 경유 왕복 (280만)
+            { id: 'mia', name: 'Miami Int. Autodrome', country: 'USA (Miami)', month: 5, day: 5, h: 3500000, f: 2800000, t: 2500000 },
+            // 캐나다: 밴쿠버/토론토 경유 몬트리올 왕복 (320만)
+            { id: 'can', name: 'Circuit Gilles Villeneuve', country: 'Canada', month: 6, day: 9, h: 2200000, f: 3200000, t: 1200000 },
+            // 미국(오스틴): 댈러스/휴스턴 경유 왕복 (330만)
+            { id: 'usa', name: 'Circuit of The Americas', country: 'USA (Austin)', month: 10, day: 20, h: 2500000, f: 3300000, t: 1500000 },
+            // 멕시코: 미국 경유 왕복 (260만)
+            { id: 'mex', name: 'Autódromo H. Rodríguez', country: 'Mexico', month: 10, day: 27, h: 1800000, f: 2600000, t: 850000 },
+            // 브라질: 최장거리 경유 왕복 (300만)
+            { id: 'bra', name: 'Interlagos Circuit', country: 'Brazil', month: 11, day: 3, h: 1800000, f: 3000000, t: 800000 },
+            // 라스베이거스: 직항/경유 왕복 (280만)
+            { id: 'las', name: 'Las Vegas Strip Circuit', country: 'USA (Las Vegas)', month: 11, day: 23, h: 3800000, f: 2800000, t: 3000000 }
         ];
 
         const teamsDB = {
