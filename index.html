@@ -541,6 +541,7 @@ body.cadillac {
     </div>
 
     <div id="bgm-player"></div>
+<div id="engine-player"></div>
 
     <div id="celebration-overlay" style="display: none;">
         <div class="celebration-content">
@@ -900,6 +901,7 @@ let g_rowHeight = 21;
         let trackSpeedProfile = [];
         let raceStarted = false; 
         let bgmPlayer;
+let enginePlayer;
         let isMuted = false;
         let aiDrivers = [];
         let stableRanking = [];
@@ -1173,6 +1175,9 @@ function init() {
             const day = String(data.day).padStart(2, '0');
             state.targetDate = `${year}-${month}-${day}`;
             document.getElementById('target-date').value = state.targetDate;
+
+            // 💡 [수정 핵심] 데이터가 변경되었으므로, 추천 전략(월별 금액)도 즉시 재계산하여 반영합니다.
+            calculateRecommendation();
 
             // ============================================================
             // 🚨 [추가] 레이스 상태 강제 초기화 (Green Flag 리셋)
@@ -1884,7 +1889,13 @@ function animateAIDrivers() {
         function toggleAudio() {
             isMuted = !isMuted;
             const onIcon = document.getElementById('icon-sound-on'), offIcon = document.getElementById('icon-sound-off');
+            
+            // 1. BGM 볼륨 제어
             if (bgmPlayer && bgmPlayer.setVolume) bgmPlayer.setVolume(isMuted ? 0 : 70);
+            
+            // 2. 💡 엔진 사운드 볼륨 제어 추가
+            if (enginePlayer && enginePlayer.setVolume) enginePlayer.setVolume(isMuted ? 0 : 50);
+
             onIcon.style.display = isMuted ? 'none' : 'block';
             offIcon.style.display = isMuted ? 'block' : 'none';
         }
@@ -1895,7 +1906,7 @@ function animateAIDrivers() {
             startRaceSequence();
         }
 
-        function startRaceSequence() {
+function startRaceSequence() {
             let lightCount = 1;
             function turnOnNextLight() {
                 if (lightCount <= 5) {
@@ -1903,12 +1914,22 @@ function animateAIDrivers() {
                     document.getElementById(`light-${lightCount}b`).classList.add('on');
                     lightCount++; setTimeout(turnOnNextLight, 800);
                 } else {
+                    // 💡 불이 다 켜지고 1초 뒤 (메인 화면 진입 시점)
                     setTimeout(() => {
                         document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
                         raceStarted = true;
+                        
                         document.getElementById('loading-overlay').style.opacity = '0';
+                        
+                        // 🚀 [핵심] 여기서 엔진 소리 재생
+                        if (enginePlayer && enginePlayer.playVideo) { 
+                            if (!isMuted) enginePlayer.setVolume(50); // 볼륨은 적절히 조절 (50 추천)
+                            else enginePlayer.setVolume(0);
+                            enginePlayer.playVideo(); 
+                        }
+
                         setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 300);
-                    }, 1000);
+                    }, 1000); // 1초 텀
                 }
             }
             turnOnNextLight();
@@ -2071,6 +2092,19 @@ function animateAIDrivers() {
 
         function onYouTubeIframeAPIReady() {
             bgmPlayer = new YT.Player('bgm-player', { height: '0', width: '0', videoId: 'YhX_Woa3kVA', playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'YhX_Woa3kVA' } });
+
+// 2. 💡 [신규] 엔진 사운드 플레이어 추가
+            // 요청하신 링크 ID: 2O_n4EQsMrM
+            enginePlayer = new YT.Player('engine-player', { 
+                height: '0', width: '0', 
+                videoId: '2O_n4EQsMrM', 
+                playerVars: { 
+                    'autoplay': 0, 
+                    'controls': 0, 
+                    'loop': 1,             // 반복 재생
+                    'playlist': '2O_n4EQsMrM' // 반복을 위해 필수
+                } 
+            });
         }
 
         function getDriverShortId(n) { return n.substring(0,3).toUpperCase(); }
