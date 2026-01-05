@@ -400,27 +400,46 @@ body.cadillac {
             align-items: center;
         }
 
+        /* 💡 [수정] 오디오 버튼 스타일 재정의 */
         .audio-btn { 
             background: transparent; 
             border: none; 
             padding: 5px; 
             cursor: pointer; 
-            opacity: 0.6; 
-            transition: all 0.3s; 
+            opacity: 0.6; /* 기본 상태: 반투명 */
+            transition: all 0.2s ease; /* 부드러운 전환 */
             display: flex; 
             align-items: center; 
             justify-content: center; 
+            
+            /* 모바일 터치 시 파란색 하이라이트 박스 제거 */
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
         }
         
-        .audio-btn:hover { opacity: 1; transform: scale(1.1); }
-        .audio-icon { width: 24px; height: 24px; fill: #888; }
+        /* 🖱️ [PC 전용] 마우스가 있는 환경에서만 호버 효과 적용 */
+        @media (hover: hover) and (pointer: fine) {
+            .audio-btn:hover { 
+                opacity: 1; 
+                transform: scale(1.1); 
+            }
+        }
         
-        /* 활성화 상태일 때 아이콘 색상 변경 (선택사항) */
+        /* 📱 [공통] 클릭하거나 터치하고 있을 때 (Active) */
+        /* 모바일에서는 이 스타일이 '눌렀을 때'만 적용됩니다 */
+        .audio-btn:active { 
+            opacity: 1; 
+            transform: scale(0.9); /* 누르면 살짝 작아지는 쫀득한 느낌 */
+            transition: none; /* 반응 속도 즉시 적용 */
+        }
+
+        .audio-icon { width: 24px; height: 24px; fill: #888; pointer-events: none; }
+        
+        /* 활성화 상태일 때 아이콘 색상 변경 */
         .audio-btn.active .audio-icon { fill: #fff; }
         
         /* 꺼진 상태(Off) 표시 */
         .audio-icon.off { opacity: 0.5; }
-
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
         .tooltip.show { opacity: 1; transform: translateX(-50%) translateY(0); }
