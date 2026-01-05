@@ -728,7 +728,7 @@ body.cadillac {
         let enginePlayer; // 유튜브 엔진 사운드 플레이어
 
         // ==========================================
-        // 🔊 SFX (효과음) 제어 함수
+        // 🔊 SFX (효과음) 제어 함수 (수정됨: 재생 재시도 로직 추가)
         // ==========================================
         function toggleSFX() {
             isSfxMuted = !isSfxMuted;
@@ -742,14 +742,24 @@ body.cadillac {
             if(offIcon) offIcon.style.display = isSfxMuted ? 'block' : 'none';
             if(btn) btn.classList.toggle('active', !isSfxMuted);
 
-            // 엔진 소리 즉시 반영 (재생 중이라면)
-            if (enginePlayer && enginePlayer.setVolume) {
-                enginePlayer.setVolume(isSfxMuted ? 0 : 50);
+            // 💡 [핵심 수정] 소리를 켤 때, 엔진 소리가 재생 중이 아니라면 강제 호출 시도
+            if (!isSfxMuted) {
+                if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
+                    // 현재 플레이어 상태가 재생 중이 아니라면(혹은 로딩 실패했다면) 재생 시도
+                    // (유튜브 API 상태: 1=재생중. 안전하게 무조건 playVideo 호출해도 됩니다)
+                    enginePlayer.playVideo(); 
+                    enginePlayer.setVolume(50); // 볼륨 복구
+                }
+            } else {
+                // 소리 끌 때는 볼륨만 0으로 (영상은 계속 돌아가야 끊김 없음)
+                if (enginePlayer && enginePlayer.setVolume) {
+                    enginePlayer.setVolume(0);
+                }
             }
         }
 
         // ==========================================
-        // 🎵 BGM (배경음악) 제어 함수
+        // 🎵 BGM (배경음악) 제어 함수 (수정됨: 재생 재시도 로직 추가)
         // ==========================================
         function toggleBGM() {
             isBgmMuted = !isBgmMuted;
@@ -763,9 +773,17 @@ body.cadillac {
             if(offIcon) offIcon.style.display = isBgmMuted ? 'block' : 'none';
             if(btn) btn.classList.toggle('active', !isBgmMuted);
 
-            // 배경음 즉시 반영
-            if (bgmPlayer && bgmPlayer.setVolume) {
-                bgmPlayer.setVolume(isBgmMuted ? 0 : 70);
+            // 💡 [핵심 수정] 소리를 켤 때, BGM이 안 나오고 있다면 강제 호출 시도
+            if (!isBgmMuted) {
+                if (bgmPlayer && typeof bgmPlayer.playVideo === 'function') {
+                    bgmPlayer.playVideo(); // 🚀 강제 재생 명령 (재시도 효과)
+                    bgmPlayer.setVolume(70); // 볼륨 복구
+                }
+            } else {
+                // 소리 끄기
+                if (bgmPlayer && bgmPlayer.setVolume) {
+                    bgmPlayer.setVolume(0);
+                }
             }
         }
 
