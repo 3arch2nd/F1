@@ -1163,10 +1163,10 @@ const circuitsData = [
             cadillac: { name: 'Cadillac F1 Team', drivers: ['BOTTAS', 'PEREZ'] }
         };
 
-        const driverGroups = {
-            top: ['VER', 'NOR', 'PIA', 'RUS', 'LEC', 'HAM'], 
-            mid: ['SAI', 'ALB', 'ANT', 'HUL', 'ALO', 'BOT', 'PER', 'GAS'], 
-            btm: ['STR', 'OCO', 'LAW', 'HAD', 'LIN', 'BOR', 'COL', 'BEA'] 
+const driverGroups = {
+            top: ['ANT', 'RUS', 'HAM', 'NOR', 'LEC', 'VER', 'PIA'], 
+            mid: ['HAD', 'LAW', 'GAS', 'LIN', 'COL', 'BEA'], 
+            btm: ['BOR', 'HUL', 'SAI', 'ALB', 'OCO', 'ALO', 'STR', 'BOT', 'PER'] 
         };
 
         const driverColors = {
@@ -1217,28 +1217,28 @@ const circuitsData = [
         let eventTimer = 0;        
 
         const driverList = [
+            { id: 'ANT', speed: 1.32 }, // 압도적 1위
+            { id: 'RUS', speed: 1.29 }, 
             { id: 'VER', speed: 1.29 }, 
-            { id: 'NOR', speed: 1.29 }, 
-            { id: 'PIA', speed: 1.26 }, 
-            { id: 'RUS', speed: 1.25 }, 
-            { id: 'LEC', speed: 1.24 }, 
-            { id: 'HAM', speed: 1.23 }, 
-            { id: 'SAI', speed: 1.21 }, 
-            { id: 'ALB', speed: 1.20 }, 
-            { id: 'HUL', speed: 1.18 }, 
-            { id: 'ANT', speed: 1.18 }, 
-            { id: 'ALO', speed: 1.16 }, 
-            { id: 'BOT', speed: 1.14 }, 
-            { id: 'PER', speed: 1.14 }, 
-            { id: 'GAS', speed: 1.10 }, 
-            { id: 'STR', speed: 1.09 }, 
-            { id: 'OCO', speed: 1.08 }, 
-            { id: 'LAW', speed: 1.08 }, 
-            { id: 'HAD', speed: 1.05 },
-            { id: 'LIN', speed: 1.03 }, 
-            { id: 'COL', speed: 1.02 }, 
-            { id: 'BOR', speed: 1.01 }, 
-            { id: 'BEA', speed: 1.01 }  
+            { id: 'HAM', speed: 1.28 }, 
+            { id: 'NOR', speed: 1.27 }, 
+            { id: 'LEC', speed: 1.26 }, 
+            { id: 'PIA', speed: 1.23 }, 
+            { id: 'HAD', speed: 1.19 }, // 다크호스
+            { id: 'LAW', speed: 1.17 }, 
+            { id: 'GAS', speed: 1.15 }, 
+            { id: 'LIN', speed: 1.14 }, 
+            { id: 'COL', speed: 1.13 }, 
+            { id: 'BEA', speed: 1.11 }, 
+            { id: 'BOR', speed: 1.09 }, 
+            { id: 'HUL', speed: 1.08 }, 
+            { id: 'SAI', speed: 1.08 }, 
+            { id: 'ALB', speed: 1.07 }, 
+            { id: 'OCO', speed: 1.06 }, 
+            { id: 'ALO', speed: 1.06 }, 
+            { id: 'STR', speed: 1.04 }, 
+            { id: 'BOT', speed: 1.03 }, 
+            { id: 'PER', speed: 1.02 }  
         ];
 
         function calculateScaleFactor(viewBoxStr) {
@@ -1687,23 +1687,21 @@ const circuitsData = [
             const len = track.getTotalLength();
             const now = Date.now();
 
-            const circuitSpecialists = {
-                'aus': { 'NOR': 1.03, 'PIA': 1.03, 'LEC': 1.02, 'PER': 1.02 },
-                'chn': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.01 },
-                'jpn': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
-                'bhr': { 'PIA': 1.03, 'VER': 1.02, 'PER': 1.03 },
-                'ksa': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.02 },
-                'mia': { 'PIA': 1.03, 'NOR': 1.02, 'LEC': 1.02, 'PER': 1.02 },
-                'mon': { 'NOR': 1.04, 'LEC': 1.03, 'PER': 1.04 },
-                'esp': { 'PIA': 1.03, 'NOR': 1.02, 'VER': 1.02, 'PER': 1.02 },
-                'can': { 'RUS': 1.05, 'VER': 1.02, 'PER': 1.03 },
-                'aut': { 'NOR': 1.03, 'PIA': 1.02, 'PER': 1.03 },
-                'gbr': { 'NOR': 1.03, 'PIA': 1.02, 'HUL': 1.05, 'PER': 1.02 }, 
-                'bel': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
-                'hun': { 'NOR': 1.03, 'PIA': 1.02, 'RUS': 1.03, 'PER': 1.02 },
-                'ned': { 'PIA': 1.03, 'VER': 1.02, 'HAD': 1.05, 'PER': 1.02 },
-                'ita': { 'VER': 1.04, 'NOR': 1.02, 'PIA': 1.01, 'PER': 1.02 },
-                'mad': { 'PIA': 1.03, 'NOR': 1.02, 'PER': 1.03 },
+const circuitSpecialists = {
+                'aus': { 'BEA': 1.06, 'LIN': 1.05, 'BOR': 1.05 },
+                'chn': { 'BEA': 1.06, 'GAS': 1.05, 'LAW': 1.04 },
+                'jpn': { 'GAS': 1.04, 'LAW': 1.03 },
+                'mia': { 'COL': 1.05, 'LAW': 1.03 },
+                'can': { 'HAD': 1.05, 'COL': 1.04, 'LAW': 1.03 },
+                'mon': { 'HAD': 1.08, 'LAW': 1.05, 'LIN': 1.04, 'ALB': 1.04 },
+                'esp': { 'HAD': 1.04, 'GAS': 1.04 },
+                'aut': { 'HAD': 1.04, 'LAW': 1.03 },
+                'gbr': { 'HAD': 1.05, 'LAW': 1.04, 'LIN': 1.04, 'BOR': 1.03 },
+                'bel': { 'HAD': 1.04, 'BOR': 1.04, 'LIN': 1.03 },
+                'hun': { 'HAD': 1.04, 'LAW': 1.03, 'HUL': 1.03 },
+                'ned': { 'LAW': 1.05, 'HUL': 1.04, 'ALO': 1.04 },
+                'ita': { 'GAS': 1.05, 'LIN': 1.04, 'COL': 1.04 },
+                'mad': { 'LAW': 1.05, 'COL': 1.04, 'LIN': 1.03 }
                 'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
                 'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
                 'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
