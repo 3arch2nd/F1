@@ -31,23 +31,16 @@
             --dynamic-stroke: 10px;
         }
 
-/* 1. 📊 리더보드 컨테이너 (너비 조정) */
         #leaderboard {
             position: absolute;
             top: 240px;  
             left: 20px;
-            
-            /* 💡 [수정] 너비 축소: 160px -> 105px */
-            /* 글자와 적당한 여백만 남기고 불필요한 공백 제거 */
             width: 105px; 
-            
             z-index: 900;
             display: flex;
             flex-direction: column;
             gap: 3px;
             pointer-events: none; 
-            
-            /* 높이 계산 유지 */
             max-height: calc(100vh - 330px);
             overflow: hidden; 
             
@@ -55,34 +48,26 @@
             transform-origin: left center;
         }
 
-        /* 💡 [수정] 숨김 상태 이동 거리 조정 */
-        /* 너비가 줄었으므로, 왼쪽으로 숨길 때 너무 멀리 보내지 않아도 됩니다. */
-        /* 기존 -180px -> -125px로 변경 (너비 + 약간의 여유) */
         #leaderboard.hidden {
             transform: translateX(-125px) !important;
             opacity: 0;
         }
-        /* 🚨 중요: 기존에 있던 @media display: none 코드를 여기서 삭제하거나 덮어씁니다. */
-        /* 이제 모바일에서도 display: none이 되지 않고, 단지 .hidden 클래스로 위치만 이동합니다. */
+
         @media (max-width: 767px) {
-            #leaderboard { display: flex; } /* 강제로 보이게 설정 (위치 이동으로 제어) */
+            #leaderboard { display: flex; }
         }
 
-
-        /* 2. 🔘 토글 버튼 컨테이너 (위치 고정) */
         .leaderboard-toggle-container {
             position: absolute;
-            bottom: 40px; /* 오디오 버튼과 높이 맞춤 */
+            bottom: 40px;
             left: 30px;
             z-index: 950;
         }
 
-        /* 3. 🔘 토글 버튼 디자인 (Outline Style - 수정됨) */
         #lb-toggle-btn {
-            /* 💡 [수정] 배경 투명 + 테두리 강조 */
-            background-color: rgba(0, 0, 0, 0.3); /* 배경 거의 투명 (가독성 위해 아주 살짝 어둡게) */
-            border: 2px solid var(--team-primary); /* 테두리에 팀 컬러 적용 */
-            color: var(--team-primary); /* 아이콘(+ -)도 팀 컬러 */
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--team-primary); 
+            color: var(--team-primary);
             
             width: 44px;
             height: 44px;
@@ -96,40 +81,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
-            /* 그림자 & 애니메이션 */
+
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             transition: all 0.2s ease;
             padding: 0;
             padding-bottom: 4px;
             line-height: 1;
-            
-            /* 모바일 탭 시 파란 박스 제거 */
+
             -webkit-tap-highlight-color: transparent;
             outline: none;
         }
 
-        /* 💡 [수정] 호버 효과는 PC(마우스)에서만 적용 -> 모바일 호버 멈춤 해결 */
         @media (hover: hover) and (pointer: fine) {
             #lb-toggle-btn:hover {
-                background-color: var(--team-primary); /* 마우스 올리면 색 채움 */
-                color: #fff; /* 아이콘 흰색 */
+                background-color: var(--team-primary);
+                color: #fff;
                 transform: scale(1.1);
                 box-shadow: 0 0 15px var(--team-primary);
                 border-color: var(--team-primary);
             }
         }
 
-        /* 클릭(활성) 효과 - 모바일/PC 공통 (box-btn과 동일한 메커니즘) */
         #lb-toggle-btn:active {
             background-color: var(--team-primary) !important;
             color: #fff !important;
-            transform: scale(0.90); /* 클릭 시 꾹 눌리는 느낌 */
+            transform: scale(0.90);
             box-shadow: 0 0 10px var(--team-primary);
-            transition: none; /* 즉각 반응 */
+            transition: none;
         }
 
-        /* 3. 📝 행(Row) 스타일 (유지) */
         .lb-row {
             display: flex;
             align-items: center;
@@ -148,15 +128,9 @@
         .lb-color-strip { width: 6px; height: 100%; }
         .lb-name { flex: 1; font-size: 13px; font-weight: bold; color: #ffffff; font-family: var(--font-display); padding-left: 10px; letter-spacing: 0.5px; white-space: nowrap; }
 
-        /* 4. 📱 반응형 초기 상태 설정 */
-        /* PC: 기본 보임 (숨김 클래스 없음) */
-        /* 모바일/작은 화면: 기본 숨김 (JS에서 처리하거나 CSS로 초기 위치 지정) */
         @media (max-width: 768px) {
-            /* 모바일에서는 기본적으로 숨겨진 상태로 시작 */
-            /* JS init()에서 클래스를 추가할 예정 */
         }
 
-        /* 💡 [수정] 글자가 길어도 절대 줄바꿈 안 되게 설정 & 중앙 정렬 느낌 */
         #race-status-display {
             position: absolute;
             top: 195px;
@@ -176,24 +150,21 @@
             opacity: 0;
             transition: opacity 0.3s;
             letter-spacing: 1px;
-            white-space: nowrap; /* 🚨 핵심: 줄바꿈 절대 금지 */
+            white-space: nowrap; 
             box-sizing: border-box;
         }
 
-        /* 상태별 스타일 */
         .status-sc { background-color: #FF8700; color: #000; box-shadow: 0 0 10px #FF8700; }
         .status-yellow { background-color: #FFD700; color: #000; box-shadow: 0 0 10px #FFD700; }
         .status-green { background-color: #00D632; color: #fff; box-shadow: 0 0 10px #00D632; }
 
-        /* 고장난 차량 스타일 (깜빡임) */
         .ai-marker.stopped rect { fill: #333 !important; stroke: #FF0000 !important; stroke-width: 2px; }
         .ai-marker.stopped text { fill: #FF0000 !important; }
 
-        /* 행 높이 및 폰트 축소 */
         .lb-row {
             display: flex;
             align-items: center;
-            height: 20px; /* 24px -> 20px로 축소 */
+            height: 20px; 
             background: rgba(0, 0, 0, 0.8);
             border-radius: 2px;
             overflow: hidden;
@@ -203,22 +174,22 @@
         }
 
         .lb-pos {
-            width: 22px; /* 너비 축소 */
+            width: 22px; 
             text-align: center;
-            font-size: 9px; /* 폰트 축소 */
+            font-size: 9px; 
             font-weight: bold;
             color: #ffffff !important;
             font-family: var(--font-display);
         }
 
         .lb-color-strip {
-            width: 3px; /* 4px -> 3px */
+            width: 3px;
             height: 100%;
         }
 
         .lb-name {
             flex: 1;
-            font-size: 10px; /* 12px -> 10px */
+            font-size: 10px;
             font-weight: bold;
             color: #ffffff;
             font-family: var(--font-display);
@@ -226,7 +197,6 @@
             padding-left: 5px;
         }
 
-        /* Team Styles */
         body.redbull { --team-bg: #060025; --team-radio-bg: rgba(6, 0, 37, 0.95); --team-primary: #3671C6; --team-accent: #FCD116; --track-active-color: var(--f1-purple); --marker-bg: #FFEC00; --marker-text: #000000; }
         body.redbull .driver-name span, body.redbull #txt-current { color: #3671C6 !important; text-shadow: 0 0 2px rgba(0, 0, 0, 0.5); }
         body.redbull #txt-goal { color: rgba(255, 255, 255, 0.6); }
@@ -252,8 +222,8 @@ body.cadillac {
             --team-bg: #0A0A0A; 
             --team-primary: #F1B315; 
             --team-accent: #FFFFFF; 
-            --marker-bg: #F1B315; /* 마커 배경: 골드 */
-            --marker-text: #000000; /* 마커 글자: 검정 */
+            --marker-bg: #F1B315;
+            --marker-text: #000000;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -316,11 +286,9 @@ body.cadillac {
             overflow: hidden; 
             min-height: 0; 
             
-            /* 📱 [모바일 기본] */
             padding: 190px 20px 60px 20px; 
         }
 
-        /* 💻 [데스크탑/태블릿] */
         @media (min-width: 768px) {
             .track-container {
                 padding: 150px 120px 40px 100px; 
@@ -330,17 +298,12 @@ body.cadillac {
         svg.track-svg { 
             width: 100%; 
             height: 100%; 
-            
-            /* 💡 [핵심] 기존 800px 제한을 풀고, 데스크탑에서 훨씬 커지도록 설정 */
             max-width: 1400px;  
-            
-            /* 너무 위아래로 길어지는 것을 방지 (화면 높이의 80%까지만) */
             max-height: 80vh; 
-            
             overflow: visible; 
-            transition: all 0.5s ease; /* 크기 변할 때 부드럽게 */
+            transition: all 0.5s ease; 
         }
-        /* 💡 트랙 굵기 조정 (14 -> 10) */
+
         .track-path-bg { 
             fill: none; 
             stroke: var(--gray-track); 
@@ -362,19 +325,18 @@ body.cadillac {
         .checker-white { fill: #fff; }
         .checker-black { fill: #000; }
 
-        /* 💡 [수정] SC 마커: 검정 배경 + 주황 테두리 (명확한 구분) */
         .sc-marker rect {
-            fill: #000000 !important; /* 검정색 */
-            stroke: #FF8700 !important; /* 주황색 외곽선 */
+            fill: #000000 !important; 
+            stroke: #FF8700 !important; 
             stroke-width: 2.5px;
             box-shadow: 0 0 15px #FF8700;
         }
         .sc-marker text {
-            fill: #FF8700 !important; /* 글자도 주황색 */
+            fill: #FF8700 !important; 
             font-weight: 900;
-            font-size: 13px; /* 글자 살짝 키움 */
+            font-size: 13px; 
         }
-        /* 깜빡임 애니메이션 유지 */
+
         .sc-marker {
             animation: sc-blink 0.5s infinite alternate;
             z-index: 2000 !important;
@@ -398,35 +360,30 @@ body.cadillac {
         @media (hover: hover) and (pointer: fine) { .box-btn:hover { background-color: var(--team-primary); color: #000; transform: scale(1.02); box-shadow: 0 0 15px var(--team-primary); } }
         .box-btn:active, .box-btn.flash-active { transform: scale(0.96); background-color: var(--team-primary) !important; color: #000 !important; box-shadow: 0 0 15px var(--team-primary) !important; transition: none; }
 
-        /* 💡 [수정] 오디오 컨테이너: 버튼 두 개를 가로로 정렬 */
         .audio-container { 
             position: absolute; 
             bottom: 40px; 
             right: 30px; 
             z-index: 50; 
-            display: flex;       /* 가로 배치 */
-            gap: 15px;           /* 버튼 사이 간격 */
+            display: flex;
+            gap: 15px;
             align-items: center;
         }
 
-        /* 💡 [수정] 오디오 버튼 스타일 재정의 */
         .audio-btn { 
             background: transparent; 
             border: none; 
             padding: 5px; 
             cursor: pointer; 
-            opacity: 0.6; /* 기본 상태: 반투명 */
-            transition: all 0.2s ease; /* 부드러운 전환 */
+            opacity: 0.6; 
+            transition: all 0.2s ease;
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            
-            /* 모바일 터치 시 파란색 하이라이트 박스 제거 */
             -webkit-tap-highlight-color: transparent;
             outline: none;
         }
-        
-        /* 🖱️ [PC 전용] 마우스가 있는 환경에서만 호버 효과 적용 */
+
         @media (hover: hover) and (pointer: fine) {
             .audio-btn:hover { 
                 opacity: 1; 
@@ -434,20 +391,16 @@ body.cadillac {
             }
         }
         
-        /* 📱 [공통] 클릭하거나 터치하고 있을 때 (Active) */
-        /* 모바일에서는 이 스타일이 '눌렀을 때'만 적용됩니다 */
         .audio-btn:active { 
             opacity: 1; 
-            transform: scale(0.9); /* 누르면 살짝 작아지는 쫀득한 느낌 */
-            transition: none; /* 반응 속도 즉시 적용 */
+            transform: scale(0.9); 
+            transition: none;
         }
 
         .audio-icon { width: 24px; height: 24px; fill: #888; pointer-events: none; }
         
-        /* 활성화 상태일 때 아이콘 색상 변경 */
         .audio-btn.active .audio-icon { fill: #fff; }
-        
-        /* 꺼진 상태(Off) 표시 */
+
         .audio-icon.off { opacity: 0.5; }
 
         .tooltip { position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%) translateY(10px); background: #000; color: #fff; border: 2px solid var(--team-primary); padding: 10px 16px; border-radius: 4px; font-size: 11px; font-family: var(--font-display); white-space: nowrap; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
@@ -458,48 +411,41 @@ body.cadillac {
         .settings-btn:hover { border-color: #fff; color: #fff; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
-        /* 1. 모달 컨텐츠: Flex 박스로 변경하여 내부 영역 분할 */
         .modal-content { 
             background: var(--team-radio-bg); 
-            /* padding: 25px;  <- 기존 패딩 삭제 (내부 요소에 각각 적용) */
+            padding: 25px;
             padding: 0; 
             border-radius: 4px; 
             width: 90%; 
             max-width: 400px; 
             border: 1px solid var(--team-accent); 
-            
-            /* 💡 핵심: 높이 고정 및 Flex 구조 설정 */
             max-height: 80vh; 
             display: flex; 
             flex-direction: column; 
-            overflow: hidden; /* 전체 스크롤 방지 */
+            overflow: hidden; 
         }
 
-        /* 2. 헤더 (타이틀): 고정 */
         .modal-header {
-            padding: 25px 25px 10px 25px; /* 위, 좌우 패딩 */
-            flex-shrink: 0; /* 줄어들지 않음 */
+            padding: 25px 25px 10px 25px;
+            flex-shrink: 0;
         }
-        .modal h2 { margin-bottom: 0; } /* 마진 조정 */
+        .modal h2 { margin-bottom: 0; }
 
-        /* 3. 본문 (입력창들): 남은 공간 차지 & 스크롤 가능 */
         .modal-body {
-            flex: 1; /* 남은 높이 모두 차지 */
-            overflow-y: auto; /* 내용 넘치면 여기서만 스크롤 */
-            padding: 10px 25px; /* 좌우 패딩 유지 */
-            min-height: 0; /* Flexbox 버그 방지 */
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 25px;
+            min-height: 0; 
         }
 
-        /* 4. 푸터 (버튼): 하단 고정 */
         .modal-footer {
-            padding: 15px 25px 25px 25px; /* 아래, 좌우 패딩 */
-            background: var(--team-radio-bg); /* 본문 위로 떠 있는 느낌 */
-            border-top: 1px solid rgba(255,255,255,0.1); /* 구분선 (선택사항) */
-            flex-shrink: 0; /* 줄어들지 않음 */
+            padding: 15px 25px 25px 25px;
+            background: var(--team-radio-bg);
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            flex-shrink: 0; 
             z-index: 10;
         }
 
-        /* 스크롤바 디자인 (Webkit) - 다크 테마에 맞게 */
         .modal-body::-webkit-scrollbar { width: 6px; }
         .modal-body::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
         .modal-body::-webkit-scrollbar-thumb { background: var(--team-primary); border-radius: 3px; }
@@ -521,14 +467,14 @@ body.cadillac {
         .fastest-lap-driver { color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
         .next-session-btn { background: var(--team-primary); color: #fff; border: none; padding: 16px 30px; font-family: var(--font-display); font-size: 11px; font-weight: 900; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-/* 📱 [신규] 모바일 전용 상태 패널 스타일 */
+
         .status-panel {
-            display: none; /* 평소엔 숨김 */
+            display: none;
             width: 100%;
             max-width: 300px;
-            margin: 0 auto 15px auto; /* 버튼과 간격 */
+            margin: 0 auto 15px auto;
             padding: 12px 0;
-            background: #000000; /* 완전 검정 배경 */
+            background: #000000;
             font-family: var(--font-display);
             font-size: 14px;
             font-weight: 900;
@@ -536,11 +482,9 @@ body.cadillac {
             letter-spacing: 2px;
             border-radius: 4px;
             text-transform: uppercase;
-            /* 💡 [요청] 글로우 효과(box-shadow) 없음 -> 눈부심 방지 */
             box-shadow: none; 
         }
 
-        /* 상태별 색상 (테두리와 글자색만 변경) */
         .status-panel.sc { 
             border: 2px solid #FF8700; 
             color: #FF8700; 
@@ -550,34 +494,26 @@ body.cadillac {
             color: #FFD700; 
         }
         .status-panel.green { 
-            display: none !important; /* 초록불이면 즉시 숨김 */
+            display: none !important; 
         }
 
-        /* PC에서는 굳이 보여줄 필요 없으므로 숨김 (원하시면 삭제 가능) */
         @media (min-width: 1025px) {
             .status-panel { display: none !important; }
         }
 
-/* 📱 [신규] 모바일 전용: 드라이버 이름표 1.5배 확대 */
         @media (max-width: 768px) {
             
-            /* 1. 검정 배경 박스 (rect) 확대 */
             .ai-marker rect {
-                transform: scale(1.5); /* 1.5배 커짐 */
-                /* 박스의 중심점(0, -20)을 기준으로 커지게 설정하여 위치 이탈 방지 */
+                transform: scale(1.5);
                 transform-origin: 0px -20px; 
             }
 
-            /* 2. 텍스트 (text) 확대 및 위치 보정 */
             .ai-marker text {
                 /* JS 인라인 스타일(14px)을 무시하고 21px로 적용 (!important) */
                 font-size: 21px !important; 
-                /* 글자가 커지면서 살짝 내려가는 현상을 위로 올려서 보정 */
                 transform: translateY(-5px); 
             }
-            
-            /* (선택) SC 마커도 같이 키우고 싶다면 아래 코드 포함 (이미 위 클래스로 적용되지만 명시적 조정 필요시 사용) */
-            /* .sc-marker text { font-size: 18px !important; } */
+
         }
 
     </style>
@@ -745,17 +681,13 @@ body.cadillac {
     <script>
         const STORAGE_KEY = 'f1_world_tour_plan_v3_aus'; 
 
-        // ==========================================
-        // 🎵 오디오 전역 변수 (중복 선언 제거됨)
-        // ==========================================
-        let isSfxMuted = false; // 효과음 (기본 켜짐)
-        let isBgmMuted = false; // 배경음 (기본 켜짐)
+        let isSfxMuted = false;
+        let isBgmMuted = false;
         
-        let audioCtx;     // Web Audio API 컨텍스트
-        let bgmPlayer;    // 유튜브 BGM 플레이어
-        let enginePlayer; // 유튜브 엔진 사운드 플레이어
+        let audioCtx;
+        let bgmPlayer; 
+        let enginePlayer; 
 
-        // 🔊 SFX (효과음) 제어 함수 수정
 function toggleSFX() {
     isSfxMuted = !isSfxMuted;
     
@@ -769,17 +701,16 @@ function toggleSFX() {
 
     if (!isSfxMuted) {
         if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
-            enginePlayer.unMute(); // 💡 setVolume 대신 unMute
+            enginePlayer.unMute();
             enginePlayer.playVideo(); 
         }
     } else {
         if (enginePlayer && typeof enginePlayer.mute === 'function') {
-            enginePlayer.mute(); // 💡 볼륨 0 대신 mute
+            enginePlayer.mute(); 
         }
     }
 }
 
-// 🎵 BGM 제어 함수 수정
 function toggleBGM() {
     isBgmMuted = !isBgmMuted;
 
@@ -793,7 +724,7 @@ function toggleBGM() {
 
     if (!isBgmMuted) {
         if (bgmPlayer && typeof bgmPlayer.playVideo === 'function') {
-            bgmPlayer.unMute(); // 💡 setVolume 대신 unMute
+            bgmPlayer.unMute();
             bgmPlayer.playVideo(); 
         }
     } else {
@@ -803,12 +734,7 @@ function toggleBGM() {
     }
 }
 
-
-        // ==========================================
-        // 🎹 비프음 재생 (Web Audio API) - 필터 적용 버전
-        // ==========================================
         function playBeep() {
-            // SFX가 꺼져있으면 소리 안 냄
             if (isSfxMuted) return;
 
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -818,23 +744,19 @@ function toggleBGM() {
             const gainNode = audioCtx.createGain();
             const filterNode = audioCtx.createBiquadFilter();
 
-            // 파형 및 주파수 설정 (무게감 있는 400Hz 사각파)
             oscillator.type = 'square'; 
             oscillator.frequency.setValueAtTime(500, audioCtx.currentTime); 
 
-            // 필터 설정 (부드러운 타격감)
             filterNode.type = 'lowpass';
             filterNode.frequency.setValueAtTime(600, audioCtx.currentTime);
 
             const now = audioCtx.currentTime;
             
-            // 볼륨 엔벨로프 (부드럽게 시작해서 뚝 끊기지 않게)
             gainNode.gain.setValueAtTime(0, now); 
             gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02); 
             gainNode.gain.setValueAtTime(0.5, now + 0.12);          
             gainNode.gain.linearRampToValueAtTime(0, now + 0.15);   
 
-            // 연결 및 재생
             oscillator.connect(filterNode);
             filterNode.connect(gainNode);
             gainNode.connect(audioCtx.destination);
@@ -843,7 +765,6 @@ function toggleBGM() {
             oscillator.stop(now + 0.15);
         }
 
-// 🚀 엔진 스타트 버튼 로직 수정
 function activateEngine() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -860,7 +781,6 @@ function activateEngine() {
     
     try {
         if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
-            // 엔진 출발 전까지 음소거 상태로 백그라운드 재생
             enginePlayer.mute();
             enginePlayer.playVideo();  
         }
@@ -869,7 +789,6 @@ function activateEngine() {
     startRaceSequence();
 }
 
-// 🚦 레이스 출발 시퀀스 내부 볼륨 제어 수정 (setTimeout 내부만 수정)
 function startRaceSequence() {
     let lightCount = 1;
 
@@ -885,7 +804,6 @@ function startRaceSequence() {
             setTimeout(() => {
                 document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
                 
-                // 💡 [수정] 모바일 대응을 위해 unMute() 사용
                 if (enginePlayer && typeof enginePlayer.unMute === 'function') { 
                     if (!isSfxMuted) enginePlayer.unMute(); 
                 }
@@ -900,9 +818,7 @@ function startRaceSequence() {
     }
     turnOnNextLight();
 }
-        // ==========================================
-        // 📺 유튜브 API 필수 함수 (수정됨: 무한 반복 기능 추가)
-        // ==========================================
+
 function onYouTubeIframeAPIReady() {
     const onPlayerStateChange = function(event) {
         if (event.data === YT.PlayerState.ENDED) {
@@ -910,7 +826,6 @@ function onYouTubeIframeAPIReady() {
         }
     };
 
-    // 💡 [수정] width, height를 0에서 1로 변경
     bgmPlayer = new YT.Player('bgm-player', { 
         height: '1', width: '1', 
         videoId: 'YhX_Woa3kVA', 
@@ -925,12 +840,6 @@ function onYouTubeIframeAPIReady() {
         events: { 'onStateChange': onPlayerStateChange }
     });
 }
-
-        // ==========================================
-        // 🏁 여기서부터는 기존 로직 (데이터, 맵, 자동차 등)
-        // ==========================================
-        
-        // (아래 코드는 그대로 두시면 됩니다. 중복 선언만 주의하세요.)
         
         const circuitAssets = {
             'aus': {
@@ -1171,12 +1080,13 @@ const driverGroups = {
             speedFactor: 1 
         };
 
-        let visualProgress = 0, animId = null;
-        let trackSpeedProfile = [];
-        let raceStarted = false; 
+let visualProgress = 0, animId = null;
+let trackSpeedProfile = [];
+let trackPoints = []; 
+const TRACK_RES = 3000; 
+let lastLeaderboardUpdate = 0; 
+let raceStarted = false;
 
-        // let bgmPlayer;   <-- 중복 선언 삭제됨
-        // let enginePlayer; <-- 중복 선언 삭제됨
         let isMuted = false;
         let aiDrivers = [];
         let stableRanking = [];
@@ -1191,14 +1101,14 @@ const driverGroups = {
         let eventTimer = 0;        
 
         const driverList = [
-            { id: 'ANT', speed: 1.32 }, // 압도적 1위
+            { id: 'ANT', speed: 1.30 }, 
             { id: 'RUS', speed: 1.29 }, 
             { id: 'VER', speed: 1.29 }, 
             { id: 'HAM', speed: 1.28 }, 
             { id: 'NOR', speed: 1.27 }, 
             { id: 'LEC', speed: 1.26 }, 
             { id: 'PIA', speed: 1.23 }, 
-            { id: 'HAD', speed: 1.19 }, // 다크호스
+            { id: 'HAD', speed: 1.19 }, 
             { id: 'LAW', speed: 1.17 }, 
             { id: 'GAS', speed: 1.15 }, 
             { id: 'LIN', speed: 1.14 }, 
@@ -1508,28 +1418,49 @@ const driverGroups = {
         }
 
         function generateTrackSpeedProfile() {
-            const track = document.getElementById('bg-track');
-            const len = track.getTotalLength();
-            trackSpeedProfile = []; 
-            for(let i=0; i<1000; i++) {
-                const pt1 = track.getPointAtLength(((i-5+1000)%1000)/1000*len);
-                const pt2 = track.getPointAtLength((i/1000)*len);
-                const pt3 = track.getPointAtLength(((i+5)%1000)/1000*len);
-                
-                const angle1 = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
-                const angle2 = Math.atan2(pt3.y - pt2.y, pt3.x - pt2.x);
-                let diff = Math.abs(angle1 - angle2);
-                if (diff > Math.PI) diff = 2 * Math.PI - diff; 
+    const track = document.getElementById('bg-track');
+    const len = track.getTotalLength();
+    trackSpeedProfile = []; 
+    trackPoints = [];
 
-                let trackFactor;
-                if (diff < 0.12) trackFactor = 2.0;      
-                else if (diff < 0.25) trackFactor = 1.4; 
-                else if (diff < 0.45) trackFactor = 0.7; 
-                else trackFactor = 0.35;                 
-                
-                trackSpeedProfile.push(trackFactor);
-            }
-        }
+    for(let i=0; i<1000; i++) {
+        const pt1 = track.getPointAtLength(((i-5+1000)%1000)/1000*len);
+        const pt2 = track.getPointAtLength((i/1000)*len);
+        const pt3 = track.getPointAtLength(((i+5)%1000)/1000*len);
+        
+        const angle1 = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
+        const angle2 = Math.atan2(pt3.y - pt2.y, pt3.x - pt2.x);
+        let diff = Math.abs(angle1 - angle2);
+        if (diff > Math.PI) diff = 2 * Math.PI - diff; 
+
+        let trackFactor;
+        if (diff < 0.12) trackFactor = 2.0;      
+        else if (diff < 0.25) trackFactor = 1.4; 
+        else if (diff < 0.45) trackFactor = 0.7; 
+        else trackFactor = 0.35;                 
+        
+        trackSpeedProfile.push(trackFactor);
+    }
+
+    for(let i=0; i<TRACK_RES; i++) {
+        const pt = track.getPointAtLength((i / TRACK_RES) * len);
+        trackPoints.push({x: pt.x, y: pt.y});
+    }
+}
+
+function getCachedPoint(progress) {
+    let p = progress % 1.0;
+    if (p < 0) p += 1.0;
+    const exact = p * TRACK_RES;
+    const idx1 = Math.floor(exact);
+    const idx2 = (idx1 + 1) % TRACK_RES;
+    const w = exact - idx1; 
+
+    return {
+        x: trackPoints[idx1].x + (trackPoints[idx2].x - trackPoints[idx1].x) * w,
+        y: trackPoints[idx1].y + (trackPoints[idx2].y - trackPoints[idx1].y) * w
+    };
+}
 
         let leaderboardRows = {}; 
 
@@ -1604,25 +1535,18 @@ const driverGroups = {
             stableRanking = sortedDrivers.map(d => d.id);
         }
 
-        // ==========================================
-        // 💥 사고 발생 로직 (수정됨: 주인공 절대 보호)
-        // ==========================================
         function triggerRaceIncident() {
-            // 1. 🛡️ [핵심] 사고 후보군 선정 (나를 제외한 AI만 골라냄)
             const myDriverId = getDriverShortId(state.driver);
             const potentialVictims = aiDrivers.filter(ai => ai.id !== myDriverId);
 
-            // (혹시 모를 오류 방지: 남은 차가 없으면 취소)
             if (potentialVictims.length === 0) return;
 
-            // 2. 나를 제외한 나머지 중에서 희생양 랜덤 선택
             const victimIndex = Math.floor(Math.random() * potentialVictims.length);
             const victim = potentialVictims[victimIndex];
             
             if (stoppedCarId !== null) return;
             stoppedCarId = victim.id;
-            
-            // 3. SC(세이프티카) 또는 옐로우 플래그 결정
+
             const isSC = Math.random() > 0.4; 
 
             if (isSC) {
@@ -1635,8 +1559,7 @@ const driverGroups = {
                 eventTimer = 600; 
                 updateStatusUI('YELLOW FLAG', 'status-yellow');
             }
-            
-            // (디버깅용 로그: 누가 고장났는지 확인)
+
             console.log(`[Incident] Crash: ${victim.id} (Player Safe)`);
         }
 
@@ -1654,38 +1577,39 @@ const driverGroups = {
             safetyCar.element.style.display = 'block';
         }
 
-        function animateAIDrivers() {
-            const track = document.getElementById('bg-track');
-            if(!track) { requestAnimationFrame(animateAIDrivers); return; }
+const circuitSpecialists = {
+    'aus': { 'RUS': 1.05, 'ANT': 1.04, 'BEA': 1.06, 'LIN': 1.05, 'BOR': 1.04 },
+    'ksa': { 'VER': 1.05, 'LEC': 1.03, 'BEA': 1.08 },
+    'jpn': { 'ANT': 1.05, 'PIA': 1.05, 'GAS': 1.04, 'LAW': 1.03 },
+    'chn': { 'ANT': 1.05, 'BEA': 1.06, 'GAS': 1.05, 'LAW': 1.04 },
+    'mia': { 'ANT': 1.05, 'NOR': 1.04, 'COL': 1.05 },
+    'imo': { 'VER': 1.04, 'NOR': 1.04, 'LEC': 1.03, 'HUL': 1.03 }, 
+    'mon': { 'ANT': 1.05, 'HAD': 1.08, 'LAW': 1.05, 'LIN': 1.04 },
+    'can': { 'ANT': 1.05, 'HAM': 1.04, 'HAD': 1.05, 'COL': 1.04, 'LAW': 1.03 },
+    'esp': { 'HAM': 1.05, 'RUS': 1.04, 'HAD': 1.04, 'GAS': 1.04 },
+    'aut': { 'RUS': 1.05, 'VER': 1.04, 'HAD': 1.04, 'LAW': 1.03 },
+    'gbr': { 'LEC': 1.06, 'RUS': 1.04, 'HAD': 1.05, 'LAW': 1.04, 'LIN': 1.04 },
+    'hun': { 'NOR': 1.06, 'VER': 1.04, 'HAD': 1.04, 'LAW': 1.03, 'HUL': 1.03 },
+    'bel': { 'ANT': 1.05, 'LEC': 1.04, 'HAD': 1.04, 'BOR': 1.04 },
+    'ned': { 'NOR': 1.06, 'ANT': 1.04, 'LAW': 1.05, 'HUL': 1.04, 'ALO': 1.04 },
+    'ita': { 'ANT': 1.05, 'RUS': 1.04, 'GAS': 1.05, 'LIN': 1.04, 'COL': 1.04 },
+    'aze': { 'RUS': 1.05, 'VER': 1.04, 'HAD': 1.07, 'LIN': 1.05, 'OCO': 1.04, 'BEA': 1.04 },
+    // 이후는 2025년 기준
+    'sin': { 'SAI': 1.06, 'NOR': 1.05, 'HAM': 1.03, 'LAW': 1.05 },
+    'usa': { 'VER': 1.05, 'HAM': 1.04, 'NOR': 1.03, 'GAS': 1.04 },
+    'mex': { 'VER': 1.05, 'HAM': 1.04, 'LEC': 1.03 },
+    'bra': { 'VER': 1.06, 'NOR': 1.04, 'ALO': 1.05, 'STR': 1.04 },
+    'las': { 'VER': 1.05, 'LEC': 1.05, 'PER': 1.03, 'STR': 1.04 },
+    'qat': { 'VER': 1.05, 'PIA': 1.05, 'NOR': 1.04 },
+    'abu': { 'VER': 1.05, 'LEC': 1.04, 'RUS': 1.04 }
+};
+
+function animateAIDrivers() {
+    const track = document.getElementById('bg-track');
+    if(!track) { requestAnimationFrame(animateAIDrivers); return; }
             
             const len = track.getTotalLength();
             const now = Date.now();
-
-const circuitSpecialists = {
-                'aus': { 'BEA': 1.06, 'LIN': 1.05, 'BOR': 1.05 },
-                'chn': { 'BEA': 1.06, 'GAS': 1.05, 'LAW': 1.04 },
-                'jpn': { 'GAS': 1.04, 'LAW': 1.03 },
-                'mia': { 'COL': 1.05, 'LAW': 1.03 },
-                'can': { 'HAD': 1.05, 'COL': 1.04, 'LAW': 1.03 },
-                'mon': { 'HAD': 1.08, 'LAW': 1.05, 'LIN': 1.04, 'ALB': 1.04 },
-                'esp': { 'HAD': 1.04, 'GAS': 1.04 },
-                'aut': { 'HAD': 1.04, 'LAW': 1.03 },
-                'gbr': { 'HAD': 1.05, 'LAW': 1.04, 'LIN': 1.04, 'BOR': 1.03 },
-                'bel': { 'HAD': 1.04, 'BOR': 1.04, 'LIN': 1.03 },
-                'hun': { 'HAD': 1.04, 'LAW': 1.03, 'HUL': 1.03 },
-                'ned': { 'LAW': 1.05, 'HUL': 1.04, 'ALO': 1.04 },
-                'ita': { 'GAS': 1.05, 'LIN': 1.04, 'COL': 1.04 },
-                'mad': { 'LAW': 1.05, 'COL': 1.04, 'LIN': 1.03 },
-                'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
-                'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
-                'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
-                'mex': { 'NOR': 1.03, 'PER': 1.05, 'LEC': 1.02 },
-                'bra': { 'NOR': 1.03, 'ANT': 1.05, 'VER': 1.02, 'PER': 1.02 },
-                'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.03, 'PER': 1.02 },
-                'qat': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 },
-                'abu': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 }
-            };
-
             const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
             const leaderCar = battleRank[0];
             const leaderDist = leaderCar ? (leaderCar.totalLaps + leaderCar.progress) : 0;
@@ -1707,16 +1631,16 @@ const circuitSpecialists = {
                 }
             }
 
-            if (safetyCar.active) {
-                if (raceStatus === 'SC_ENDING') {
-                    safetyCar.element.style.display = 'none';
-                    safetyCar.active = false; 
-                } else {
-                    safetyCar.progress += 0.8 * 0.00038 * state.speedFactor;
-                    if (safetyCar.progress >= 1) safetyCar.progress -= 1;
+    if (safetyCar.active) {
+        if (raceStatus === 'SC_ENDING') {
+            safetyCar.element.style.display = 'none';
+            safetyCar.active = false; 
+        } else {
+            safetyCar.progress += 0.8 * 0.00038 * state.speedFactor;
+            if (safetyCar.progress >= 1) safetyCar.progress -= 1;
 
-                    const pt = track.getPointAtLength(len * safetyCar.progress);
-                    safetyCar.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
+            const pt = getCachedPoint(safetyCar.progress);
+            safetyCar.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
 
                     if (stoppedCarId && raceStatus === 'SC' && eventTimer > 200) {
                         const victim = aiDrivers.find(d => d.id === stoppedCarId);
@@ -1733,18 +1657,19 @@ const circuitSpecialists = {
                 }
             }
 
-            aiDrivers.forEach(ai => {
-                if (raceStarted) {
-                    if (ai.id === stoppedCarId) {
-                        ai.actualSpeed *= 0.9;
-                        if (ai.actualSpeed < 0.01) ai.actualSpeed = 0;
-                        ai.element.classList.add('stopped');
-                        const pt = track.getPointAtLength(len * ai.progress);
-                        ai.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
-                        return; 
-                    } else {
-                        ai.element.classList.remove('stopped');
-                    }
+    aiDrivers.forEach(ai => {
+        if (raceStarted) {
+            if (ai.id === stoppedCarId) {
+                ai.actualSpeed *= 0.9;
+                if (ai.actualSpeed < 0.01) ai.actualSpeed = 0;
+                ai.element.classList.add('stopped');
+
+                const pt = getCachedPoint(ai.progress);
+                ai.element.setAttribute('transform', `translate(${pt.x}, ${pt.y}) scale(${state.scaleFactor})`);
+                return; 
+            } else {
+                ai.element.classList.remove('stopped');
+            }
 
                     if (!ai.battleState) { ai.battleState = 'normal'; ai.battleTimer = 0; ai.cooldown = 0; }
                     if (!ai.conditionState) { ai.conditionState = 'normal'; ai.conditionTimer = 0; }
@@ -1920,12 +1845,12 @@ const circuitSpecialists = {
                     }
                 } 
                 
-                const pt = track.getPointAtLength(len * ai.progress);
-                const jitterPower = (raceStatus === 'GREEN') ? 2.0 : 0.0;
-                const jitterX = (Math.sin(now/200 + ai.randomFactor) * jitterPower); 
-                const jitterY = (Math.cos(now/200 + ai.randomFactor) * jitterPower);
-                ai.element.setAttribute('transform', `translate(${pt.x + jitterX}, ${pt.y + jitterY}) scale(${state.scaleFactor})`);
-            });
+        const pt = getCachedPoint(ai.progress);
+        const jitterPower = (raceStatus === 'GREEN') ? 2.0 : 0.0;
+        const jitterX = (Math.sin(now/200 + ai.randomFactor) * jitterPower); 
+        const jitterY = (Math.cos(now/200 + ai.randomFactor) * jitterPower);
+        ai.element.setAttribute('transform', `translate(${pt.x + jitterX}, ${pt.y + jitterY}) scale(${state.scaleFactor})`);
+    });
 
             if(raceStarted) updateLeaderboard();
             requestAnimationFrame(animateAIDrivers);
@@ -2177,9 +2102,6 @@ const circuitSpecialists = {
             console.log(`[Camera Switch] Now watching: ${state.driver}`);
         }
 
-        // ==========================================
-        // 🔧 [FIX] YouTube API 안전한 로딩 (순서 보장)
-        // ==========================================
         function loadYouTubeAPI() {
             const tag = document.createElement('script');
             tag.src = "https://www.youtube.com/iframe_api";
@@ -2187,7 +2109,6 @@ const circuitSpecialists = {
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         }
 
-        // 💡 init() 실행 후 API를 로드하여 순서 꼬임 방지
         init(); 
         loadYouTubeAPI(); 
     </script>
