@@ -845,34 +845,35 @@ body.cadillac {
             oscillator.stop(now + 0.15);
         }
 
-// ==========================================
-        // 🚀 엔진 스타트 버튼 로직 (수정됨: 무조건 출발 모드)
+
+        // ==========================================
+        // 🚀 엔진 스타트 버튼 로직 (수정됨: 음소거 해제 후 재생)
         // ==========================================
         function activateEngine() {
             // 1. 오디오 컨텍스트 깨우기
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
-            // 버튼 즉시 숨김
             document.getElementById('start-engine-btn').style.display = 'none';
             
-            // 2. 오디오 재생 시도 (실패해도 레이스는 멈추지 않음!)
-            // 플레이어가 준비되었는지 확인하고 실행, 안 됐으면 조용히 넘어감
+            // 2. 미리 버퍼링된 영상의 음소거(unMute)를 풀고 볼륨 설정
             try {
-                if (bgmPlayer && typeof bgmPlayer.playVideo === 'function') { 
+                if (bgmPlayer && typeof bgmPlayer.unMute === 'function') { 
+                    bgmPlayer.unMute();
                     bgmPlayer.setVolume(isBgmMuted ? 0 : 70); 
                     bgmPlayer.playVideo(); 
                 }
-            } catch(e) { console.log("BGM not ready yet"); }
+            } catch(e) { console.log("BGM error"); }
             
             try {
-                if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
-                    enginePlayer.setVolume(0); 
+                if (enginePlayer && typeof enginePlayer.unMute === 'function') {
+                    enginePlayer.unMute();
+                    enginePlayer.setVolume(0); // 💡 출발 전 대기 상태이므로 볼륨 0 유지 (startRaceSequence에서 40으로 올림)
                     enginePlayer.playVideo();  
                 }
-            } catch(e) { console.log("Engine not ready yet"); }
+            } catch(e) { console.log("Engine error"); }
             
-            // 3. 🏁 레이스 시퀀스 강제 시작 (가장 중요!)
+            // 3. 🏁 레이스 시퀀스 강제 시작
             startRaceSequence();
         }
 
@@ -920,11 +921,9 @@ body.cadillac {
         }
 
         // ==========================================
-        // 📺 유튜브 API 필수 함수 (수정됨: 무한 반복 기능 추가)
+        // 📺 유튜브 API 필수 함수 (수정됨: 음소거 사전 버퍼링 방식)
         // ==========================================
         function onYouTubeIframeAPIReady() {
-            // 💡 [반복 재생 헬퍼 함수] 
-            // 영상이 끝나면(0) 다시 재생(playVideo) 명령을 내립니다.
             const onPlayerStateChange = function(event) {
                 if (event.data === YT.PlayerState.ENDED) {
                     event.target.playVideo();
@@ -935,20 +934,18 @@ body.cadillac {
             bgmPlayer = new YT.Player('bgm-player', { 
                 height: '0', width: '0', 
                 videoId: 'YhX_Woa3kVA', 
-                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 }, // loop 옵션 대신 이벤트 사용
-                events: {
-                    'onStateChange': onPlayerStateChange // 👈 상태 변화 감지 연결
-                }
+                // 💡 [변경] mute: 1, autoplay: 1 추가하여 소리 없이 미리 재생 준비
+                playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 0, 'playsinline': 1 }, 
+                events: { 'onStateChange': onPlayerStateChange }
             });
 
             // 엔진 사운드 플레이어
             enginePlayer = new YT.Player('engine-player', { 
                 height: '0', width: '0', 
                 videoId: 'Yfzh9PDPkes', 
-                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
-                events: {
-                    'onStateChange': onPlayerStateChange // 👈 상태 변화 감지 연결
-                }
+                // 💡 [변경] mute: 1, autoplay: 1 추가
+                playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 0, 'playsinline': 1 },
+                events: { 'onStateChange': onPlayerStateChange }
             });
         }
 
@@ -1688,28 +1685,32 @@ const driverGroups = {
             const now = Date.now();
 
 const circuitSpecialists = {
-                'aus': { 'BEA': 1.06, 'LIN': 1.05, 'BOR': 1.05 },
-                'chn': { 'BEA': 1.06, 'GAS': 1.05, 'LAW': 1.04 },
-                'jpn': { 'GAS': 1.04, 'LAW': 1.03 },
-                'mia': { 'COL': 1.05, 'LAW': 1.03 },
-                'can': { 'HAD': 1.05, 'COL': 1.04, 'LAW': 1.03 },
-                'mon': { 'HAD': 1.08, 'LAW': 1.05, 'LIN': 1.04, 'ALB': 1.04 },
-                'esp': { 'HAD': 1.04, 'GAS': 1.04 },
-                'aut': { 'HAD': 1.04, 'LAW': 1.03 },
-                'gbr': { 'HAD': 1.05, 'LAW': 1.04, 'LIN': 1.04, 'BOR': 1.03 },
-                'bel': { 'HAD': 1.04, 'BOR': 1.04, 'LIN': 1.03 },
-                'hun': { 'HAD': 1.04, 'LAW': 1.03, 'HUL': 1.03 },
-                'ned': { 'LAW': 1.05, 'HUL': 1.04, 'ALO': 1.04 },
-                'ita': { 'GAS': 1.05, 'LIN': 1.04, 'COL': 1.04 },
-                'mad': { 'LAW': 1.05, 'COL': 1.04, 'LIN': 1.03 },
-                'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
-                'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
-                'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
-                'mex': { 'NOR': 1.03, 'PER': 1.05, 'LEC': 1.02 },
-                'bra': { 'NOR': 1.03, 'ANT': 1.05, 'VER': 1.02, 'PER': 1.02 },
-                'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.03, 'PER': 1.02 },
-                'qat': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 },
-                'abu': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 }
+                // 🏁 2026 시즌 데이터 (이탈리아 몬자까지)
+                'aus': { 'RUS': 1.04, 'ANT': 1.03, 'LEC': 1.02, 'BEA': 1.04, 'LIN': 1.03 },
+                'ksa': { 'PIA': 1.04, 'VER': 1.03, 'LEC': 1.02, 'SAI': 1.03 }, // 2025 데이터 적용 (26년 취소)
+                'jpn': { 'ANT': 1.04, 'PIA': 1.03, 'LEC': 1.02, 'GAS': 1.03 },
+                'chn': { 'ANT': 1.04, 'RUS': 1.03, 'HAM': 1.02, 'BEA': 1.04, 'GAS': 1.03, 'LAW': 1.03 },
+                'mia': { 'ANT': 1.04, 'NOR': 1.03, 'PIA': 1.02, 'COL': 1.04 },
+                'imo': { 'VER': 1.04, 'NOR': 1.03, 'PIA': 1.02, 'ALB': 1.03 }, // 2025 데이터 적용
+                'mon': { 'ANT': 1.04, 'HAM': 1.03, 'HAD': 1.04, 'LAW': 1.03, 'LIN': 1.03 }, // 아자르 3위 쾌거 반영
+                'can': { 'ANT': 1.04, 'HAM': 1.03, 'VER': 1.02, 'HAD': 1.03, 'COL': 1.03 },
+                'esp': { 'HAM': 1.04, 'RUS': 1.03, 'NOR': 1.02, 'HAD': 1.03, 'GAS': 1.03 },
+                'aut': { 'RUS': 1.04, 'VER': 1.03, 'ANT': 1.02, 'LAW': 1.03 },
+                'gbr': { 'LEC': 1.04, 'RUS': 1.03, 'HAM': 1.02, 'HAD': 1.03, 'LAW': 1.03 },
+                'bel': { 'ANT': 1.04, 'LEC': 1.03, 'VER': 1.02, 'HAD': 1.03, 'BOR': 1.03 },
+                'hun': { 'NOR': 1.04, 'VER': 1.03, 'ANT': 1.02, 'HAD': 1.03, 'LAW': 1.03 },
+                'ned': { 'NOR': 1.04, 'ANT': 1.03, 'RUS': 1.02, 'LAW': 1.03 },
+                'ita': { 'ANT': 1.04, 'RUS': 1.03, 'VER': 1.02, 'GAS': 1.03, 'LIN': 1.03, 'COL': 1.03 },
+                
+                // 🏁 2025 시즌 데이터 (아제르바이잔 바쿠부터 아부다비까지)
+                'aze': { 'VER': 1.04, 'RUS': 1.03, 'SAI': 1.02, 'LAW': 1.03, 'TSU': 1.03 },
+                'sin': { 'RUS': 1.04, 'VER': 1.03, 'NOR': 1.02, 'ANT': 1.03 },
+                'usa': { 'VER': 1.04, 'NOR': 1.03, 'LEC': 1.02, 'TSU': 1.03, 'HUL': 1.03 },
+                'mex': { 'NOR': 1.04, 'LEC': 1.03, 'VER': 1.02, 'BEA': 1.04 },
+                'bra': { 'NOR': 1.04, 'ANT': 1.03, 'VER': 1.02, 'BEA': 1.03, 'LAW': 1.03, 'HAD': 1.03 },
+                'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.02, 'SAI': 1.03, 'HAD': 1.03 },
+                'qat': { 'VER': 1.04, 'PIA': 1.03, 'SAI': 1.02, 'ANT': 1.03, 'ALO': 1.03 },
+                'abu': { 'VER': 1.04, 'PIA': 1.03, 'NOR': 1.02, 'OCO': 1.03 }
             };
 
             const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
