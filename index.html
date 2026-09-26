@@ -242,11 +242,11 @@ body.cadillac {
     position: absolute;
     top: 0;
     left: 0;
-    width: 1px !important;
-    height: 1px !important;
+    width: 300px !important;
+    height: 300px !important; 
     opacity: 0.01;
-    pointer-events: none;
-    z-index: -1;
+    pointer-events: none; 
+    z-index: -999;
 }
 
         .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 15px; z-index: 100; align-items: flex-start; justify-content: space-between; }
@@ -827,14 +827,14 @@ function onYouTubeIframeAPIReady() {
     };
 
     bgmPlayer = new YT.Player('bgm-player', { 
-        height: '1', width: '1', 
+        height: '300', width: '300',
         videoId: 'YhX_Woa3kVA', 
         playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
         events: { 'onStateChange': onPlayerStateChange }
     });
 
     enginePlayer = new YT.Player('engine-player', { 
-        height: '1', width: '1', 
+        height: '300', width: '300',
         videoId: 'Yfzh9PDPkes', 
         playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
         events: { 'onStateChange': onPlayerStateChange }
