@@ -268,7 +268,16 @@ body.cadillac {
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         #start-engine-btn { background: transparent; color: #fff; border: 2px solid #fff; padding: 15px 40px; font-family: var(--font-display); font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
         #start-engine-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255,255,255,0.6); }
-        #bgm-player { position: absolute; top: -9999px; left: -9999px; visibility: hidden; pointer-events: none; }
+#bgm-player, #engine-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0.01;
+    pointer-events: none;
+    z-index: -1;
+}
 
         .header-container { position: absolute; top: 0; left: 0; width: 100%; padding: 40px 20px 0 20px; display: flex; gap: 15px; z-index: 100; align-items: flex-start; justify-content: space-between; }
         .logo-box { flex: 0 1 auto; width: auto; background: transparent; border: none; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 0; }
@@ -746,65 +755,54 @@ body.cadillac {
         let bgmPlayer;    // 유튜브 BGM 플레이어
         let enginePlayer; // 유튜브 엔진 사운드 플레이어
 
-        // ==========================================
-        // 🔊 SFX (효과음) 제어 함수 (수정됨: 재생 재시도 로직 추가)
-        // ==========================================
-        function toggleSFX() {
-            isSfxMuted = !isSfxMuted;
-            
-            // UI 업데이트
-            const onIcon = document.getElementById('icon-sfx-on');
-            const offIcon = document.getElementById('icon-sfx-off');
-            const btn = document.getElementById('btn-sfx');
+        // 🔊 SFX (효과음) 제어 함수 수정
+function toggleSFX() {
+    isSfxMuted = !isSfxMuted;
+    
+    const onIcon = document.getElementById('icon-sfx-on');
+    const offIcon = document.getElementById('icon-sfx-off');
+    const btn = document.getElementById('btn-sfx');
 
-            if(onIcon) onIcon.style.display = isSfxMuted ? 'none' : 'block';
-            if(offIcon) offIcon.style.display = isSfxMuted ? 'block' : 'none';
-            if(btn) btn.classList.toggle('active', !isSfxMuted);
+    if(onIcon) onIcon.style.display = isSfxMuted ? 'none' : 'block';
+    if(offIcon) offIcon.style.display = isSfxMuted ? 'block' : 'none';
+    if(btn) btn.classList.toggle('active', !isSfxMuted);
 
-            // 💡 [핵심 수정] 소리를 켤 때, 엔진 소리가 재생 중이 아니라면 강제 호출 시도
-            if (!isSfxMuted) {
-                if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
-                    // 현재 플레이어 상태가 재생 중이 아니라면(혹은 로딩 실패했다면) 재생 시도
-                    // (유튜브 API 상태: 1=재생중. 안전하게 무조건 playVideo 호출해도 됩니다)
-                    enginePlayer.playVideo(); 
-                    enginePlayer.setVolume(50); // 볼륨 복구
-                }
-            } else {
-                // 소리 끌 때는 볼륨만 0으로 (영상은 계속 돌아가야 끊김 없음)
-                if (enginePlayer && enginePlayer.setVolume) {
-                    enginePlayer.setVolume(0);
-                }
-            }
+    if (!isSfxMuted) {
+        if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
+            enginePlayer.unMute(); // 💡 setVolume 대신 unMute
+            enginePlayer.playVideo(); 
         }
-
-        // ==========================================
-        // 🎵 BGM (배경음악) 제어 함수 (수정됨: 재생 재시도 로직 추가)
-        // ==========================================
-        function toggleBGM() {
-            isBgmMuted = !isBgmMuted;
-
-            // UI 업데이트
-            const onIcon = document.getElementById('icon-bgm-on');
-            const offIcon = document.getElementById('icon-bgm-off');
-            const btn = document.getElementById('btn-bgm');
-
-            if(onIcon) onIcon.style.display = isBgmMuted ? 'none' : 'block';
-            if(offIcon) offIcon.style.display = isBgmMuted ? 'block' : 'none';
-            if(btn) btn.classList.toggle('active', !isBgmMuted);
-
-            // 💡 [핵심 수정] 소리를 켤 때, BGM이 안 나오고 있다면 강제 호출 시도
-            if (!isBgmMuted) {
-                if (bgmPlayer && typeof bgmPlayer.playVideo === 'function') {
-                    bgmPlayer.playVideo(); // 🚀 강제 재생 명령 (재시도 효과)
-                    bgmPlayer.setVolume(70); // 볼륨 복구
-                }
-            } else {
-                // 소리 끄기
-                if (bgmPlayer && bgmPlayer.setVolume) {
-                    bgmPlayer.setVolume(0);
-                }
-            }
+    } else {
+        if (enginePlayer && typeof enginePlayer.mute === 'function') {
+            enginePlayer.mute(); // 💡 볼륨 0 대신 mute
         }
+    }
+}
+
+// 🎵 BGM 제어 함수 수정
+function toggleBGM() {
+    isBgmMuted = !isBgmMuted;
+
+    const onIcon = document.getElementById('icon-bgm-on');
+    const offIcon = document.getElementById('icon-bgm-off');
+    const btn = document.getElementById('btn-bgm');
+
+    if(onIcon) onIcon.style.display = isBgmMuted ? 'none' : 'block';
+    if(offIcon) offIcon.style.display = isBgmMuted ? 'block' : 'none';
+    if(btn) btn.classList.toggle('active', !isBgmMuted);
+
+    if (!isBgmMuted) {
+        if (bgmPlayer && typeof bgmPlayer.playVideo === 'function') {
+            bgmPlayer.unMute(); // 💡 setVolume 대신 unMute
+            bgmPlayer.playVideo(); 
+        }
+    } else {
+        if (bgmPlayer && typeof bgmPlayer.mute === 'function') {
+            bgmPlayer.mute();
+        }
+    }
+}
+
 
         // ==========================================
         // 🎹 비프음 재생 (Web Audio API) - 필터 적용 버전
@@ -845,109 +843,88 @@ body.cadillac {
             oscillator.stop(now + 0.15);
         }
 
+// 🚀 엔진 스타트 버튼 로직 수정
+function activateEngine() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
 
-        // ==========================================
-        // 🚀 엔진 스타트 버튼 로직 (수정됨: 음소거 해제 후 재생)
-        // ==========================================
-        function activateEngine() {
-            // 1. 오디오 컨텍스트 깨우기
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            document.getElementById('start-engine-btn').style.display = 'none';
-            
-            // 2. 미리 버퍼링된 영상의 음소거(unMute)를 풀고 볼륨 설정
-            try {
-                if (bgmPlayer && typeof bgmPlayer.unMute === 'function') { 
-                    bgmPlayer.unMute();
-                    bgmPlayer.setVolume(isBgmMuted ? 0 : 70); 
-                    bgmPlayer.playVideo(); 
-                }
-            } catch(e) { console.log("BGM error"); }
-            
-            try {
-                if (enginePlayer && typeof enginePlayer.unMute === 'function') {
-                    enginePlayer.unMute();
-                    enginePlayer.setVolume(0); // 💡 출발 전 대기 상태이므로 볼륨 0 유지 (startRaceSequence에서 40으로 올림)
-                    enginePlayer.playVideo();  
-                }
-            } catch(e) { console.log("Engine error"); }
-            
-            // 3. 🏁 레이스 시퀀스 강제 시작
-            startRaceSequence();
+    document.getElementById('start-engine-btn').style.display = 'none';
+    
+    try {
+        if (bgmPlayer && typeof bgmPlayer.playVideo === 'function') { 
+            if (isBgmMuted) bgmPlayer.mute();
+            else bgmPlayer.unMute();
+            bgmPlayer.playVideo(); 
         }
-
-        // ==========================================
-        // 🚦 레이스 출발 시퀀스 (수정됨)
-        // ==========================================
-        function startRaceSequence() {
-            let lightCount = 1;
-
-            function turnOnNextLight() {
-                if (lightCount <= 5) {
-                    playBeep(); // 비프음 재생
-
-                    const light = document.getElementById(`light-${lightCount}b`);
-                    if(light) light.classList.add('on');
-
-                    lightCount++;
-                    setTimeout(turnOnNextLight, 1000); // 1초 간격
-                } else {
-                    // 5개 다 켜짐 -> 랜덤 딜레이 후 출발
-                    const randomDelay = Math.floor(Math.random() * 1500) + 200;
-
-                    setTimeout(() => {
-                        // 1. 불 끄기
-                        document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
-                        
-                        // 2. 💡 [핵심 수정] 이미 재생 중인 엔진 소리의 '볼륨'만 키움
-                        if (enginePlayer && enginePlayer.setVolume) { 
-                            if (!isSfxMuted) enginePlayer.setVolume(40); // 소리 ON
-                            // SFX가 Mute 상태라면 볼륨 0 유지
-                        }
-
-                        // 3. 레이스 시작 플래그
-                        raceStarted = true;
-
-                        // 4. 로딩 화면 제거
-                        const overlay = document.getElementById('loading-overlay');
-                        overlay.style.opacity = '0';
-                        setTimeout(() => { overlay.style.display = 'none'; }, 300);
-
-                    }, randomDelay);
-                }
-            }
-            turnOnNextLight();
+    } catch(e) { console.log("BGM not ready yet"); }
+    
+    try {
+        if (enginePlayer && typeof enginePlayer.playVideo === 'function') {
+            // 엔진 출발 전까지 음소거 상태로 백그라운드 재생
+            enginePlayer.mute();
+            enginePlayer.playVideo();  
         }
+    } catch(e) { console.log("Engine not ready yet"); }
+    
+    startRaceSequence();
+}
 
-        // ==========================================
-        // 📺 유튜브 API 필수 함수 (수정됨: 음소거 사전 버퍼링 방식)
-        // ==========================================
-        function onYouTubeIframeAPIReady() {
-            const onPlayerStateChange = function(event) {
-                if (event.data === YT.PlayerState.ENDED) {
-                    event.target.playVideo();
+// 🚦 레이스 출발 시퀀스 내부 볼륨 제어 수정 (setTimeout 내부만 수정)
+function startRaceSequence() {
+    let lightCount = 1;
+
+    function turnOnNextLight() {
+        if (lightCount <= 5) {
+            playBeep();
+            const light = document.getElementById(`light-${lightCount}b`);
+            if(light) light.classList.add('on');
+            lightCount++;
+            setTimeout(turnOnNextLight, 1000);
+        } else {
+            const randomDelay = Math.floor(Math.random() * 1500) + 200;
+            setTimeout(() => {
+                document.querySelectorAll('.f1-light').forEach(l => l.classList.remove('on'));
+                
+                // 💡 [수정] 모바일 대응을 위해 unMute() 사용
+                if (enginePlayer && typeof enginePlayer.unMute === 'function') { 
+                    if (!isSfxMuted) enginePlayer.unMute(); 
                 }
-            };
 
-            // BGM 플레이어
-            bgmPlayer = new YT.Player('bgm-player', { 
-                height: '0', width: '0', 
-                videoId: 'YhX_Woa3kVA', 
-                // 💡 [변경] mute: 1, autoplay: 1 추가하여 소리 없이 미리 재생 준비
-                playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 0, 'playsinline': 1 }, 
-                events: { 'onStateChange': onPlayerStateChange }
-            });
+                raceStarted = true;
+                const overlay = document.getElementById('loading-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
 
-            // 엔진 사운드 플레이어
-            enginePlayer = new YT.Player('engine-player', { 
-                height: '0', width: '0', 
-                videoId: 'Yfzh9PDPkes', 
-                // 💡 [변경] mute: 1, autoplay: 1 추가
-                playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 0, 'playsinline': 1 },
-                events: { 'onStateChange': onPlayerStateChange }
-            });
+            }, randomDelay);
         }
+    }
+    turnOnNextLight();
+}
+        // ==========================================
+        // 📺 유튜브 API 필수 함수 (수정됨: 무한 반복 기능 추가)
+        // ==========================================
+function onYouTubeIframeAPIReady() {
+    const onPlayerStateChange = function(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+            event.target.playVideo();
+        }
+    };
+
+    // 💡 [수정] width, height를 0에서 1로 변경
+    bgmPlayer = new YT.Player('bgm-player', { 
+        height: '1', width: '1', 
+        videoId: 'YhX_Woa3kVA', 
+        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
+        events: { 'onStateChange': onPlayerStateChange }
+    });
+
+    enginePlayer = new YT.Player('engine-player', { 
+        height: '1', width: '1', 
+        videoId: 'Yfzh9PDPkes', 
+        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 0 },
+        events: { 'onStateChange': onPlayerStateChange }
+    });
+}
 
         // ==========================================
         // 🏁 여기서부터는 기존 로직 (데이터, 맵, 자동차 등)
@@ -1685,32 +1662,28 @@ const driverGroups = {
             const now = Date.now();
 
 const circuitSpecialists = {
-                // 🏁 2026 시즌 데이터 (이탈리아 몬자까지)
-                'aus': { 'RUS': 1.04, 'ANT': 1.03, 'LEC': 1.02, 'BEA': 1.04, 'LIN': 1.03 },
-                'ksa': { 'PIA': 1.04, 'VER': 1.03, 'LEC': 1.02, 'SAI': 1.03 }, // 2025 데이터 적용 (26년 취소)
-                'jpn': { 'ANT': 1.04, 'PIA': 1.03, 'LEC': 1.02, 'GAS': 1.03 },
-                'chn': { 'ANT': 1.04, 'RUS': 1.03, 'HAM': 1.02, 'BEA': 1.04, 'GAS': 1.03, 'LAW': 1.03 },
-                'mia': { 'ANT': 1.04, 'NOR': 1.03, 'PIA': 1.02, 'COL': 1.04 },
-                'imo': { 'VER': 1.04, 'NOR': 1.03, 'PIA': 1.02, 'ALB': 1.03 }, // 2025 데이터 적용
-                'mon': { 'ANT': 1.04, 'HAM': 1.03, 'HAD': 1.04, 'LAW': 1.03, 'LIN': 1.03 }, // 아자르 3위 쾌거 반영
-                'can': { 'ANT': 1.04, 'HAM': 1.03, 'VER': 1.02, 'HAD': 1.03, 'COL': 1.03 },
-                'esp': { 'HAM': 1.04, 'RUS': 1.03, 'NOR': 1.02, 'HAD': 1.03, 'GAS': 1.03 },
-                'aut': { 'RUS': 1.04, 'VER': 1.03, 'ANT': 1.02, 'LAW': 1.03 },
-                'gbr': { 'LEC': 1.04, 'RUS': 1.03, 'HAM': 1.02, 'HAD': 1.03, 'LAW': 1.03 },
-                'bel': { 'ANT': 1.04, 'LEC': 1.03, 'VER': 1.02, 'HAD': 1.03, 'BOR': 1.03 },
-                'hun': { 'NOR': 1.04, 'VER': 1.03, 'ANT': 1.02, 'HAD': 1.03, 'LAW': 1.03 },
-                'ned': { 'NOR': 1.04, 'ANT': 1.03, 'RUS': 1.02, 'LAW': 1.03 },
-                'ita': { 'ANT': 1.04, 'RUS': 1.03, 'VER': 1.02, 'GAS': 1.03, 'LIN': 1.03, 'COL': 1.03 },
-                
-                // 🏁 2025 시즌 데이터 (아제르바이잔 바쿠부터 아부다비까지)
-                'aze': { 'VER': 1.04, 'RUS': 1.03, 'SAI': 1.02, 'LAW': 1.03, 'TSU': 1.03 },
-                'sin': { 'RUS': 1.04, 'VER': 1.03, 'NOR': 1.02, 'ANT': 1.03 },
-                'usa': { 'VER': 1.04, 'NOR': 1.03, 'LEC': 1.02, 'TSU': 1.03, 'HUL': 1.03 },
-                'mex': { 'NOR': 1.04, 'LEC': 1.03, 'VER': 1.02, 'BEA': 1.04 },
-                'bra': { 'NOR': 1.04, 'ANT': 1.03, 'VER': 1.02, 'BEA': 1.03, 'LAW': 1.03, 'HAD': 1.03 },
-                'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.02, 'SAI': 1.03, 'HAD': 1.03 },
-                'qat': { 'VER': 1.04, 'PIA': 1.03, 'SAI': 1.02, 'ANT': 1.03, 'ALO': 1.03 },
-                'abu': { 'VER': 1.04, 'PIA': 1.03, 'NOR': 1.02, 'OCO': 1.03 }
+                'aus': { 'BEA': 1.06, 'LIN': 1.05, 'BOR': 1.05 },
+                'chn': { 'BEA': 1.06, 'GAS': 1.05, 'LAW': 1.04 },
+                'jpn': { 'GAS': 1.04, 'LAW': 1.03 },
+                'mia': { 'COL': 1.05, 'LAW': 1.03 },
+                'can': { 'HAD': 1.05, 'COL': 1.04, 'LAW': 1.03 },
+                'mon': { 'HAD': 1.08, 'LAW': 1.05, 'LIN': 1.04, 'ALB': 1.04 },
+                'esp': { 'HAD': 1.04, 'GAS': 1.04 },
+                'aut': { 'HAD': 1.04, 'LAW': 1.03 },
+                'gbr': { 'HAD': 1.05, 'LAW': 1.04, 'LIN': 1.04, 'BOR': 1.03 },
+                'bel': { 'HAD': 1.04, 'BOR': 1.04, 'LIN': 1.03 },
+                'hun': { 'HAD': 1.04, 'LAW': 1.03, 'HUL': 1.03 },
+                'ned': { 'LAW': 1.05, 'HUL': 1.04, 'ALO': 1.04 },
+                'ita': { 'GAS': 1.05, 'LIN': 1.04, 'COL': 1.04 },
+                'mad': { 'LAW': 1.05, 'COL': 1.04, 'LIN': 1.03 },
+                'aze': { 'PER': 1.055, 'VER': 1.02, 'RUS': 1.03, 'SAI': 1.04 },
+                'sin': { 'RUS': 1.05, 'VER': 1.02, 'NOR': 1.01, 'PER': 1.03 },
+                'usa': { 'VER': 1.04, 'NOR': 1.02, 'PER': 1.03 },
+                'mex': { 'NOR': 1.03, 'PER': 1.05, 'LEC': 1.02 },
+                'bra': { 'NOR': 1.03, 'ANT': 1.05, 'VER': 1.02, 'PER': 1.02 },
+                'las': { 'VER': 1.04, 'RUS': 1.03, 'ANT': 1.03, 'PER': 1.02 },
+                'qat': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 },
+                'abu': { 'VER': 1.04, 'PIA': 1.02, 'PER': 1.03 }
             };
 
             const battleRank = [...aiDrivers].sort((a, b) => (b.totalLaps + b.progress) - (a.totalLaps + a.progress));
