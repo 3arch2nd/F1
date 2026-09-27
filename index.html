@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- 💡 구글 원탭 / 로그인 연동 스크립트 -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
         :root {
@@ -43,7 +45,6 @@
             pointer-events: none; 
             max-height: calc(100vh - 330px);
             overflow: hidden; 
-            
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
             transform-origin: left center;
         }
@@ -68,26 +69,21 @@
             background-color: rgba(0, 0, 0, 0.3);
             border: 2px solid var(--team-primary); 
             color: var(--team-primary);
-            
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            
             font-family: var(--font-display);
             font-size: 24px;
             font-weight: 400;
-            
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             transition: all 0.2s ease;
             padding: 0;
             padding-bottom: 4px;
             line-height: 1;
-
             -webkit-tap-highlight-color: transparent;
             outline: none;
         }
@@ -170,29 +166,9 @@
             width: 100%;
         }
 
-        .lb-pos {
-            width: 22px; 
-            text-align: center;
-            font-size: 9px; 
-            font-weight: bold;
-            color: #ffffff !important;
-            font-family: var(--font-display);
-        }
-
-        .lb-color-strip {
-            width: 3px;
-            height: 100%;
-        }
-
-        .lb-name {
-            flex: 1;
-            font-size: 10px;
-            font-weight: bold;
-            color: #ffffff;
-            font-family: var(--font-display);
-            letter-spacing: 0px;
-            padding-left: 5px;
-        }
+        .lb-pos { width: 22px; text-align: center; font-size: 9px; font-weight: bold; color: #ffffff !important; font-family: var(--font-display); }
+        .lb-color-strip { width: 3px; height: 100%; }
+        .lb-name { flex: 1; font-size: 10px; font-weight: bold; color: #ffffff; font-family: var(--font-display); letter-spacing: 0px; padding-left: 5px; }
 
         body.redbull { --team-bg: #060025; --team-radio-bg: rgba(6, 0, 37, 0.95); --team-primary: #3671C6; --team-accent: #FCD116; --track-active-color: var(--f1-purple); --marker-bg: #FFEC00; --marker-text: #000000; }
         body.redbull .driver-name span, body.redbull #txt-current { color: #3671C6 !important; text-shadow: 0 0 2px rgba(0, 0, 0, 0.5); }
@@ -346,7 +322,7 @@
         .settings-btn:hover { border-color: #fff; color: #fff; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--team-radio-bg); padding: 0; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid var(--team-accent); max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-content { background: var(--team-radio-bg); padding: 0; border-radius: 4px; width: 90%; max-width: 400px; border: 1px solid var(--team-accent); max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; }
         .modal-header { padding: 25px 25px 10px 25px; flex-shrink: 0; }
         .modal h2 { margin-bottom: 0; }
         .modal-body { flex: 1; overflow-y: auto; padding: 10px 25px; min-height: 0; }
@@ -366,6 +342,83 @@
         .rec-title { font-size: 9px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; font-family: var(--font-display); }
         .rec-value { font-size: 14px; color: var(--team-accent); font-weight: bold; font-family: var(--font-display); }
         
+        /* ☁️ 구글 클라우드 동기화 UI 스타일 */
+        .sync-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        .sync-title {
+            font-size: 10px;
+            color: var(--team-primary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .sync-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .sync-user-pic {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid var(--team-primary);
+        }
+        .sync-user-details {
+            font-size: 10px;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sync-btn-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .sync-sub-btn {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--team-primary);
+            color: var(--team-primary);
+            font-family: var(--font-display);
+            font-size: 9px;
+            font-weight: bold;
+            padding: 8px 4px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        .sync-sub-btn:hover {
+            background: var(--team-primary);
+            color: #000;
+        }
+        .sync-logout-btn {
+            background: transparent;
+            border: 1px solid #777;
+            color: #aaa;
+            font-family: var(--font-display);
+            font-size: 8px;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-top: 8px;
+            width: 100%;
+        }
+        .sync-logout-btn:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
         #celebration-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .celebration-content { background: #000; border: 2px solid var(--team-primary); border-radius: 12px; width: 85%; max-width: 400px; padding: 40px 20px; text-align: center; box-shadow: none; border: 2px solid var(--team-primary); animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .fastest-lap-title { color: var(--team-primary); font-family: var(--font-display); font-size: 12px; letter-spacing: 4px; margin-bottom: 12px; font-weight: 900; }
@@ -486,6 +539,7 @@
         </div>
     </div>
 
+    <!-- PIT STOP 모달창 -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -536,6 +590,30 @@
                     <div class="rec-title">Race Engineer Strategy</div>
                     <div class="rec-value" id="rec-msg">Calculating...</div>
                 </div>
+
+                <!-- ☁️ 구글 로그인 및 동기화 컴포넌트 -->
+                <div class="sync-box">
+                    <div class="sync-title">Cloud Synchronization</div>
+                    
+                    <!-- 로그인 전 버튼 -->
+                    <div id="google-login-container" style="display: flex; justify-content: center; margin: 10px 0;"></div>
+                    
+                    <!-- 로그인 후 사용자 정보 & 동기화 제어 -->
+                    <div id="google-user-container" style="display: none;">
+                        <div class="sync-user-info">
+                            <img id="google-user-pic" class="sync-user-pic" src="" alt="Profile">
+                            <div class="sync-user-details">
+                                <div id="google-user-name" style="font-weight: bold; color: #fff;"></div>
+                                <div id="google-user-email" style="color: rgba(255,255,255,0.6);"></div>
+                            </div>
+                        </div>
+                        <div class="sync-btn-row">
+                            <button class="sync-sub-btn" onclick="backupToCloud()">☁️ Save to Cloud</button>
+                            <button class="sync-sub-btn" onclick="restoreFromCloud()">⬇️ Load Cloud</button>
+                        </div>
+                        <button class="sync-logout-btn" onclick="logoutGoogle()">Disconnect Account</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="close-btn" onclick="saveAndCloseSettings()" style="margin-top:0;">PIT LIMITER OFF</button>
@@ -546,6 +624,10 @@
     <script>
         const STORAGE_KEY = 'f1_world_tour_plan_v3_aus'; 
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        const GOOGLE_CLIENT_ID = "432615419072-9rq00e8mju0h5h7bimefvu8k2p4q3q5r.apps.googleusercontent.com"; 
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/library/d/1SUM9LOrPDeTFVY7mY7vX1M721P2I5JnEJQCJuCPqCWEWsQb5bdnCdFSa/1"; 
+        let googleUser = JSON.parse(localStorage.getItem('f1_google_user') || 'null');
 
         let isSfxMuted = false;
         let isBgmMuted = false;
@@ -900,7 +982,6 @@
         }
 
         function init() {
-            // 💡 [수정] JS 초기화 단계에서 HTML 태그에 모바일 클래스 부착
             if (isMobileDevice) {
                 document.documentElement.classList.add('mobile-audio');
             }
@@ -959,6 +1040,170 @@
                 }
                 updateDashboard(); 
             }, 50);
+
+            // 💡 구글 인증 인스턴스 초기화 실행
+            initGoogleAuth();
+        }
+
+        // ==========================================
+        // ☁️ 구글 로그인 및 동기화 처리 로직
+        // ==========================================
+        function initGoogleAuth() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleGoogleCredential
+                });
+                renderGoogleButton();
+            } else {
+                setTimeout(initGoogleAuth, 500);
+            }
+        }
+
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) { return null; }
+        }
+
+        function handleGoogleCredential(response) {
+            const payload = parseJwt(response.credential);
+            if (payload) {
+                googleUser = { sub: payload.sub, email: payload.email, name: payload.name, picture: payload.picture };
+                localStorage.setItem('f1_google_user', JSON.stringify(googleUser));
+                renderGoogleButton();
+                showTooltip(`CONNECTED: ${googleUser.name}`);
+
+                // 자동 복구 시도
+                fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'load', tokenPayload: googleUser })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.data) {
+                        const loaded = JSON.parse(data.data);
+                        state = { ...state, ...loaded };
+                        saveData();
+                        updateDashboard();
+                        updateTeamSelectUI();
+                        updateRaceScenario();
+                        showTooltip("CLOUD DATA SYNCED");
+                    }
+                }).catch(err => console.error(err));
+            }
+        }
+
+        function renderGoogleButton() {
+            const loginBox = document.getElementById('google-login-container');
+            const userBox = document.getElementById('google-user-container');
+
+            if (!loginBox || !userBox) return;
+
+            if (googleUser) {
+                loginBox.style.display = 'none';
+                userBox.style.display = 'block';
+
+                document.getElementById('google-user-pic').src = googleUser.picture || '';
+                document.getElementById('google-user-name').innerText = googleUser.name || 'Racer';
+                document.getElementById('google-user-email').innerText = googleUser.email || '';
+            } else {
+                userBox.style.display = 'none';
+                loginBox.style.display = 'flex';
+                loginBox.innerHTML = '';
+                if (typeof google !== 'undefined' && google.accounts) {
+                    google.accounts.id.renderButton(loginBox, {
+                        theme: 'filled_black',
+                        size: 'medium',
+                        text: 'signin_with',
+                        shape: 'rectangular'
+                    });
+                }
+            }
+        }
+
+        function logoutGoogle() {
+            googleUser = null;
+            localStorage.removeItem('f1_google_user');
+            renderGoogleButton();
+            showTooltip("ACCOUNT DISCONNECTED");
+        }
+
+        function backupToCloud() {
+            if (!googleUser) {
+                showTooltip("LOGIN FIRST");
+                return;
+            }
+            if (GAS_WEB_APP_URL.includes("YOUR_GAS")) {
+                showTooltip("GAS URL NOT SET");
+                return;
+            }
+
+            showTooltip("SAVING TO CLOUD...");
+
+            fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'save',
+                    tokenPayload: googleUser,
+                    cloudData: JSON.stringify(state)
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showTooltip("SAVED TO CLOUD ✅");
+                } else {
+                    showTooltip("SAVE FAILED ❌");
+                }
+            })
+            .catch(err => {
+                showTooltip("NETWORK ERROR");
+                console.error(err);
+            });
+        }
+
+        function restoreFromCloud() {
+            if (!googleUser) {
+                showTooltip("LOGIN FIRST");
+                return;
+            }
+
+            if (confirm("클라우드 데이터를 불러오시겠습니까?\n현재 브라우저의 설정과 저장된 금액이 덮어씌워집니다.")) {
+                showTooltip("LOADING CLOUD...");
+
+                fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'load',
+                        tokenPayload: googleUser
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.data) {
+                        const loaded = JSON.parse(data.data);
+                        state = { ...state, ...loaded };
+                        saveData();
+                        updateDashboard();
+                        updateTeamSelectUI();
+                        updateRaceScenario();
+                        showTooltip("RESTORE SUCCESS ✅");
+                    } else {
+                        showTooltip("NO SAVED DATA");
+                    }
+                })
+                .catch(err => {
+                    showTooltip("LOAD FAILED");
+                    console.error(err);
+                });
+            }
         }
 
         function initCircuitSelect() {
@@ -1686,6 +1931,11 @@
             
             saveData(); 
             updateDashboard();
+
+            // 💡 입금 발생 시 자동 클라우드 백업 트리거
+            if (googleUser && !GAS_WEB_APP_URL.includes("YOUR_GAS")) {
+                backupToCloud();
+            }
         }
 
         function updateDashboard() {
@@ -1767,7 +2017,12 @@
         }
 
         function showTooltip(m) { const t = document.getElementById('msg-tooltip'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; updateTeamSelectUI(); calculateRecommendation(); }
+        function openSettings() { 
+            document.getElementById('settings-modal').style.display = 'flex'; 
+            updateTeamSelectUI(); 
+            calculateRecommendation(); 
+            renderGoogleButton(); // 설정창 열릴 때 로그인 상태 동기화
+        }
         function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
         function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
         function loadData() { const s = localStorage.getItem(STORAGE_KEY); if (s) state = { ...state, ...JSON.parse(s) }; }
@@ -1805,6 +2060,12 @@
             saveData();
             updateDashboard();      
             updateRaceScenario();   
+            
+            // 💡 PIT STOP 종료 시 클라우드 자동 저장 트리거
+            if (googleUser && !GAS_WEB_APP_URL.includes("YOUR_GAS")) {
+                backupToCloud();
+            }
+
             document.getElementById('settings-modal').style.display = 'none';
         }
 
