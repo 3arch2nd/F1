@@ -16,6 +16,21 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        input, select, textarea {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+
         :root {
             --bg-color: #121212;
             --text-color: #ffffff;
@@ -602,7 +617,7 @@
                             </div>
                         </div>
                         <div class="sync-btn-row">
-                            <button class="sync-sub-btn" onclick="backupToCloud()">Save to Cloud</button>
+                            <button id="btn-save-cloud" class="sync-sub-btn" onclick="backupToCloud()">Save to Cloud</button>
                             <button class="sync-sub-btn" onclick="restoreFromCloud()">Load Cloud</button>
                         </div>
                         <button class="sync-logout-btn" onclick="logoutGoogle()">Disconnect Account</button>
@@ -611,6 +626,19 @@
             </div>
             <div class="modal-footer">
                 <button class="close-btn" onclick="saveAndCloseSettings()" style="margin-top:0;">PIT LIMITER OFF</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="load-confirm-modal" style="z-index: 5500;">
+        <div class="modal-content" style="padding: 25px; text-align: center; max-height: unset;">
+            <h2 style="color: var(--team-accent); margin-bottom: 15px; font-size: 16px;">⚠️ OVERWRITE DATA?</h2>
+            <p style="margin-bottom: 20px; font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.5; font-family: sans-serif;">
+                클라우드 데이터를 불러오면<br>현재 기기의 기록과 설정이 덮어씌워집니다.<br>진행하시겠습니까?
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button class="close-btn" style="margin-top: 0; border-color: #555; color: #aaa;" onclick="document.getElementById('load-confirm-modal').style.display='none'">CANCEL</button>
+                <button class="close-btn" style="margin-top: 0; background-color: var(--team-primary); border-color: var(--team-primary); color: #fff;" onclick="executeRestore()">LOAD DATA</button>
             </div>
         </div>
     </div>
@@ -1123,37 +1151,40 @@
         }
 
         function backupToCloud() {
-            if (!googleUser) {
-                showTooltip("LOGIN FIRST");
-                return;
-            }
-            if (GAS_WEB_APP_URL.includes("YOUR_GAS")) {
-                showTooltip("GAS URL NOT SET");
-                return;
-            }
+            if (!googleUser) { showTooltip("LOGIN FIRST"); return; }
+            if (GAS_WEB_APP_URL.includes("YOUR_GAS")) { showTooltip("GAS URL NOT SET"); return; }
 
-            showTooltip("SAVING TO CLOUD...");
+            const btn = document.getElementById('btn-save-cloud');
+            const originalText = btn.innerText;
+            btn.innerText = "SAVING...";
+            btn.style.pointerEvents = "none"; 
 
             fetch(GAS_WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'save',
-                    tokenPayload: googleUser,
-                    cloudData: JSON.stringify(state)
-                })
+                body: JSON.stringify({ action: 'save', tokenPayload: googleUser, cloudData: JSON.stringify(state) })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    showTooltip("SAVED TO CLOUD");
+                    btn.innerText = "SAVED!";
+                    btn.style.backgroundColor = "var(--team-primary)";
+                    btn.style.color = "#000";
                 } else {
-                    showTooltip("SAVE FAILED");
+                    btn.innerText = "FAILED";
                 }
             })
             .catch(err => {
-                showTooltip("NETWORK ERROR");
+                btn.innerText = "ERROR";
                 console.error(err);
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.pointerEvents = "auto";
+                    btn.style.backgroundColor = "transparent";
+                    btn.style.color = "var(--team-primary)";
+                }, 2000);
             });
         }
 
@@ -1162,37 +1193,36 @@
                 showTooltip("LOGIN FIRST");
                 return;
             }
+            document.getElementById('load-confirm-modal').style.display = 'flex';
+        }
 
-            if (confirm("클라우드 데이터를 불러오시겠습니까?\n현재 브라우저의 설정과 저장된 금액이 덮어씌워집니다.")) {
-                showTooltip("LOADING CLOUD...");
+        function executeRestore() {
+            document.getElementById('load-confirm-modal').style.display = 'none';
+            showTooltip("LOADING CLOUD...");
 
-                fetch(GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'load',
-                        tokenPayload: googleUser
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success' && data.data) {
-                        const loaded = JSON.parse(data.data);
-                        state = { ...state, ...loaded };
-                        saveData();
-                        updateDashboard();
-                        updateTeamSelectUI();
-                        updateRaceScenario();
-                        showTooltip("RESTORE SUCCESS");
-                    } else {
-                        showTooltip("NO SAVED DATA");
-                    }
-                })
-                .catch(err => {
-                    showTooltip("LOAD FAILED");
-                    console.error(err);
-                });
-            }
+            fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'load', tokenPayload: googleUser })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && data.data) {
+                    const loaded = JSON.parse(data.data);
+                    state = { ...state, ...loaded };
+                    saveData();
+                    updateDashboard();
+                    updateTeamSelectUI();
+                    updateRaceScenario();
+                    showTooltip("RESTORE SUCCESS");
+                } else {
+                    showTooltip("NO SAVED DATA");
+                }
+            })
+            .catch(err => {
+                showTooltip("LOAD FAILED");
+                console.error(err);
+            });
         }
 
         function initCircuitSelect() {
@@ -2085,6 +2115,27 @@
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         }
+
+        document.addEventListener('contextmenu', e => e.preventDefault()); 
+        document.addEventListener('dragstart', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's' || e.key === 'P' || e.key === 'p')) {
+                e.preventDefault();
+                return false;
+            }
+        });
 
         init(); 
         loadYouTubeAPI(); 
