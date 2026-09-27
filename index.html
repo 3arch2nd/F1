@@ -13,7 +13,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- 💡 구글 원탭 / 로그인 연동 스크립트 -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
@@ -342,7 +341,6 @@
         .rec-title { font-size: 9px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; font-family: var(--font-display); }
         .rec-value { font-size: 14px; color: var(--team-accent); font-weight: bold; font-family: var(--font-display); }
         
-        /* ☁️ 구글 클라우드 동기화 UI 스타일 */
         .sync-box {
             margin-top: 20px;
             padding: 15px;
@@ -539,7 +537,6 @@
         </div>
     </div>
 
-    <!-- PIT STOP 모달창 -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -591,14 +588,11 @@
                     <div class="rec-value" id="rec-msg">Calculating...</div>
                 </div>
 
-                <!-- ☁️ 구글 로그인 및 동기화 컴포넌트 -->
                 <div class="sync-box">
                     <div class="sync-title">Cloud Synchronization</div>
                     
-                    <!-- 로그인 전 버튼 -->
                     <div id="google-login-container" style="display: flex; justify-content: center; margin: 10px 0;"></div>
                     
-                    <!-- 로그인 후 사용자 정보 & 동기화 제어 -->
                     <div id="google-user-container" style="display: none;">
                         <div class="sync-user-info">
                             <img id="google-user-pic" class="sync-user-pic" src="" alt="Profile">
@@ -608,8 +602,8 @@
                             </div>
                         </div>
                         <div class="sync-btn-row">
-                            <button class="sync-sub-btn" onclick="backupToCloud()">☁️ Save to Cloud</button>
-                            <button class="sync-sub-btn" onclick="restoreFromCloud()">⬇️ Load Cloud</button>
+                            <button class="sync-sub-btn" onclick="backupToCloud()">Save to Cloud</button>
+                            <button class="sync-sub-btn" onclick="restoreFromCloud()">Load Cloud</button>
                         </div>
                         <button class="sync-logout-btn" onclick="logoutGoogle()">Disconnect Account</button>
                     </div>
@@ -1041,13 +1035,9 @@
                 updateDashboard(); 
             }, 50);
 
-            // 💡 구글 인증 인스턴스 초기화 실행
             initGoogleAuth();
         }
 
-        // ==========================================
-        // ☁️ 구글 로그인 및 동기화 처리 로직
-        // ==========================================
         function initGoogleAuth() {
             if (typeof google !== 'undefined' && google.accounts) {
                 google.accounts.id.initialize({
@@ -1077,7 +1067,6 @@
                 renderGoogleButton();
                 showTooltip(`CONNECTED: ${googleUser.name}`);
 
-                // 자동 복구 시도
                 fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1157,9 +1146,9 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    showTooltip("SAVED TO CLOUD ✅");
+                    showTooltip("SAVED TO CLOUD");
                 } else {
-                    showTooltip("SAVE FAILED ❌");
+                    showTooltip("SAVE FAILED");
                 }
             })
             .catch(err => {
@@ -1194,7 +1183,7 @@
                         updateDashboard();
                         updateTeamSelectUI();
                         updateRaceScenario();
-                        showTooltip("RESTORE SUCCESS ✅");
+                        showTooltip("RESTORE SUCCESS");
                     } else {
                         showTooltip("NO SAVED DATA");
                     }
@@ -1932,7 +1921,6 @@
             saveData(); 
             updateDashboard();
 
-            // 💡 입금 발생 시 자동 클라우드 백업 트리거
             if (googleUser && !GAS_WEB_APP_URL.includes("YOUR_GAS")) {
                 backupToCloud();
             }
@@ -2021,7 +2009,7 @@
             document.getElementById('settings-modal').style.display = 'flex'; 
             updateTeamSelectUI(); 
             calculateRecommendation(); 
-            renderGoogleButton(); // 설정창 열릴 때 로그인 상태 동기화
+            renderGoogleButton(); 
         }
         function closeCelebration() { document.getElementById('celebration-overlay').style.display = 'none'; }
         function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -2060,8 +2048,7 @@
             saveData();
             updateDashboard();      
             updateRaceScenario();   
-            
-            // 💡 PIT STOP 종료 시 클라우드 자동 저장 트리거
+
             if (googleUser && !GAS_WEB_APP_URL.includes("YOUR_GAS")) {
                 backupToCloud();
             }
