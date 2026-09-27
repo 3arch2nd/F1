@@ -16,6 +16,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
+        /* 💡 [보안] 텍스트 드래그 및 모바일 터치 홀드 방지 */
         body {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -1091,7 +1092,7 @@
 
             const btn = document.getElementById('btn-save-cloud');
             const originalText = btn.innerText;
-            btn.innerText = "SAVING...";
+            btn.innerText = "⏳ SAVING...";
             btn.style.pointerEvents = "none"; 
 
             fetch(GAS_WEB_APP_URL, {
@@ -1102,15 +1103,15 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    btn.innerText = "SAVED!";
+                    btn.innerText = "✅ SAVED!";
                     btn.style.backgroundColor = "var(--team-primary)";
                     btn.style.color = "#000";
                 } else {
-                    btn.innerText = "FAILED";
+                    btn.innerText = "❌ FAILED";
                 }
             })
             .catch(err => {
-                btn.innerText = "ERROR";
+                btn.innerText = "❌ ERROR";
                 console.error(err);
             })
             .finally(() => {
@@ -1149,7 +1150,7 @@
                     updateDashboard();
                     updateTeamSelectUI();
                     updateRaceScenario();
-                    showTooltip("RESTORE SUCCESS");
+                    showTooltip("RESTORE SUCCESS ✅");
                 } else {
                     showTooltip("NO SAVED DATA");
                 }
@@ -1624,7 +1625,8 @@
                     const lookAheadIndex = (currentIndex + 20) % 1000;
                     const normalTrackFactor = (trackSpeedProfile[currentIndex] * 0.6) + (trackSpeedProfile[lookAheadIndex] * 0.4);
 
-                    const compressedBaseSpeed = 1.0 + (ai.baseSpeed - 1.0) * 0.65;
+                    // 💡 기본 능력치 격차 축소 (0.65 -> 0.45) : 차량들이 전체적으로 더 뭉치게 됩니다.
+                    const compressedBaseSpeed = 1.0 + (ai.baseSpeed - 1.0) * 0.45;
 
                     let targetSpeed = compressedBaseSpeed;
                     let currentLerpRate = 0.05;
@@ -1676,35 +1678,43 @@
                             const gap = leaderDist - myDist; 
 
                             if (ai.id === leaderCar.id) {
+                                // 💡 선두 강력 견제: 2등과 1.5% 이상 벌어지면 강한 브레이크 발동
                                 if (battleRank.length > 1) {
                                     const secondDist = battleRank[1].totalLaps + battleRank[1].progress;
                                     const leadGap = myDist - secondDist;
                                     
-                                    if (leadGap > 0.03) rubberBandBoost = 0.960;      // 너무 멀면 강한 브레이크
-                                    else if (leadGap > 0.015) rubberBandBoost = 0.985; // 적당히 멀면 살짝 브레이크
-                                    else rubberBandBoost = 0.995;                      // 아슬아슬하면 미세 조정만
+                                    if (leadGap > 0.015) rubberBandBoost = 0.90;      
+                                    else if (leadGap > 0.008) rubberBandBoost = 0.95; 
+                                    else if (leadGap > 0.003) rubberBandBoost = 0.98; 
                                 } else {
                                     rubberBandBoost = 0.990;
                                 }
                             } else if (gap > 0) {
-                                rubberBandBoost = 1.0 + (gap * 0.12); 
-                                if (rubberBandBoost > 1.15) rubberBandBoost = 1.15;
+                                // 💡 후발 주자 맹추격 (최대 1.25배까지 가속)
+                                rubberBandBoost = 1.0 + (gap * 0.20); 
+                                if (rubberBandBoost > 1.25) rubberBandBoost = 1.25;
                             }
                         }
 
                         let calculatedSpeed = compressedBaseSpeed * normalTrackFactor * battleBoost * conditionBoost * circuitBoost * rubberBandBoost;
                         
+                        // 💡 엎치락뒤치락(슬립스트림) 추월 로직 적용
                         if (myCurrentRank > 0) {
                             const ahead = battleRank[myCurrentRank - 1];
                             const dist = (ahead.totalLaps + ahead.progress) - (ai.totalLaps + ai.progress);
+                            
                             if (ai.battleState === 'boost' || ai.battleState === 'underdog_push') { 
                                 targetSpeed = calculatedSpeed; 
                             } 
-                            else if (dist < 0.005 && ai.actualSpeed > ahead.actualSpeed) { 
-                                targetSpeed = ahead.actualSpeed; currentLerpRate = 0.2; 
+                            // 앞차 꽁무니(1.5% 이내)에 붙으면 속도를 맞추는 게 아니라 8% 급가속하여 제쳐버립니다!
+                            else if (dist > 0 && dist < 0.015) { 
+                                targetSpeed = calculatedSpeed * 1.08; 
+                                currentLerpRate = 0.1; 
                             } 
                             else { targetSpeed = calculatedSpeed; }
-                        } else { targetSpeed = calculatedSpeed; }
+                        } else { 
+                            targetSpeed = calculatedSpeed; 
+                        }
 
                     } else if (raceStatus === 'YELLOW') {
                         const isLeader = (battleRank[0] && ai.id === battleRank[0].id);
@@ -1768,18 +1778,20 @@
                         }
                     }
 
+                    // 💡 주인공 우위 보정 및 1등 독주 압수 로직
                     if (ai.id === getDriverShortId(state.driver)) {
-                        let heroBonus = 1.002; 
+                        let heroBonus = 1.015; // 기본적으로 난전에서 살짝 우위
                         
                         if (ai.baseSpeed <= 1.10) { 
-                            heroBonus = 1.015; 
+                            heroBonus = 1.025; 
                         } else if (ai.baseSpeed <= 1.20) { 
-                            heroBonus = 1.008; 
+                            heroBonus = 1.020; 
                         }
                         
+                        // 내가 1등인데 2등이랑 0.5%만 벌어져도 보너스 압수 -> 뒤차가 슬립스트림으로 바로 쫓아옴!
                         if (leaderCar && ai.id === leaderCar.id && battleRank.length > 1) {
                             const secondDist = battleRank[1].totalLaps + battleRank[1].progress;
-                            if ((ai.totalLaps + ai.progress) - secondDist > 0.015) {
+                            if ((ai.totalLaps + ai.progress) - secondDist > 0.005) {
                                 heroBonus = 1.0; 
                             }
                         }
